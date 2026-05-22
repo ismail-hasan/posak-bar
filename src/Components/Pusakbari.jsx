@@ -1,11 +1,12 @@
 import { useState } from "react";
 import heroImage from "../assets/mian2.png"
 import img from "../assets/hero-img.jpg"
+import mainimg from "../assets/nav.png"
 
 
 /* ── Colors ── */
 const C = {
-      green: "#006a4e",
+      green: "red",
       red: "#f42a41",
       dark: "#002a1e",
       lightGreen: "#f0faf6",
@@ -35,70 +36,72 @@ function StampButton({ children, color, onClick }) {
 /* ── Header ── */
 function Header() {
       return (
-            <header
-                  className="sticky top-0 z-50 flex items-center justify-between px-4 py-3 shadow-md"
-                  style={{ background: C.green, borderBottom: `3px solid ${C.red}` }}
-            >
-                  <div
-                        className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-base font-black"
-                        style={{ border: `2px solid ${C.red}`, color: C.green }}
+            <>
+                  <header
+                        className="sticky bg-black  py-5 top-0 z-50 flex items-center justify-between px-4 shadow-md"
                   >
-                        p<span style={{ color: C.red }}>b</span>
-                  </div>
+                        <div>
+                              <img className="w-[130px]" src={mainimg} alt="" />
+                        </div>
 
-                  <div className="text-xs text-white/90">
-                        ✉️ example@gmail.com
-                  </div>
-            </header>
+                        <div className="md:text-xl sm:text-[14px] text-white">
+                              ✉️ example@gmail.com
+                        </div>
+                  </header>
+            </>
       );
 }
 
 /* ── Hero ── */
 function Hero() {
       return (
-            <section className="relative text-center px-5 py-20 border-b overflow-hidden">
+            <>
+                  <section className="relative text-center px-5 py-20 border-b overflow-hidden">
+                        dfsdfsdf
+                        {/* Background Image */}
+                        <div className="absolute inset-0">
+                              <img
+                                    src={img}
+                                    alt="Background"
+                                    className="w-full h-full object-cover"
+                              />
 
-      {/* Background Image */}
-      <div className="absolute inset-0">
-            <img
-                  src={img}
-                  alt="Background"
-                  className="w-full h-full object-cover"
-            />
+                              {/* Black Overlay */}
+                              <div className="absolute inset-0 bg-black/90"></div>
 
-            {/* Black Overlay */}
-            <div className="absolute inset-0 bg-black/90"></div>
+                              {/* Optional Blur */}
+                              <div className="absolute inset-0 backdrop-blur-[2px]"></div>
+                        </div>
 
-            {/* Optional Blur */}
-            <div className="absolute inset-0 backdrop-blur-[2px]"></div>
-      </div>
+                        {/* Content */}
+                        <div className="relative z-10 max-w-4xl mx-auto">
 
-      {/* Content */}
-      <div className="relative z-10 max-w-4xl mx-auto">
+                              <p className="sm:text-[12px] md:text-2xl leading-loose text-white mb-5 font-medium">
+                                    সম্মানিত গ্রাহক/বন্ধু সকল...... আসসালামু আলাইকুম।<br />
 
-            <p className="text-xl md:text-2xl leading-loose text-white mb-5 font-medium">
-                  সম্মানিত গ্রাহক/বন্ধু সকল...... আসসালামু আলাইকুম।<br />
+                                    <span
+                                          className="font-bold"
+                                          style={{ color: C.red }}
+                                    >
+                                          "পোষাক বাড়ি"
+                                    </span>{" "}
+                                    তে আপনাদেরকে জানাই স্বেচ্ছা-অভিনন্দন। <br></br>
+                                    একমাত্র প্রতারণামুক্ত সহজ ও নিরাপদ অনলাইন শপিং।
 
-                  <span
-                        className="font-bold"
-                        style={{ color: C.red }}
-                  >
-                        "পোষাক বাড়ি"
-                  </span>{" "}
-                  তে আপনাদেরকে জানাই স্বেচ্ছা-অভিনন্দন।
-            </p>
+                              </p>
 
-            <div className="flex justify-center mt-10">
-                  <img
-                        src={heroImage}
-                        className="w-8/12 md:w-5/12 object-cover rounded-2xl shadow-2xl"
-                        alt=""
-                  />
-            </div>
+                              <div className="flex justify-center mt-10">
+                                    <img
+                                          src={heroImage}
+                                          className="w-8/12 md:w-5/12 object-cover rounded-2xl shadow-2xl"
+                                          alt=""
+                                    />
+                              </div>
 
-      </div>
+                        </div>
 
-</section>
+                  </section>
+            </>
 
 
             // <div className="relative w-full h-screen overflow-hidden">
@@ -117,8 +120,7 @@ function Hero() {
 
 /* ── Marquee ── */
 function Marquee() {
-      const text =
-            "Uniform · Garments · Printing Service · Quality Assurance · Customer Support · ";
+      const text = "আমাদের লভ্যাংশের  কিছু অংশ  গরিব-অসহায়, এতীম-মিসকিন, মসজিদ-মাদ্রাসা ও দ্বীনি কাজে দান করা হয়। যার ৫০% শেয়ার গ্রাহক এবং ৫০% শেয়ার পোশাক বাড়ি তাই নিঃসন্দেহে সহজ ও নিরাপদে পোশাক বাড়িতে শপিং করুন, সওয়াবের ভাগিদার হউন }";
 
       return (
             <div className="overflow-hidden py-2" style={{ background: C.green }}>
@@ -327,7 +329,7 @@ function InfoCard({ title, color, body }) {
 /* ── Footer ── */
 function Footer() {
       return (
-            <footer className="text-center py-4 text-xs text-white" style={{ background: C.dark, borderTop: `3px solid ${C.red}` }}>
+            <footer className="text-center bg-blue-700 text-white py-4 text-xs text-white">
                   © 2024 পোষাক বাড়ি | www.pusakbari.com
             </footer>
       );
