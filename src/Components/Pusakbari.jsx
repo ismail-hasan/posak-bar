@@ -2,6 +2,7 @@ import { useState } from "react";
 import heroImage from "../assets/mian2.png"
 import img from "../assets/hero-img.jpg"
 import mainimg from "../assets/nav.png"
+import { MdEmail } from "react-icons/md";
 
 
 /* ── Colors ── */
@@ -38,14 +39,14 @@ function Header() {
       return (
             <>
                   <header
-                        className="sticky bg-black  py-5 top-0 z-50 flex items-center justify-between px-4 shadow-md"
+                        className="sticky bg-blue-600/75 py-5 top-0 z-50 flex items-center justify-between px-4 shadow-md"
                   >
                         <div>
                               <img className="w-[130px]" src={mainimg} alt="" />
                         </div>
 
-                        <div className="md:text-xl sm:text-[14px] text-white">
-                              ✉️ example@gmail.com
+                        <div className="flex items-center md:text-xl sm:text-[14px] text-white">
+                              <MdEmail className="mr-3" /> example@gmail.com
                         </div>
                   </header>
             </>
@@ -67,7 +68,7 @@ function Hero() {
                               />
 
                               {/* Black Overlay */}
-                              <div className="absolute inset-0 bg-black/90"></div>
+                              <div className="absolute inset-0 bg-blue-600/75"></div>
 
                               {/* Optional Blur */}
                               <div className="absolute inset-0 backdrop-blur-[2px]"></div>
@@ -93,7 +94,7 @@ function Hero() {
                               <div className="flex justify-center mt-10">
                                     <img
                                           src={heroImage}
-                                          className="w-8/12 md:w-5/12 object-cover rounded-2xl shadow-2xl"
+                                          className="w-8/12 md:w-5/12 object-cover rounded-2xl "
                                           alt=""
                                     />
                               </div>
@@ -104,17 +105,6 @@ function Hero() {
             </>
 
 
-            // <div className="relative w-full h-screen overflow-hidden">
-            //       <img
-            //             src={img}
-            //             alt="Hero"
-            //             className="absolute inset-0 w-full h-full object-cover"
-            //       />
-            //       <div className="absolute inset-0 bg-gradient-to-b from-white via-white via-[75%] to-blue-600 mix-blend-multiply"></div>
-            //       <div className="relative z-10 flex flex-col items-center justify-center h-full text-center px-4">
-            //             <h1 className="text-4xl md:text-6xl font-black text-gray-900">আপনার হেডিং</h1>
-            //       </div>
-            // </div>
       );
 }
 
@@ -148,14 +138,7 @@ function Marquee() {
 function ActionButtons() {
       return (
             <>
-                  {/* <div className="flex gap-5 justify-center py-5 bg-white border-b">
-                  <StampButton color={C.red} onClick={() => alert("Support")}>
-                        🎧 Support
-                  </StampButton>
-                  <StampButton color={C.green} onClick={() => alert("Order")}>
-                        🛒 Order Now
-                  </StampButton>
-            </div> */}
+
             </>
       );
 }
@@ -163,19 +146,8 @@ function ActionButtons() {
 /* ── CTA Cards ── */
 function CTASection() {
       return (
-            <section className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 bg-gray-50 border-b">
-                  {/* <CTACard
-                        label="কোম্পানীর"
-                        title="প্রোফাইল"
-                        sub="দেখতে"
-                        color={C.red}
-                  />
-                  <CTACard
-                        label="অনলাইনে"
-                        title="কেনাকাটা"
-                        sub="করতে"
-                        color={C.green}
-                  /> */}
+            <section className="">
+
             </section>
       );
 }
@@ -210,8 +182,7 @@ function CTACard({ label, title, sub, color }) {
 function InfoSection() {
       return (
             <>
-                  <div className="min-h-screen w-full flex flex-col items-center justify-center bg-gradient-to-b from-cyan-200 via-emerald-100 to-yellow-100 p-6 font-sans py-16">
-
+                  <div className="min-h-screen w-full flex flex-col items-center justify-center bg-gradient-to-b from-cyan-200 via-emerald-100 to-blue-100 p-6 font-sans py-16">
 
 
                         {/* ১. উপরের হেডিং টাইটেল সেকশন */}
@@ -264,38 +235,38 @@ function InfoSection() {
                         </div>
 
                         {/* ২. মূল দুটি অভিযোগ ও পরামর্শ কার্ড */}
-                        <div className="mt-15 grid grid-cols-1 md:grid-cols-2 gap-12 max-w-5xl w-full px-4 mb-20">
+                        <div className="mt-15 grid grid-cols-2 gap-2 max-w-5xl w-full px-4 mb-20">
 
                               {/* অভিযোগ কার্ড */}
-                              <div className="relative border-4 border-blue-800 rounded-3xl bg-white/90 p-8 flex flex-col items-center text-center shadow-xl backdrop-blur-sm pt-12 pb-14">
-                                    <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-blue-700 text-white font-bold text-2xl px-10 py-2 rounded-full border-2 border-white shadow-md min-w-[160px]">
+                              <div className="relative border-2 border-blue-800 rounded-3xl bg-white/90 p-1 flex flex-col items-center text-center shadow-xl backdrop-blur-sm pt-12 pb-14">
+                                    <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-blue-700 text-white font-bold text-sm px-10 py-2 rounded-full border-2 border-white shadow-md min-w-[160px]">
                                           অভিযোগ
                                     </div>
 
                                     <div className="text-gray-800 text-lg md:text-xl font-semibold leading-relaxed space-y-3 flex-grow mt-2">
-                                          <p className="text-xl md:text-2xl font-bold text-gray-900">সম্মানিত গ্রাহক,</p>
-                                          <p>আমাদের প্রতিষ্ঠান/সার্ভিস সম্পর্কে কোন অভিযোগ থাকলে তা আমাদের কাছে লিখে পাঠিয়ে দিন। আপনার অভিযোগ প্রমাণিত হলে আমরা যথারীতি ব্যবস্থা/সংশোধন করিব।</p>
-                                          <p>আপনার অভিযোগ/মন্তব্য আমাদের কাছে অত্যন্ত গুরুত্বপূর্ণ।</p>
+                                          <p className="text-[11px] md:text-2xl font-bold text-gray-900">সম্মানিত গ্রাহক,</p>
+                                          <p className="text-[11px] md:text-2xl">আমাদের প্রতিষ্ঠান/সার্ভিস সম্পর্কে কোন অভিযোগ থাকলে তা আমাদের কাছে লিখে পাঠিয়ে দিন। আপনার অভিযোগ প্রমাণিত হলে আমরা যথারীতি ব্যবস্থা/সংশোধন করিব।</p>
+                                          <p className="text-sm md:text-2xl">আপনার অভিযোগ/মন্তব্য আমাদের কাছে অত্যন্ত গুরুত্বপূর্ণ।</p>
                                     </div>
 
-                                    <button className="absolute -bottom-6 left-1/2 -translate-x-1/2 bg-blue-700 hover:bg-blue-800 text-white font-bold text-xl px-8 py-2 rounded-lg shadow-lg border border-blue-900 transition-all duration-200 active:scale-95 whitespace-nowrap">
+                                    <button className="absolute -bottom-6 left-1/2 -translate-x-1/2 bg-blue-700 hover:bg-blue-800 text-white font-bold text-sm px-8 py-2 rounded-lg shadow-lg border border-blue-900 transition-all duration-200 active:scale-95 whitespace-nowrap">
                                           ক্লিক করুন
                                     </button>
                               </div>
 
                               {/* পরামর্শ কার্ড */}
-                              <div className="relative border-4 border-green-700 rounded-3xl bg-white/90 p-8 flex flex-col items-center text-center shadow-xl backdrop-blur-sm pt-12 pb-14">
-                                    <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-green-600 text-white font-bold text-2xl px-10 py-2 rounded-full border-2 border-white shadow-md min-w-[160px]">
+                              <div className="relative border-2 border-green-700 rounded-3xl bg-white/90 p- flex flex-col items-center text-center shadow-xl backdrop-blur-sm pt-12 pb-14">
+                                    <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-green-600 text-white font-bold text-sm px-2 py-2 rounded-full border-2 border-white shadow-md min-w-[160px]">
                                           পরামর্শ
                                     </div>
 
                                     <div className="text-gray-800 text-lg md:text-xl font-semibold leading-relaxed space-y-3 flex-grow mt-2">
-                                          <p className="text-xl md:text-2xl font-bold text-gray-900">সম্মানিত গ্রাহক,</p>
-                                          <p>আমাদের প্রতিষ্ঠান/সার্ভিস সম্পর্কে কোন পরামর্শ থাকলে তা আমাদের কাছে লিখে পাঠিয়ে দিন। আপনার পরামর্শ গ্রহণযোগ্য হলে আমরা যথারীতি তা মেনে চলবো।</p>
-                                          <p>আপনার পরামর্শ/মন্তব্য আমাদের কাছে অত্যন্ত গুরুত্বপূর্ণ।</p>
+                                          <p className="text-sm md:text-2xl font-bold text-gray-900">সম্মানিত গ্রাহক,</p>
+                                          <p className="text-[11px] md:text-2xl">আমাদের প্রতিষ্ঠান/সার্ভিস সম্পর্কে কোন পরামর্শ থাকলে তা আমাদের কাছে লিখে পাঠিয়ে দিন। আপনার পরামর্শ গ্রহণযোগ্য হলে আমরা যথারীতি তা মেনে চলবো।</p>
+                                          <p className="text-sm md:text-2xl">আপনার পরামর্শ/মন্তব্য আমাদের কাছে অত্যন্ত গুরুত্বপূর্ণ।</p>
                                     </div>
 
-                                    <button className="absolute -bottom-6 left-1/2 -translate-x-1/2 bg-green-600 hover:bg-green-700 text-white font-bold text-xl px-8 py-2 rounded-lg shadow-lg border border-green-800 transition-all duration-200 active:scale-95 whitespace-nowrap">
+                                    <button className="absolute -bottom-6 left-1/2 -translate-x-1/2 bg-green-600 hover:bg-green-700 text-white font-bold text-sm px-8 py-2 rounded-lg shadow-lg border border-green-800 transition-all duration-200 active:scale-95 whitespace-nowrap">
                                           ক্লিক করুন
                                     </button>
                               </div>
