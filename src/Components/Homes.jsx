@@ -13,7 +13,8 @@ import {
 
 import logo from "../assets/logo.png";
 
-import jersey1 from "../assets/ji.jpg";
+import jerseyTop from "../assets/heroBanner.jpg";
+import jersey1 from "../assets/leftBanner.jpg";
 import jersey2 from "../assets/jercy2.jpg";
 import jersey3 from "../assets/jercy1.jpg";
 import { Link } from "react-router";
@@ -72,7 +73,9 @@ const Homes = () => {
           TOP HEADER
       ====================================================== */}
 
-                  <Navbar></Navbar>
+                  <div className="mt-[66px] md:mt-[93px]">
+                        <Navbar></Navbar>
+                  </div>
 
                   {/* ======================================================
           MARQUEE SECTION
@@ -90,6 +93,11 @@ const Homes = () => {
                         </marquee>
 
                   </div>
+                  {/* <div className="bg-red-600 border-y-[3px] border-white py-2 overflow-hidden">
+                        <div className="whitespace-nowrap animate-marquee text-white font-bold text-[19px] md:text-2xl">
+                              আসসালামু আলাইকুম... সম্মানিত গ্রাহক / বন্ধু সকলকে “পোশাক বাড়ি” তে স্বাগতম।
+                        </div>
+                  </div> */}
 
                   {/* ======================================================
           GREEN CONTENT SECTION
@@ -165,9 +173,12 @@ const Homes = () => {
           CUSTOM DESIGN BOX
       ====================================================== */}
 
-                  <section className="bg-[#f5f5f5] px-4 py-12">
+                  <section className="bg-[#f5f5f5] px-4 pb-12">
+                        <div className="flex justify-center">
+                              <img width={350} src={jerseyTop} alt="" />
+                        </div>
 
-                        <div className="max-w-[850px] mx-auto">
+                        <div className="max-w-[850px] mx-auto mt-10 ">
 
                               <div className="border-[7px] border-blue-700 bg-white rounded-3xl p-5 md:p-10 text-center shadow-xl">
 

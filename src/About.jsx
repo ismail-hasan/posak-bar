@@ -12,7 +12,7 @@ const About = () => {
                   <section className="bg-[#007600] text-center px-4 pt-10 pb-0">
 
 
-                        <h1 className="inline-block text-white mt-5 md:mt-29 text-[28px] md:text-3xl font-extrabold leading-tight pb-5">
+                        <h1 className="inline-block text-white mt-15 md:mt-29 text-[28px] md:text-3xl font-extrabold leading-tight pb-5 ">
                               পোশাক বাড়ি'র <br />  অর্ডার ফরমে <span className='text-red-500 text-[35px]'>স্বাগতম</span>
                         </h1>
 

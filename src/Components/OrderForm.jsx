@@ -16,6 +16,7 @@ const FABRICS = [
 ];
 
 const SIZES = ["S", "M", "L", "XL", "XXL", "3XL", "4XL", "5XL"];
+const BSIZES = ["SFFF", "M", "L", "XL", "XXL", "3XL", "4XL", "5XL"];
 
 const MANUFACTURING_PRODUCTS = [
       "কাস্টমাইজ সাবলিমেশন জার্সি",
@@ -48,10 +49,7 @@ const PAYMENT_OPTIONS = [
 ];
 
 const TERMS_LIST = [
-      { key: "t1", text: "আমি নিশ্চিত করছি যে প্রদত্ত সকল তথ্য সঠিক।" },
-      { key: "t2", text: "ডিজাইন কনফার্ম হওয়ার পর কোনো পরিবর্তন গ্রহণযোগ্য নয়।" },
-      { key: "t3", text: "অগ্রিম প্রদত্ত অর্থ ফেরতযোগ্য নয়।" },
-      { key: "t4", text: "ডেলিভারি খরচ মোট মূল্যের সাথে যোগ হবে এবং গ্রাহক তা পরিশোধ করবেন।" },
+      { key: "t1", text: "আমি নিশ্চিত করছি যে প্রদত্ত সকল তথ্য সঠিক। ডিজাইন কনফার্ম হওয়ার পর কোনো পরিবর্তন গ্রহণযোগ্য নয়। অগ্রিম প্রদত্ত অর্থ ফেরতযোগ্য নয়। ডেলিভারি খরচ মোট মূল্যের সাথে যোগ হবে এবং গ্রাহক তা পরিশোধ করবেন।" }
 ];
 
 // ─── Reusable UI components ───────────────────────────────────────────────────
@@ -61,8 +59,8 @@ function SectionCard({ step, icon, title, children }) {
       return (
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 sm:p-6 mb-4">
 
-                  <h2 className="text-sm sm:text-base font-semibold text-gray-800 border-b border-gray-100 pb-3 mb-4">
-                        {title} নির্বাচন করুন
+                  <h2 className="text-[22px] sm:text-base font-semibold text-gray-800 border-b border-gray-100 pb-3 mb-4">
+                        {title}
                   </h2>
                   {children}
             </div>
@@ -222,7 +220,7 @@ export default function OrderForm() {
                   if (!selectedFabric) e.fabric = "ফেব্রিক নির্বাচন করুন";
                   if (!quantity || qty < 10) e.qty = "ন্যূনতম ১০ পিস অর্ডার করতে হবে";
             }
-            if (!terms.t1 || !terms.t2 || !terms.t3 || !terms.t4)
+            if (!terms.t1)
                   e.terms = "সকল শর্তাবলী মেনে নিতে হবে";
             return e;
       };
@@ -324,7 +322,7 @@ export default function OrderForm() {
                   <div className="max-w-2xl mx-auto">
 
                         {/* ── Header ─────────────────────────────────────────────────────── */}
-                        <div className="bg-gradient-to-r from-blue-700 to-red-600 rounded-2xl p-6 sm:p-8 mb-5 text-center shadow-md">
+                        <div className="bg-gradient-to-r from-green-700 to-red-600 rounded-2xl p-6 sm:p-8 mb-5 text-center shadow-md">
                               <h1 className="text-[21px] sm:text-3xl font-bold text-white mb-1">
                                     🎽 কাস্টমাইজ জার্সি অর্ডার ফরম
                               </h1>
@@ -346,7 +344,7 @@ export default function OrderForm() {
                         >
 
                               {/* ── Section 1: Product Type ─────────────────────────────────── */}
-                              <SectionCard step={1} icon="🛍️" title="কোন পণ্যটি অর্ডার করতে চান?">
+                              <SectionCard step={1} icon="🛍️" title="কোন পণ্যটি অর্ডার করতে চান? নির্বাচন করুন">
                                     <div className="flex gap-2 mb-4">
                                           <ToggleBtn
                                                 label="🏭 মেনুফেকচারিং"
@@ -362,25 +360,44 @@ export default function OrderForm() {
 
                                     {/* This select IS a native input — its name goes to Formspree */}
                                     <Label htmlFor="selectedProduct">পণ্য নির্বাচন করুন</Label>
-                                    <SelectEl
+
+                                    <div
                                           id="selectedProduct"
-                                          name="পণ্য"
-                                          value={selectedProduct}
-                                          onChange={(e) => setSelectedProduct(e.target.value)}
+                                          className="grid grid-cols-1 sm:grid-cols-2 gap-3"
                                     >
-                                          <option value="">— নির্বাচন করুন —</option>
                                           {(productType === "manufacturing"
                                                 ? MANUFACTURING_PRODUCTS
                                                 : READYMADE_PRODUCTS
                                           ).map((p) => (
-                                                <option key={p} value={p}>{p}</option>
+                                                <label
+                                                      key={p}
+                                                      className={[
+                                                            "flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all duration-200",
+                                                            selectedProduct === p
+                                                                  ? "border-red-500 bg-blue-50 shadow-sm"
+                                                                  : "border-gray-200 bg-white hover:border-blue-300",
+                                                      ].join(" ")}
+                                                >
+
+                                                      <input
+                                                            type="checkbox"
+                                                            checked={selectedProduct === p}
+                                                            onChange={() => setSelectedProduct(p)}
+                                                            className="w-5 h-5 accent-blue-600 cursor-pointer"
+                                                      />
+
+                                                      <span className="text-sm font-medium text-gray-800">
+                                                            {p}
+                                                      </span>
+
+                                                </label>
                                           ))}
-                                    </SelectEl>
+                                    </div>
 
                               </SectionCard>
 
                               {/* ── Section 2: Customer Info ────────────────────────────────── */}
-                              <SectionCard step={2} icon="👤" title="গ্রাহকের তথ্য">
+                              <SectionCard title={"গ্রাহকের তথ্য"}>
 
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
 
@@ -430,55 +447,90 @@ export default function OrderForm() {
 
                               {/* ── Section 3: Fabric & Style (manufacturing only) ──────────── */}
                               {productType === "manufacturing" && (
-                                    <SectionCard step={3} icon="👕" title="ফেব্রিক ও স্টাইল ">
+                                    <SectionCard step={3} title="ফেব্রিক ও স্টাইল">
 
                                           <div id="field-fabric">
                                                 <FieldError msg={errors.fabric} />
 
-                                                {/* Fabric card buttons — selection stored in state, appended in handleSubmit */}
+                                                {/* Fabric card buttons */}
                                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5">
+
                                                       {FABRICS.map((f) => (
-                                                            <button
+                                                            <div
                                                                   key={f.id}
-                                                                  type="button"
-                                                                  onClick={() => { setSelectedFabric(f); clearErr("fabric"); }}
                                                                   className={[
-                                                                        "text-left p-3.5 rounded-xl border transition-all duration-150",
+                                                                        "p-4 rounded-xl border transition-all duration-150",
                                                                         selectedFabric?.id === f.id
                                                                               ? "border-red-500 bg-blue-50 shadow-sm"
-                                                                              : "border-gray-200 bg-white hover:border-blue-300",
+                                                                              : "border-gray-200 bg-white",
                                                                   ].join(" ")}
                                                             >
-                                                                  <div className="flex flex-wrap items-center gap-1 mb-1">
-                                                                        <span className="text-sm font-semibold text-gray-800">{f.name}</span>
-                                                                        <span className="text-xs text-gray-400">{f.gsm}</span>
+
+                                                                  {/* FABRIC TITLE */}
+                                                                  <div className="flex items-center justify-between gap-3 mb-3">
+
+                                                                        <div>
+                                                                              <h3 className="text-sm md:text-base font-semibold text-gray-800">
+                                                                                    {f.name}
+                                                                              </h3>
+
+                                                                              <p className="text-xs text-gray-400 mt-1">
+                                                                                    {f.gsm}
+                                                                              </p>
+                                                                        </div>
+
+                                                                        {/* MAIN FABRIC SELECT */}
+                                                                        <input
+                                                                              type="radio"
+                                                                              name="fabric"
+                                                                              checked={selectedFabric?.id === f.id}
+                                                                              onChange={() => {
+                                                                                    setSelectedFabric(f);
+                                                                                    clearErr("fabric");
+                                                                              }}
+                                                                              className="w-5 h-5 accent-blue-600 cursor-pointer"
+                                                                        />
                                                                   </div>
-                                                                  <div className="flex flex-wrap gap-x-3 text-xs text-blue-700">
-                                                                        <span>হাফহাতা: ৳{f.halfPrice}</span>
-                                                                        <span>ফুলহাতা: ৳{f.fullPrice}</span>
+
+                                                                  {/* STYLE OPTIONS */}
+                                                                  <div className="space-y-3">
+
+                                                                        {/* HALF SLEEVE */}
+                                                                        <label className="flex items-start gap-3 cursor-pointer border border-gray-200 rounded-lg p-3 hover:border-blue-300 transition">
+
+                                                                              <input
+                                                                                    type="checkbox"
+                                                                                    className="mt-1 w-4 h-4 accent-blue-600"
+                                                                              />
+
+                                                                              <div>
+                                                                                    <p className="text-sm font-medium text-gray-800">
+                                                                                          কলার গোলগলা হাফহাতা -  {f.halfPrice} টাকা
+                                                                                    </p>
+                                                                              </div>
+                                                                        </label>
+
+                                                                        {/* FULL SLEEVE */}
+                                                                        <label className="flex items-start gap-3 cursor-pointer border border-gray-200 rounded-lg p-3 hover:border-blue-300 transition">
+
+                                                                              <input
+                                                                                    type="checkbox"
+                                                                                    className="mt-1 w-4 h-4 accent-blue-600"
+                                                                              />
+
+                                                                              <div>
+                                                                                    <p className="text-sm font-medium text-gray-800">
+                                                                                          কলার গোলগলা ফুলহাতা - {f.fullPrice}  টাকা
+                                                                                    </p>
+                                                                              </div>
+                                                                        </label>
+
                                                                   </div>
-                                                            </button>
+                                                            </div>
                                                       ))}
+
                                                 </div>
                                           </div>
-
-                                          {/* Collar + sleeve toggles (state only, appended in handleSubmit) */}
-                                          {/* <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                                <div>
-                                                      <Label>গলার ধরন</Label>
-                                                      <div className="flex gap-2">
-                                                            <ToggleBtn label="গোলগলা" active={collar === "round"} onClick={() => setCollar("round")} />
-                                                            <ToggleBtn label="কলার" active={collar === "collar"} onClick={() => setCollar("collar")} />
-                                                      </div>
-                                                </div>
-                                                <div>
-                                                      <Label>হাতার ধরন</Label>
-                                                      <div className="flex gap-2">
-                                                            <ToggleBtn label="হাফহাতা" active={sleeve === "half"} onClick={() => setSleeve("half")} />
-                                                            <ToggleBtn label="ফুলহাতা" active={sleeve === "full"} onClick={() => setSleeve("full")} />
-                                                      </div>
-                                                </div>
-                                          </div> */}
 
                                     </SectionCard>
                               )}
@@ -494,6 +546,7 @@ export default function OrderForm() {
                                                 <div id="field-qty">
                                                       <Label htmlFor="quantity" required>কত পিস জার্সি?</Label>
                                                       <Input
+
                                                             id="quantity"
                                                             name="পরিমাণ (পিস)"
                                                             type="number"
@@ -505,33 +558,8 @@ export default function OrderForm() {
                                                       <FieldError msg={errors.qty} />
                                                 </div>
 
-                                                <div>
-                                                      <Label>একক মূল্য (টাকা)</Label>
-                                                      <ReadonlyPrice
-                                                            value={unitPrice && qty >= 10 ? `৳ ${unitPrice}` : ""}
-                                                            placeholder="ফেব্রিক নির্বাচনের পর"
-                                                      />
-                                                </div>
 
-                                          </div>
 
-                                          {/* Price summary — all computed values are appended in handleSubmit */}
-                                          <div className="bg-blue-50 rounded-2xl p-4 space-y-2">
-                                                <PriceRow label="মোট পিস" value={qty >= 10 && unitPrice ? `${qty} পিস` : null} />
-                                                <PriceRow label="একক মূল্য" value={unitPrice && qty >= 10 ? `৳ ${unitPrice}` : null} />
-
-                                                <div className="border-t border-blue-200 pt-2 flex justify-between font-semibold text-gray-800 text-sm sm:text-base">
-                                                      <span>মোট মূল্য</span>
-                                                      <span>{totalPrice ? `৳ ${totalPrice.toLocaleString()}` : "—"}</span>
-                                                </div>
-                                                <div className="flex justify-between text-sm font-semibold text-red-600">
-                                                      <span>৩০% অগ্রিম</span>
-                                                      <span>{advanceCalc ? `৳ ${advanceCalc.toLocaleString()}` : "—"}</span>
-                                                </div>
-                                                <div className="flex justify-between text-sm text-gray-500">
-                                                      <span>বাকি</span>
-                                                      <span>{dueCalc ? `৳ ${dueCalc.toLocaleString()}` : "—"}</span>
-                                                </div>
                                           </div>
 
                                     </SectionCard>
@@ -552,15 +580,15 @@ export default function OrderForm() {
 
                                     {sizeCategory === "kids" && (
                                           <div className="mb-4">
-                                                {/* <Label htmlFor="kidAge">বাচ্চার বয়স উল্লেখ করুন</Label>
+                                                <Label htmlFor="kidAge">বাচ্চার বয়স এবং পরিমাণ দিন</Label>
                                                 <Input
                                                       id="kidAge"
                                                       name="বাচ্চার বয়স"
                                                       type="text"
-                                                      placeholder="যেমন: ৬ বছর, ৮ বছর..."
+                                                      placeholder="যেমন: 1 বছর, 12 বছর..."
                                                       value={kidAge}
                                                       onChange={(e) => setKidAge(e.target.value)}
-                                                /> */}
+                                                />
                                           </div>
                                     )}
 
@@ -591,7 +619,7 @@ export default function OrderForm() {
                                                 মোট সাইজ: <strong className="text-blue-700">{sizeTotal} পিস</strong>
                                           </p>
                                     )}
-                                    <div>
+                                    {/* <div>
                                           <div className="w-full flex justify-center px-4">
                                                 <div className="w-full max-w-xl flex flex-col gap-4  font-medium text-base sm:text-lg">
 
@@ -621,7 +649,7 @@ export default function OrderForm() {
 
                                                 </div>
                                           </div>
-                                    </div>
+                                    </div> */}
 
                               </SectionCard>
 
@@ -658,7 +686,7 @@ export default function OrderForm() {
                                                 <div className="w-full max-w-xl text-center text-green-600">
 
                                                       <p className="text-base sm:text-lg font-medium">
-                                                            👉 আরো জানাতে আমাদের WhatsApp এ যোগাযোগ করুন
+                                                            👉 আরো জানাতে আমাদের সাপোর্ট টিমের সাথে যোগাযোগ করুন
                                                       </p>
 
                                                       <a
@@ -666,7 +694,7 @@ export default function OrderForm() {
                                                             target="_blank"
                                                             className="inline-flex items-center justify-center mt-3 text-white bg-green-500 px-5 py-2 rounded-full text-sm sm:text-base font-semibold"
                                                       >
-                                                            WhatsApp এ মেসেজ করুন
+                                                            সাপোর্ট টিম
                                                       </a>
 
                                                 </div>
@@ -679,7 +707,7 @@ export default function OrderForm() {
 
 
                               {/* ── Section 9: Terms & Submit ───────────────────────────────── */}
-                              <SectionCard step={9} icon="✅" title="শর্তাবলী ও চুক্তি">
+                              <SectionCard title="শর্তাবলী ও চুক্তি">
 
                                     <div className="space-y-3 mb-5" id="field-terms">
                                           {TERMS_LIST.map(({ key, text }) => (
