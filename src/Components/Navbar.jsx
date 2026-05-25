@@ -1,30 +1,32 @@
 import React from "react";
+import logo from "../assets/logo.png";
+import { Link } from "react-router";
+
 
 const Navbar = () => {
   return (
-    <nav className="w-full bg-white shadow-md">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-        <div className="flex items-center justify-between h-16">
+    <div className="bg-[#001eff] py-6 px-3">
 
-          {/* Left - Logo */}
-          <div className="text-xl font-bold text-blue-600">
-            MyLogo
-          </div>
+      <div className="max-w-[1200px] mx-auto flex items-center justify-between gap-3">
 
-          {/* Right - Email */}
-          <div className="text-sm sm:text-base text-gray-700">
-            <a
-              href="mailto:example@gmail.com"
-              className="hover:text-blue-600 transition"
-            >
-              example@gmail.com
-            </a>
-          </div>
+        {/* LOGO */}
+        <Link to={"/"}>
+          <img
+            src={logo}
+            alt="logo"
+            className="w-[110px] md:w-[200px] object-contain"
+          />
+        </Link>
 
-        </div>
+        {/* EMAIL */}
+        <p className="text-white text-[14px] md:text-[15px] font-semibold text-right break-all">
+          posakbari4u@gmail.com
+        </p>
+
       </div>
-    </nav>
+
+    </div>
   );
 };
 

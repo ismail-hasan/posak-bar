@@ -1,44 +1,23 @@
 import React from 'react';
 import logo from "./assets/logo.png";
 import OrderForm from './Components/OrderForm';
+import Navbar from './Components/Navbar';
 
 const About = () => {
       return (
             <div>
-                  <h4>about</h4>
-                  <div className="bg-[#001eff] py-6 px-3">
-
-                        <div className="max-w-[1200px] mx-auto flex items-center justify-between gap-3">
-
-                              {/* LOGO */}
-                              <img
-                                    src={logo}
-                                    alt="logo"
-                                    className="w-[110px] md:w-[200px] object-contain"
-                              />
-
-                              {/* EMAIL */}
-                              <p className="text-white text-[10px] md:text-[14px] font-semibold text-right break-all">
-                                    Gmail: posakbari4u@gmail.com
-                              </p>
-
-                        </div>
-
-                  </div>
+                  <Navbar></Navbar>
 
                   {/* // BANNER */}
                   <section className="bg-[#007600] text-center px-4 pt-10 pb-0">
 
-                        {/* TITLE */}
-                        <h1 className="inline-block text-yellow-300 mt-5 text-[20px] md:text-5xl font-extrabold leading-tight pb-5">
-                              স্বাগতম
-                        </h1> <br />
-                        <h1 className="inline-block text-yellow-300 mt-5 text-[20px] md:text-5xl font-extrabold leading-tight pb-5">
-                              পোশাক বাড়ি'র <br /> অনলাইন অর্ডার ফরম
+
+                        <h1 className="inline-block text-white mt-5 text-[28px] md:text-3xl font-extrabold leading-tight pb-5">
+                              পোশাক বাড়ি'র <br />  অর্ডার ফরমে স্বাগতম
                         </h1>
 
                         {/* DESCRIPTION */}
-                        <p className="text-white mt-5 text-[12px] md:text-xl leading-relaxed font-semibold max-w-[850px] mx-auto border border-6 rounded-3xl py-8">
+                        <p className="text-yellow-300 mt-5 text-[14px] md:text-xl leading-relaxed font-semibold max-w-[850px] mx-auto border-white border-6 rounded-3xl py-8">
 
                               এই ফরমের মাধ্যমে আপনি কাস্টমাইজ <br />
                               সাবলিমেশন জার্সি/রেডিমেট পণ্য অর্ডার <br />করতে পারবেন। অর্ডার কনফার্ম করতে <br />অবশ্যই ৩০% এডভান্স পেমেন্ট করতে হবে।
@@ -98,14 +77,15 @@ const About = () => {
 
                   {/* // check mark  */}
 
-                  <div className='w-full flex flex-col items-center text-center gap-3 text-xl text-blue-700 font-semibold pb-6'>
-                        <p>✅ ডিজাইন কনফার্মের পর কাজ শুরু হবে</p>
+                  <div className="w-full flex justify-center px-4">
+                        <div className="w-full max-w-2xl bg-white/70 backdrop-blur-md border border-blue-100 rounded-2xl shadow-md flex flex-col items-center text-center gap-4 sm:gap-5 md:gap-6 text-[14px] md:text-xl text-blue-700 font-semibold p-6">
 
-                        <p>✅ প্রিন্ট শুরু হওয়ার পর অর্ডার বাতিল করা যাবে না</p>
+                              <p className="leading-relaxed">✅ ডিজাইন কনফার্মের পর কাজ শুরু হবে</p>
+                              <p className="leading-relaxed">✅ প্রিন্ট শুরু হওয়ার পর অর্ডার বাতিল করা যাবে না</p>
 
-                        <p>✅ ডেলিভারির আগে বাকি টাকা পরিশোধ করতে হবে</p>
+                              <p className="leading-relaxed">✅ এডভান্স ছাড়া অর্ডার গ্রহণ করা হবে না</p>
 
-                        <p>✅ এডভান্স ছাড়া অর্ডার গ্রহণ করা হবে না</p>
+                        </div>
                   </div>
 
                   <OrderForm></OrderForm>

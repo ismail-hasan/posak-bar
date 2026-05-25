@@ -8,23 +8,16 @@ import {
       MessageCircle,
 } from "lucide-react";
 
-import {
-      FaFacebookF,
-      FaInstagram,
-      FaYoutube,
-      FaFacebookMessenger,
-      FaWhatsapp,
-} from "react-icons/fa";
 
-/* =========================
-   IMAGES
-========================= */
 
 import logo from "../assets/logo.png";
 
 import jersey1 from "../assets/ji.jpg";
 import jersey2 from "../assets/jercy2.jpg";
 import jersey3 from "../assets/jercy1.jpg";
+import { Link } from "react-router";
+import Footer from "./Footer";
+import Navbar from "./Navbar";
 
 /* =========================
    COMPONENT
@@ -78,36 +71,18 @@ const Homes = () => {
           TOP HEADER
       ====================================================== */}
 
-                  <div className="bg-[#001eff] py-6 px-3">
-
-                        <div className="max-w-[1200px] mx-auto flex items-center justify-between gap-3">
-
-                              {/* LOGO */}
-                              <img
-                                    src={logo}
-                                    alt="logo"
-                                    className="w-[110px] md:w-[200px] object-contain"
-                              />
-
-                              {/* EMAIL */}
-                              <p className="text-white text-[10px] md:text-[14px] font-semibold text-right break-all">
-                                    Gmail: posakbari4u@gmail.com
-                              </p>
-
-                        </div>
-
-                  </div>
+                  <Navbar></Navbar>
 
                   {/* ======================================================
           MARQUEE SECTION
       ====================================================== */}
 
-                  <div className="bg-red-600 border-y-[8px] border-white py-2">
+                  <div className="bg-red-600 border-y-[3px] border-white py-2">
 
                         <marquee
                               behavior="scroll"
                               direction="left"
-                              className="text-white font-bold text-sm md:text-2xl"
+                              className="text-white font-bold text-[19px] md:text-2xl"
                         >
                               আসসালামু আলাইকুম... সম্মানিত গ্রাহক / বন্ধু সকলকে “পোশাক বাড়ি”
                               তে স্বাগতম।
@@ -122,7 +97,7 @@ const Homes = () => {
                   <section className="bg-[#007600] text-center px-4 pt-10 pb-0">
 
                         {/* TITLE */}
-                        <h1 className="inline-block text-yellow-300 mt-5 text-[20px] md:text-5xl font-extrabold leading-tight border-b-4 border-dashed border-yellow-300 pb-5">
+                        <h1 className="inline-block text-yellow-300 mt-5 text-[23px] md:text-5xl font-extrabold leading-tight border-b-4 border-dashed border-yellow-300 pb-5">
                               আমাদের বৈশিষ্ট্য ও বিশেষত্ব
                         </h1>
 
@@ -193,14 +168,14 @@ const Homes = () => {
 
                         <div className="max-w-[850px] mx-auto">
 
-                              <div className="border-[9px] border-blue-700 bg-white rounded-xl p-5 md:p-10 text-center shadow-xl">
+                              <div className="border-[7px] border-blue-700 bg-white rounded-3xl p-5 md:p-10 text-center shadow-xl">
 
-                                    <h1 className="text-[#00a000] text-[15px] md:text-4xl font-extrabold leading-snug">
+                                    <h1 className="text-[#00a000] text-[18px] md:text-4xl font-extrabold leading-snug">
 
                                           আপনি কি নিজের পছন্দমত  <br></br>
-                                          ডিজাইন দিয়ে সরাসরি কারখানা   <br></br>
+                                          ডিজাইন দিয়ে সরাসরি কারখানা থেকে সাবলিমেশন প্রিন্টিং  <br></br>
                                           মেশিনে
-                                          কাস্টোমাইজ <span className=" text-red-600 md:text-[42px]">জার্সি <br></br>
+                                          কাস্টোমাইজ <span className=" text-red-600 text-[24px] md:text-[42px]">জার্সি <br></br>
                                           </span> তৈরি করতে চান ?
 
                                     </h1>
@@ -216,7 +191,7 @@ const Homes = () => {
       ====================================================== */}
 
                   <section className="bg-[#007600] px-4 py-8 pb-[100px]">
-                        <h3 className="text-center text-yellow-300  text-[17px] md:text-3xl font-semibold pb-6 mt-10 ">তাহলে আপানার পাশে আছে</h3>
+                        <h3 className="text-center text-yellow-300  text-[21px] md:text-3xl font-semibold pb-6 mt-10 ">তাহলে আপানার পাশে আছে</h3>
 
                         <div className="max-w-[900px] mx-auto border-[5px] border-white p-4 mb-5  
                         
@@ -353,7 +328,7 @@ const Homes = () => {
                                                             strokeDasharray="113" strokeDashoffset="28" strokeLinecap="round"
                                                             transform="rotate(-90 22 22)" />
                                                 </svg>
-                                                <span>অর্ডার পলিসি</span>
+                                                <span className="text-[20px]">অর্ডার পলিসি</span>
                                           </div>
 
                                           <div className="bg-white text-[#0d2f85] font-bold py-2 md:py-2.5 px-4 rounded-full text-sm flex items-center gap-2 md:gap-3">
@@ -366,7 +341,7 @@ const Homes = () => {
                                                             strokeDasharray="113" strokeDashoffset="28" strokeLinecap="round"
                                                             transform="rotate(-90 22 22)" />
                                                 </svg>
-                                                <span>পেমেন্ট এবং ডেলিভারি পলিসি</span>
+                                                <span className="text-[18px]">পেমেন্ট এবং ডেলিভারি পলিসি</span>
                                           </div>
 
                                           <div className="bg-white text-[#0d2f85] font-bold py-2 md:py-2.5 px-4 rounded-full text-sm flex items-center gap-2 md:gap-3">
@@ -379,7 +354,7 @@ const Homes = () => {
                                                             strokeDasharray="113" strokeDashoffset="28" strokeLinecap="round"
                                                             transform="rotate(-90 22 22)" />
                                                 </svg>
-                                                <span>রিটার্ন পলিসি</span>
+                                                <span className="text-[20px]">রিটার্ন পলিসি</span>
                                           </div>
                                     </div>
                               </div>
@@ -395,7 +370,7 @@ const Homes = () => {
                         <p className="text-white font-bold text-[12px] md:text-xl leading-relaxed max-w-[900px] mx-auto">
 
                               সাবলিমেশন কাস্টমাইজ জার্সি তৈরি করে নিতে <br></br>
-                              <span className="text-red-600 text-xl md:text-2xl">পোশাক বাড়ির</span> কাস্টমার সাপোর্ট টিমের সাথে  <br></br>
+                              <span className="text-red-600 text-[18px] md:text-2xl">পোশাক বাড়ির</span> কাস্টমার সাপোর্ট টিমের সাথে  <br></br>
                               সরাসরি হটলাইনে যোগাযোগ করুন  <br></br>
 
                         </p>
@@ -411,12 +386,12 @@ const Homes = () => {
                         <div className="max-w-[700px] mx-auto flex flex-col md:flex-row gap-5 justify-center">
 
                               {/* ORDER BUTTON */}
-                              <button className="bg-[#1e8500] hover:scale-105 duration-300 text-white text-xl font-bold py-4 px-10 rounded-full shadow-2xl flex items-center justify-center gap-3">
+                              <Link to={"/order"} className="bg-[#1e8500] hover:scale-105 duration-300 text-white text-xl font-bold py-4 px-10 rounded-full shadow-2xl flex items-center justify-center gap-3">
 
                                     <Phone size={24} />
                                     অর্ডার করুন
 
-                              </button>
+                              </Link>
 
                               {/* INBOX BUTTON */}
                               <button className="bg-[#1023ff] hover:scale-105 duration-300 text-white text-xl font-bold py-4 px-10 rounded-full shadow-2xl flex items-center justify-center gap-3">
@@ -443,19 +418,19 @@ const Homes = () => {
 
                                     <h1 className="text-blue-700 text-center text-2xl md:text-4xl font-extrabold">
 
-                                          অভিযোগ
+                                          অভিযোগ / পরামর্শ
 
                                     </h1>
 
-                                    <p className="text-gray-700 text-sm md:text-lg leading-relaxed font-semibold text-center mt-4">
+                                    <p className="text-gray-700 text-[17px] md:text-lg leading-relaxed font-semibold text-center mt-4">
 
                                           সম্মানিত গ্রাহক,
                                           আমাদের প্রতিষ্ঠান/সার্ভিস সম্পর্কে
-                                          কোন অভিযোগ থাকলে তা আমাদের
+                                          কোন অভিযোগ / পরামর্শ থাকলে তা আমাদের
                                           কাছে লিখে পাঠিয়ে দিন। আপনার
                                           অভিযোগ প্রমাণিত হলে আমরা
-                                          যথানীতি ব্যবস্থা/সংশোধন করিব।
-                                          আপনার অভিযোগ/মন্তব্য
+                                          যথারীতি ব্যবস্থা/সংশোধন করিব।
+                                          আপনার অভিযোগ/ পরামর্শ
                                           আমাদের কাছে অত্যন্ত গুরুত্বপূর্ণ।
 
                                     </p>
@@ -469,7 +444,7 @@ const Homes = () => {
                               </div>
 
                               {/* ADVICE BOX */}
-                              <div className="bg-white border-[4px] border-green-700 rounded-3xl p-6 shadow-2xl">
+                              {/* <div className="bg-white border-[4px] border-green-700 rounded-3xl p-6 shadow-2xl">
 
                                     <h1 className="text-green-700 text-center text-2xl md:text-4xl font-extrabold">
 
@@ -496,7 +471,7 @@ const Homes = () => {
 
                                     </button>
 
-                              </div>
+                              </div> */}
 
                         </div>
 
@@ -507,54 +482,7 @@ const Homes = () => {
       ====================================================== */}
 
 
-                  <footer className="bg-[#001b82] py-8">
-
-                        <div className="flex items-center justify-center gap-2 flex-wrap">
-
-                              {/* FACEBOOK */}
-                              <a
-                                    href="#"
-                                    className="w-12 h-12 rounded-full bg-blue-600 hover:scale-110 duration-300 flex items-center justify-center shadow-xl"
-                              >
-                                    <FaFacebookF className="text-white text-xl" />
-                              </a>
-
-                              {/* MESSENGER */}
-                              <a
-                                    href="#"
-                                    className="w-12 h-12 rounded-full bg-cyan-500 hover:scale-110 duration-300 flex items-center justify-center shadow-xl"
-                              >
-                                    <FaFacebookMessenger className="text-white text-xl" />
-                              </a>
-                              {/* WHATSAPP */}
-                              <a
-                                    href="#"
-                                    className="w-12 h-12 rounded-full bg-green-500 hover:scale-110 duration-300 flex items-center justify-center shadow-xl"
-                              >
-                                    <FaWhatsapp className="text-white text-xl" />
-                              </a>
-
-                              {/* INSTAGRAM */}
-                              <a
-                                    href="#"
-                                    className="w-12 h-12 rounded-full bg-pink-500 hover:scale-110 duration-300 flex items-center justify-center shadow-xl"
-                              >
-                                    <FaInstagram className="text-white text-xl" />
-                              </a>
-
-
-
-                              {/* YOUTUBE */}
-                              <a
-                                    href="#"
-                                    className="w-12 h-12 rounded-full bg-red-600 hover:scale-110 duration-300 flex items-center justify-center shadow-xl"
-                              >
-                                    <FaYoutube className="text-white text-xl" />
-                              </a>
-
-                        </div>
-
-                  </footer>
+                  <Footer></Footer>
 
             </div>
       );
