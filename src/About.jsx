@@ -12,12 +12,12 @@ const About = () => {
                   <section className="bg-[#007600] text-center px-4 pt-10 pb-0">
 
 
-                        <h1 className="inline-block text-white mt-5 text-[28px] md:text-3xl font-extrabold leading-tight pb-5">
-                              পোশাক বাড়ি'র <br />  অর্ডার ফরমে স্বাগতম
+                        <h1 className="inline-block text-white mt-5 md:mt-29 text-[28px] md:text-3xl font-extrabold leading-tight pb-5">
+                              পোশাক বাড়ি'র <br />  অর্ডার ফরমে <span className='text-red-500 text-[35px]'>স্বাগতম</span>
                         </h1>
 
                         {/* DESCRIPTION */}
-                        <p className="text-yellow-300 mt-5 text-[14px] md:text-xl leading-relaxed font-semibold max-w-[850px] mx-auto border-white border-6 rounded-3xl py-8">
+                        <p className="text-yellow-300 mt-5 text-[18px] md:text-xl leading-relaxed font-semibold max-w-[850px] mx-auto border-white border-3 rounded-4xl py-8">
 
                               এই ফরমের মাধ্যমে আপনি কাস্টমাইজ <br />
                               সাবলিমেশন জার্সি/রেডিমেট পণ্য অর্ডার <br />করতে পারবেন। অর্ডার কনফার্ম করতে <br />অবশ্যই ৩০% এডভান্স পেমেন্ট করতে হবে।
@@ -78,12 +78,14 @@ const About = () => {
                   {/* // check mark  */}
 
                   <div className="w-full flex justify-center px-4">
-                        <div className="w-full max-w-2xl bg-white/70 backdrop-blur-md border border-blue-100 rounded-2xl shadow-md flex flex-col items-center text-center gap-4 sm:gap-5 md:gap-6 text-[14px] md:text-xl text-blue-700 font-semibold p-6">
+                        <div className="w-full max-w-2xl bg-white/70 backdrop-blur-md border border-blue-100 rounded-2xl shadow-md flex flex-col items-center text-center gap-4 sm:gap-5 md:gap-6 text-[18px] md:text-xl text-blue-700 font-semibold p-6">
 
                               <p className="leading-relaxed">✅ ডিজাইন কনফার্মের পর কাজ শুরু হবে</p>
                               <p className="leading-relaxed">✅ প্রিন্ট শুরু হওয়ার পর অর্ডার বাতিল করা যাবে না</p>
-
+                              <p className="leading-relaxed">✅ ডেলিভারির সময় পন্য চেক করে বুঝে নিবেন</p>
                               <p className="leading-relaxed">✅ এডভান্স ছাড়া অর্ডার গ্রহণ করা হবে না</p>
+
+
 
                         </div>
                   </div>

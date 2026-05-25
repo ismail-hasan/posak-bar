@@ -6,6 +6,7 @@ import {
       ChevronRight,
       Phone,
       MessageCircle,
+      LaptopMinimal,
 } from "lucide-react";
 
 
@@ -97,7 +98,7 @@ const Homes = () => {
                   <section className="bg-[#007600] text-center px-4 pt-10 pb-0">
 
                         {/* TITLE */}
-                        <h1 className="inline-block text-yellow-300 mt-5 text-[23px] md:text-5xl font-extrabold leading-tight border-b-4 border-dashed border-yellow-300 pb-5">
+                        <h1 className="inline-block text-yellow-300 mt-5 md:mt-20 text-[23px] md:text-5xl font-extrabold leading-tight border-b-4 border-dashed border-yellow-300 pb-5">
                               আমাদের বৈশিষ্ট্য ও বিশেষত্ব
                         </h1>
 
@@ -191,13 +192,13 @@ const Homes = () => {
       ====================================================== */}
 
                   <section className="bg-[#007600] px-4 py-8 pb-[100px]">
-                        <h3 className="text-center text-yellow-300  text-[21px] md:text-3xl font-semibold pb-6 mt-10 ">তাহলে আপানার পাশে আছে</h3>
+                        <h3 className="text-center text-yellow-300  text-[22px] md:text-3xl font-semibold pb-6 mt-10 ">তাহলে আপানার পাশে আছে</h3>
 
-                        <div className="max-w-[900px] mx-auto border-[5px] border-white p-4 mb-5  
+                        <div className="max-w-[900px] mx-auto border-[5px] border-white p-4 mb-5 rounded-4xl  
                         
                         ">
 
-                              <div className="bg-white rounded-lg py-8 px-4 text-center mb-[10px]">
+                              <div className="bg-white rounded-4xl py-8 px-4 text-center mb-[10px]">
 
                                     {/* LOGO */}
                                     <img
@@ -298,7 +299,7 @@ const Homes = () => {
                   <section className="bg-white px-4 pb-10">
 
                         <div className="w-full flex justify-center">
-                              <h4 className="text-center text-xl md:text-2xl text-white mb-7 px-6 py-3 inline-block bg-[#0d2f85]">
+                              <h4 className="text-center text-xl md:text-2xl text-white mb-7 px-6 py-3 inline-block bg-[#0d2f85] rounded-3xl">
                                     শপিং পলিসি সম্পর্কে জানুন
                               </h4>
                         </div>
@@ -386,20 +387,23 @@ const Homes = () => {
                         <div className="max-w-[700px] mx-auto flex flex-col md:flex-row gap-5 justify-center">
 
                               {/* ORDER BUTTON */}
-                              <Link to={"/order"} className="bg-[#1e8500] hover:scale-105 duration-300 text-white text-xl font-bold py-4 px-10 rounded-full shadow-2xl flex items-center justify-center gap-3">
+                              <Link to={"/order"} className="bg-[#1e8500] hover:scale-105 duration-300 text-white text-[23px] font-bold py-4 px-10 rounded-full shadow-2xl flex items-center justify-center gap-3">
 
-                                    <Phone size={24} />
+                                    <LaptopMinimal size={24} />
                                     অর্ডার করুন
 
                               </Link>
 
                               {/* INBOX BUTTON */}
-                              <button className="bg-[#1023ff] hover:scale-105 duration-300 text-white text-xl font-bold py-4 px-10 rounded-full shadow-2xl flex items-center justify-center gap-3">
-
-                                    <MessageCircle size={24} />
+                              <a
+                                    href="https://wa.me/88017XXXXXXXX"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="bg-[#1023ff] hover:scale-105 duration-300 text-white text-[23px] font-bold py-4 px-10 rounded-full shadow-2xl flex items-center justify-center gap-3"
+                              >
+                                    <Phone size={24} />
                                     হটলাইন
-
-                              </button>
+                              </a>
 
                         </div>
 
@@ -435,11 +439,14 @@ const Homes = () => {
 
                                     </p>
 
-                                    <button className="bg-blue-700 text-white font-bold py-3 px-7 rounded-full mx-auto block mt-6">
-
+                                    <a
+                                          href="https://wa.me/88017XXXXXXXX"
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          className="bg-blue-700 text-white font-bold py-3 px-7 rounded-full mx-auto block mt-6 text-center"
+                                    >
                                           ক্লিক করুন
-
-                                    </button>
+                                    </a>
 
                               </div>
 

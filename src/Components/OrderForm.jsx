@@ -325,9 +325,8 @@ export default function OrderForm() {
 
                         {/* ── Header ─────────────────────────────────────────────────────── */}
                         <div className="bg-gradient-to-r from-blue-700 to-red-600 rounded-2xl p-6 sm:p-8 mb-5 text-center shadow-md">
-                              <div className="text-[30px] sm:text-4xl mb-2">🎽</div>
-                              <h1 className="text-lg sm:text-3xl font-bold text-white mb-1">
-                                    কাস্টম জার্সি অর্ডার ফরম
+                              <h1 className="text-[21px] sm:text-3xl font-bold text-white mb-1">
+                                    🎽 কাস্টমাইজ জার্সি অর্ডার ফরম
                               </h1>
                         </div>
 
@@ -348,9 +347,6 @@ export default function OrderForm() {
 
                               {/* ── Section 1: Product Type ─────────────────────────────────── */}
                               <SectionCard step={1} icon="🛍️" title="কোন পণ্যটি অর্ডার করতে চান?">
-
-                                    {/* Toggle buttons update UI state only — not sent as a native field.
-                The actual value is appended to FormData in handleSubmit. */}
                                     <div className="flex gap-2 mb-4">
                                           <ToggleBtn
                                                 label="🏭 মেনুফেকচারিং"
