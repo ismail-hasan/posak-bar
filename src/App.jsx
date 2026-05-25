@@ -13,7 +13,7 @@ function App() {
 
     <Routes>
       <Route path="/" element={<Firstain />} />
-      <Route path="/about" element={<About />} />
+      <Route path="/order" element={<About />} />
     </Routes>
   )
 }

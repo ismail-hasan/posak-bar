@@ -23,8 +23,8 @@ import {
 import logo from "../assets/logo.png";
 
 import jersey1 from "../assets/ji.jpg";
-import jersey2 from "../assets/main.png";
-import jersey3 from "../assets/ji.jpg";
+import jersey2 from "../assets/jercy2.jpg";
+import jersey3 from "../assets/jercy1.jpg";
 
 /* =========================
    COMPONENT
@@ -122,12 +122,12 @@ const Homes = () => {
                   <section className="bg-[#007600] text-center px-4 pt-10 pb-0">
 
                         {/* TITLE */}
-                        <h1 className="inline-block text-yellow-300 mt-5 text-2xl md:text-5xl font-extrabold leading-tight border-b-4 border-dashed border-yellow-300 pb-5">
+                        <h1 className="inline-block text-yellow-300 mt-5 text-[20px] md:text-5xl font-extrabold leading-tight border-b-4 border-dashed border-yellow-300 pb-5">
                               আমাদের বৈশিষ্ট্য ও বিশেষত্ব
                         </h1>
 
                         {/* DESCRIPTION */}
-                        <p className="text-white mt-5 text-sm md:text-xl leading-relaxed font-semibold max-w-[850px] mx-auto">
+                        <p className="text-white mt-5 text-[12px] md:text-xl leading-relaxed font-semibold max-w-[850px] mx-auto">
 
                               আমাদের লভ্যাংশের কিছু অংশ গরিব-অসহায় <br></br>
                               এতিম-মিসকিন, মসজিদ-মাদ্রাসা ও দ্বীনি কাজে দান করা হয়। <br></br>
@@ -193,9 +193,9 @@ const Homes = () => {
 
                         <div className="max-w-[850px] mx-auto">
 
-                              <div className="border-[12px] border-blue-700 bg-white rounded-xl p-5 md:p-10 text-center shadow-2xl">
+                              <div className="border-[9px] border-blue-700 bg-white rounded-xl p-5 md:p-10 text-center shadow-xl">
 
-                                    <h1 className="text-[#00a000] text-xl md:text-4xl font-extrabold leading-snug">
+                                    <h1 className="text-[#00a000] text-[15px] md:text-4xl font-extrabold leading-snug">
 
                                           আপনি কি নিজের পছন্দমত  <br></br>
                                           ডিজাইন দিয়ে সরাসরি কারখানা   <br></br>
@@ -216,9 +216,9 @@ const Homes = () => {
       ====================================================== */}
 
                   <section className="bg-[#007600] px-4 py-8 pb-[100px]">
-                        <h3 className="text-center text-yellow-300 text-3xl font-semibold pb-6 mt-10 ">তাহলে আপানার পাশে আছে</h3>
+                        <h3 className="text-center text-yellow-300  text-[17px] md:text-3xl font-semibold pb-6 mt-10 ">তাহলে আপানার পাশে আছে</h3>
 
-                        <div className="max-w-[900px] mx-auto border-[5px] border-white p-4 mb-10  
+                        <div className="max-w-[900px] mx-auto border-[5px] border-white p-4 mb-5  
                         
                         ">
 
@@ -236,9 +236,9 @@ const Homes = () => {
 
                               </div>
 
-                              <div className="w-full flex justify-center -mb-13 relative z-10">
-                                    <p className="text-white bg-red-600 inline-block font-bold text-sm md:text-xl px-4 py-2 text-center">
-                                          সততা ও মানবতার মাধ্যমে কাজই আমাদের মূল উদ্দেশ্য
+                              <div className="w-full flex justify-center -mb-10 md:-mb-13 relative z-10">
+                                    <p className="text-white bg-red-600 inline-block font-bold text-[10px] md:text-xl px-4 py-2 text-center">
+                                          সততা ও সর্বোত্তম গ্রাহকসেবায় ১৬ বছর+
                                     </p>
                               </div>
                         </div>
@@ -321,50 +321,69 @@ const Homes = () => {
       ====================================================== */}
 
                   <section className="bg-white px-4 pb-10">
+
                         <div className="w-full flex justify-center">
-                              <h4 className="text-center text-2xl text-white mb-7 px-6 py-3 inline-block bg-[#0d2f85]">
+                              <h4 className="text-center text-xl md:text-2xl text-white mb-7 px-6 py-3 inline-block bg-[#0d2f85]">
                                     শপিং পলিসি সম্পর্কে জানুন
                               </h4>
                         </div>
 
-                        <div className="max-w-[900px] mx-auto bg-[#0d2f85] rounded-xl p-4 shadow-2xl">
+                        <div className="max-w-[900px] mx-auto bg-[#0d2f85] p-2 shadow-2xl">
+                              <div className="flex flex-col md:flex-row items-center">
 
-                              <div className="flex flex-col md:flex-row items-center gap-5">
-
-                                    {/* IMAGE */}
-                                    <img
-                                          src={jersey1}
-                                          alt=""
-                                          className="w-fit md:w-[320px] rounded-lg p-3 bg-white"
-                                    />
-
-                                    {/* CONTENT */}
-                                    <div className="flex-1 space-y-4 w-full">
-
-                                          <div className="bg-white text-red-600 font-bold py-3 px-5 rounded-full text-center text-sm md:text-lg">
-
-                                                অর্ডার পলিসি
-
-                                          </div>
-
-                                          <div className="bg-white text-black font-bold py-3 px-5 rounded-full text-center text-sm md:text-lg">
-
-                                                পেমেন্ট এবং ডেলিভারি পলিসি
-
-                                          </div>
-
-                                          <div className="bg-white  text-[#0d2f85] font-bold py-3 px-5 rounded-full text-center text-sm md:text-lg">
-
-                                                রিটার্ন পলিসি
-
-                                          </div>
-
+                                    {/* IMAGE - full width mobile, 50% desktop */}
+                                    <div className="w-full md:w-1/2 flex-shrink-0 p-2">
+                                          <img
+                                                src={jersey1}
+                                                alt=""
+                                                className="w-full rounded p-3 bg-white"
+                                          />
                                     </div>
 
+                                    {/* BUTTONS - full width mobile, 50% desktop */}
+                                    <div className="w-full md:w-1/2 flex-shrink-0 flex flex-col gap-2 md:gap-3 p-2 px-0 md:px-10">
+
+                                          <div className="bg-white text-[#0d2f85] font-bold py-2 md:py-2.5 px-4 rounded-full text-sm flex items-center gap-2 md:gap-3">
+                                                <svg
+                                                      className="w-6 h-6 md:w-9 md:h-9 flex-shrink-0"
+                                                      viewBox="0 0 44 44"
+                                                >
+                                                      <circle cx="22" cy="22" r="18" fill="none" stroke="#d1d5db" strokeWidth="6" />
+                                                      <circle cx="22" cy="22" r="18" fill="none" stroke="#6b7280" strokeWidth="6"
+                                                            strokeDasharray="113" strokeDashoffset="28" strokeLinecap="round"
+                                                            transform="rotate(-90 22 22)" />
+                                                </svg>
+                                                <span>অর্ডার পলিসি</span>
+                                          </div>
+
+                                          <div className="bg-white text-[#0d2f85] font-bold py-2 md:py-2.5 px-4 rounded-full text-sm flex items-center gap-2 md:gap-3">
+                                                <svg
+                                                      className="w-6 h-6 md:w-9 md:h-9 flex-shrink-0"
+                                                      viewBox="0 0 44 44"
+                                                >
+                                                      <circle cx="22" cy="22" r="18" fill="none" stroke="#d1d5db" strokeWidth="6" />
+                                                      <circle cx="22" cy="22" r="18" fill="none" stroke="#6b7280" strokeWidth="6"
+                                                            strokeDasharray="113" strokeDashoffset="28" strokeLinecap="round"
+                                                            transform="rotate(-90 22 22)" />
+                                                </svg>
+                                                <span>পেমেন্ট এবং ডেলিভারি পলিসি</span>
+                                          </div>
+
+                                          <div className="bg-white text-[#0d2f85] font-bold py-2 md:py-2.5 px-4 rounded-full text-sm flex items-center gap-2 md:gap-3">
+                                                <svg
+                                                      className="w-6 h-6 md:w-9 md:h-9 flex-shrink-0"
+                                                      viewBox="0 0 44 44"
+                                                >
+                                                      <circle cx="22" cy="22" r="18" fill="none" stroke="#d1d5db" strokeWidth="6" />
+                                                      <circle cx="22" cy="22" r="18" fill="none" stroke="#6b7280" strokeWidth="6"
+                                                            strokeDasharray="113" strokeDashoffset="28" strokeLinecap="round"
+                                                            transform="rotate(-90 22 22)" />
+                                                </svg>
+                                                <span>রিটার্ন পলিসি</span>
+                                          </div>
+                                    </div>
                               </div>
-
                         </div>
-
                   </section>
 
                   {/* ======================================================
@@ -373,10 +392,10 @@ const Homes = () => {
 
                   <div className="bg-[#007600] py-5 px-4 text-center">
 
-                        <p className="text-white font-bold text-sm md:text-xl leading-relaxed max-w-[900px] mx-auto">
+                        <p className="text-white font-bold text-[12px] md:text-xl leading-relaxed max-w-[900px] mx-auto">
 
                               সাবলিমেশন কাস্টমাইজ জার্সি তৈরি করে নিতে <br></br>
-                              <span className="text-red-600 text-2xl">পোশাক বাড়ির</span> কাস্টমার সাপোর্ট টিমের সাথে  <br></br>
+                              <span className="text-red-600 text-xl md:text-2xl">পোশাক বাড়ির</span> কাস্টমার সাপোর্ট টিমের সাথে  <br></br>
                               সরাসরি হটলাইনে যোগাযোগ করুন  <br></br>
 
                         </p>
