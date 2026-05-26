@@ -6,15 +6,20 @@ import './App.css'
 import { Route, Routes } from 'react-router'
 import About from './About'
 import Firstain from './Firstain'
+import ScrollToTop from './Components/ScrollToTop'
 
 function App() {
 
   return (
 
-    <Routes>
-      <Route path="/" element={<Firstain />} />
-      <Route path="/order" element={<About />} />
-    </Routes>
+    <>
+      <ScrollToTop></ScrollToTop>
+      <Routes>
+
+        <Route path="/" element={<Firstain />} />
+        <Route path="/order" element={<About />} />
+      </Routes>
+    </>
   )
 }
 

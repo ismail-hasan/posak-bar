@@ -177,11 +177,13 @@ export default function OrderForm() {
       );
 
       // ── Form-field state (values sent to Formspree) ───────────────────────────
-      const [selectedProduct, setSelectedProduct] = useState("");
+      const [selectedProduct, setSelectedProduct] = useState([]);
       const [customerName, setCustomerName] = useState("");
       const [customerPhone, setCustomerPhone] = useState("");
       const [customerAddress, setCustomerAddress] = useState("");
       const [quantity, setQuantity] = useState("");
+      //       const [halfSleeveQty, setHalfSleeveQty] = useState("");
+      // const [fullSleeveQty, setFullSleeveQty] = useState("");
       const [instructions, setInstructions] = useState("");
       const [kidAge, setKidAge] = useState("");
       const [sizes, setSizes] = useState(
@@ -381,8 +383,14 @@ export default function OrderForm() {
 
                                                       <input
                                                             type="checkbox"
-                                                            checked={selectedProduct === p}
-                                                            onChange={() => setSelectedProduct(p)}
+                                                            checked={selectedProduct.includes(p)}
+                                                            onChange={() => {
+                                                                  setSelectedProduct((prev) =>
+                                                                        prev.includes(p)
+                                                                              ? prev.filter((item) => item !== p)
+                                                                              : [...prev, p]
+                                                                  );
+                                                            }}
                                                             className="w-5 h-5 accent-blue-600 cursor-pointer"
                                                       />
 
@@ -652,6 +660,47 @@ export default function OrderForm() {
                                     </div> */}
 
                               </SectionCard>
+
+                              {productType === "manufacturing" && (
+                                    <SectionCard itle="জার্সি এর পরিমাণ দিন">
+
+                                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+
+                                                <div id="field-qty">
+                                                      <Label htmlFor="quantity" required>কলার  হাফহাতা </Label>
+                                                      <Input
+
+                                                            id="quantity"
+                                                            name="পরিমাণ (পিস)"
+                                                            type="number"
+                                                            min=""
+                                                            placeholder="পিস সংখ্যা লিখুন"
+                                                            value={quantity}
+                                                            onChange={(e) => { setQuantity(e.target.value); clearErr("qty"); }}
+                                                      />
+                                                      <FieldError msg={errors.qty} />
+                                                </div>
+                                                <div id="field-qty">
+                                                      <Label htmlFor="quantity" required>কলার  ফুলহাতা</Label>
+                                                      <Input
+
+                                                            id="quantity"
+                                                            name="পরিমাণ (পিস)"
+                                                            type="number"
+                                                            min=""
+                                                            placeholder="পিস সংখ্যা লিখুন"
+                                                            value={quantity}
+                                                            onChange={(e) => { setQuantity(e.target.value); clearErr("qty"); }}
+                                                      />
+                                                      <FieldError msg={errors.qty} />
+                                                </div>
+
+
+
+                                          </div>
+
+                                    </SectionCard>
+                              )}
 
                               {/* ── Section 7: Delivery ─────────────────────────────────────── */}
                               <SectionCard step={7} icon="🚚" title="ডেলিভারি পদ্ধতি">

@@ -426,28 +426,17 @@ const Homes = () => {
 
                   <section className="bg-gradient-to-r from-[#d7fff6] to-[#f8ffe6] px-4 py-12">
 
-                        <div className="max-w-[1100px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div className="max-w-[1100px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 justify-items-center">
 
-                              {/* EXPERIENCE BOX */}
-                              <div className="bg-white border-[4px] border-blue-700 rounded-3xl p-6 shadow-2xl">
+                              {/* CENTER BOX */}
+                              <div className="bg-white border-[4px] border-blue-700 rounded-3xl p-6 shadow-2xl md:col-span-2 max-w-xl w-full">
 
                                     <h1 className="text-blue-700 text-center text-2xl md:text-4xl font-extrabold">
-
                                           অভিযোগ / পরামর্শ
-
                                     </h1>
 
                                     <p className="text-gray-700 text-[17px] md:text-lg leading-relaxed font-semibold text-center mt-4">
-
-                                          সম্মানিত গ্রাহক,
-                                          আমাদের প্রতিষ্ঠান/সার্ভিস সম্পর্কে
-                                          কোন অভিযোগ / পরামর্শ থাকলে তা আমাদের
-                                          কাছে লিখে পাঠিয়ে দিন। আপনার
-                                          অভিযোগ প্রমাণিত হলে আমরা
-                                          যথারীতি ব্যবস্থা/সংশোধন করিব।
-                                          আপনার অভিযোগ/ পরামর্শ
-                                          আমাদের কাছে অত্যন্ত গুরুত্বপূর্ণ।
-
+                                          সম্মানিত গ্রাহক, আমাদের প্রতিষ্ঠান/সার্ভিস সম্পর্কে কোন অভিযোগ / পরামর্শ থাকলে তা আমাদের কাছে লিখে পাঠিয়ে দিন। আপনার অভিযোগ প্রমাণিত হলে আমরা যথারীতি ব্যবস্থা/সংশোধন করিব। আপনার অভিযোগ/ পরামর্শ আমাদের কাছে অত্যন্ত গুরুত্বপূর্ণ।
                                     </p>
 
                                     <a
@@ -461,38 +450,7 @@ const Homes = () => {
 
                               </div>
 
-                              {/* ADVICE BOX */}
-                              {/* <div className="bg-white border-[4px] border-green-700 rounded-3xl p-6 shadow-2xl">
-
-                                    <h1 className="text-green-700 text-center text-2xl md:text-4xl font-extrabold">
-
-                                          পরামর্শ
-
-                                    </h1>
-
-                                    <p className="text-gray-700 text-sm md:text-lg leading-relaxed font-semibold text-center mt-4">
-
-                                          সম্মানিত গ্রাহক,
-                                          আমাদের প্রতিষ্ঠান/সার্ভিস সম্পর্কে
-                                          কোন পরামর্শ থাকলে তা আমাদের
-                                          কাছে লিখে পাঠিয়ে দিন। আপনার
-                                          পরামর্শ গ্রহণযোগ্য হলে আমরা
-                                          যথানীতি তা মেনে চলবো।
-                                          আপনার পরামর্শ/মন্তব্য
-                                          আমাদের কাছে অত্যন্ত গুরুত্বপূর্ণ।
-
-                                    </p>
-
-                                    <button className="bg-green-700 text-white font-bold py-3 px-7 rounded-full mx-auto block mt-6">
-
-                                          ক্লিক করুন
-
-                                    </button>
-
-                              </div> */}
-
                         </div>
-
                   </section>
 
                   {/* ======================================================
