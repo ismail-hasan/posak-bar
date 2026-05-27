@@ -22,7 +22,7 @@ const Navbar = () => {
         {/* EMAIL */}
         <a
           href="mailto:posakbari4u@gmail.com?subject=PosakBari4U Support Request"
-          className="text-white text-[14px] md:text-[15px] font-semibold text-right break-all mr-5"
+          className="text-white text-[14px] md:text-[15px] font-semibold text-right break-all mr-5 md:mr-12"
         >
           posakbari4u@gmail.com
         </a>

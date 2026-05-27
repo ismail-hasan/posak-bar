@@ -606,7 +606,7 @@ export default function OrderForm() {
                   <Input
                     id="kidAge"
                     type="text"
-                    placeholder="যেমন: 1 বছরের ৫ পিছ, ৭ বছরে ১০ পিছ ......"
+                    placeholder="যেমন: ১ বছরের ৫ পিছ, ৭ বছরে ১০ পিছ ......"
                     value={kidAge}
                     onChange={(e) => setKidAge(e.target.value)}
                   />
