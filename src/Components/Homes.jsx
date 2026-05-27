@@ -11,12 +11,15 @@ import {
 
 
 
-import logo from "../assets/logo.png";
+import logo from "../assets/siteLogo.png";
 
 import jerseyTop from "../assets/heroBanner.jpg";
-import jersey1 from "../assets/leftBanner.jpg";
-import jersey2 from "../assets/jercy2.jpg";
-import jersey3 from "../assets/jercy1.jpg";
+import shopJercy from "../assets/leftBanner.jpg";
+import jersey1 from "../assets/1.jpg";
+import jersey2 from "../assets/2.jpg";
+import jersey3 from "../assets/3.jpg";
+import jersey4 from "../assets/4.jpg";
+import jersey5 from "../assets/5.jpg";
 import { Link } from "react-router";
 import Footer from "./Footer";
 import Navbar from "./Navbar";
@@ -30,7 +33,7 @@ const Homes = () => {
          CAROUSEL DATA
       ========================= */
 
-      const jerseys = [jersey1, jersey2, jersey3];
+      const jerseys = [jersey1, jersey2, jersey3, jersey4, jersey5];
 
       const [current, setCurrent] = useState(0);
 
@@ -73,7 +76,7 @@ const Homes = () => {
           TOP HEADER
       ====================================================== */}
 
-                  <div className="mt-[66px] md:mt-[93px]">
+                  <div className="mt-[64px] md:mt-[91px]">
                         <Navbar></Navbar>
                   </div>
 
@@ -81,12 +84,12 @@ const Homes = () => {
           MARQUEE SECTION
       ====================================================== */}
 
-                  <div className="bg-red-600 border-y-[3px] border-white py-2">
+                  <div className="bg-red-600">
 
                         <marquee
                               behavior="scroll"
                               direction="left"
-                              className="text-white font-bold text-[19px] md:text-2xl"
+                              className="text-white font-bold text-[17px] md:text-[20px] pt-1"
                         >
                               আসসালামু আলাইকুম... সম্মানিত গ্রাহক / বন্ধু সকলকে “পোশাক বাড়ি”
                               তে স্বাগতম।
@@ -321,7 +324,7 @@ const Homes = () => {
                                     {/* IMAGE - full width mobile, 50% desktop */}
                                     <div className="w-full md:w-1/2 flex-shrink-0 p-2">
                                           <img
-                                                src={jersey1}
+                                                src={shopJercy}
                                                 alt=""
                                                 className="w-full rounded p-3 bg-white"
                                           />
@@ -340,7 +343,7 @@ const Homes = () => {
                                                             strokeDasharray="113" strokeDashoffset="28" strokeLinecap="round"
                                                             transform="rotate(-90 22 22)" />
                                                 </svg>
-                                                <span className="text-[20px]">অর্ডার পলিসি</span>
+                                                <Link to={"/order-policy"} className="text-[20px]">অর্ডার পলিসি</Link>
                                           </div>
 
                                           <div className="bg-white text-[#0d2f85] font-bold py-2 md:py-2.5 px-4 rounded-full text-sm flex items-center gap-2 md:gap-3">
@@ -353,7 +356,7 @@ const Homes = () => {
                                                             strokeDasharray="113" strokeDashoffset="28" strokeLinecap="round"
                                                             transform="rotate(-90 22 22)" />
                                                 </svg>
-                                                <span className="text-[18px]">পেমেন্ট এবং ডেলিভারি পলিসি</span>
+                                                <Link to={"/delivery-policy"} className="text-[18px]">পেমেন্ট এবং ডেলিভারি পলিসি</Link>
                                           </div>
 
                                           <div className="bg-white text-[#0d2f85] font-bold py-2 md:py-2.5 px-4 rounded-full text-sm flex items-center gap-2 md:gap-3">
@@ -366,7 +369,7 @@ const Homes = () => {
                                                             strokeDasharray="113" strokeDashoffset="28" strokeLinecap="round"
                                                             transform="rotate(-90 22 22)" />
                                                 </svg>
-                                                <span className="text-[20px]">রিটার্ন পলিসি</span>
+                                                <Link to={"/return-policy"} className="text-[20px]">রিটার্ন পলিসি</Link>
                                           </div>
                                     </div>
                               </div>
@@ -407,7 +410,7 @@ const Homes = () => {
 
                               {/* INBOX BUTTON */}
                               <a
-                                    href="https://wa.me/88017XXXXXXXX"
+                                    href="https://wa.me/8801305506395"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="bg-[#1023ff] hover:scale-105 duration-300 text-white text-[23px] font-bold py-4 px-10 rounded-full shadow-2xl flex items-center justify-center gap-3"
@@ -440,9 +443,7 @@ const Homes = () => {
                                     </p>
 
                                     <a
-                                          href="https://wa.me/88017XXXXXXXX"
-                                          target="_blank"
-                                          rel="noopener noreferrer"
+                                          href="mailto:posakbari4u@gmail.com?subject=অভিযোগ / পরামর্শ&body=আপনার অভিযোগ / পরামর্শ লিখুন..."
                                           className="bg-blue-700 text-white font-bold py-3 px-7 rounded-full mx-auto block mt-6 text-center"
                                     >
                                           ক্লিক করুন

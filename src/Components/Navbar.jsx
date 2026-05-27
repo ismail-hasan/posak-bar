@@ -1,5 +1,5 @@
 import React from "react";
-import logo from "../assets/logo.png";
+import logo from "../assets/siteLogo.png";
 import { Link } from "react-router";
 
 
@@ -22,7 +22,7 @@ const Navbar = () => {
         {/* EMAIL */}
         <a
           href="mailto:posakbari4u@gmail.com?subject=PosakBari4U Support Request"
-          className="text-white text-[14px] md:text-[15px] font-semibold text-right break-all"
+          className="text-white text-[14px] md:text-[15px] font-semibold text-right break-all mr-5"
         >
           posakbari4u@gmail.com
         </a>
