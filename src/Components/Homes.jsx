@@ -114,7 +114,7 @@ const Homes = () => {
                         </h1>
 
                         {/* DESCRIPTION */}
-                        <p className="text-white mt-5 text-[12px] md:text-xl leading-relaxed font-semibold max-w-[850px] mx-auto">
+                        <p className="text-white mt-5 text-[11px] md:text-xl leading-relaxed font-semibold max-w-[850px] mx-auto">
 
                               আমাদের লভ্যাংশের কিছু অংশ গরিব-অসহায় <br></br>
                               এতিম-মিসকিন, মসজিদ-মাদ্রাসা ও দ্বীনি কাজে দান করা হয়। <br></br>
