@@ -188,7 +188,7 @@ const Homes = () => {
                                     <h1 className="text-[#00a000] text-[18px] md:text-4xl font-extrabold leading-snug">
 
                                           আপনি কি নিজের পছন্দমত  <br></br>
-                                          ডিজাইন দিয়ে সরাসরি কারখানা থেকে সাবলিমেশন প্রিন্টিং  <br></br>
+                                          ডিজাইন দিয়ে সরাসরি কারখানা থেকে সাবলিমেশন প্রিন্টিং  
                                           মেশিনে
                                           কাস্টোমাইজ <span className=" text-red-600 text-[24px] md:text-[42px]">জার্সি <br></br>
                                           </span> তৈরি করতে চান ?
