@@ -192,9 +192,7 @@ const Homes = () => {
                                           মেশিনে
                                           কাস্টোমাইজ <span className=" text-red-600 text-[24px] md:text-[42px]">জার্সি <br></br>
                                           </span> তৈরি করতে চান ?
-
                                     </h1>
-
                               </div>
 
                         </div>
