@@ -91,8 +91,7 @@ const Homes = () => {
                               direction="left"
                               className="text-white font-bold text-[17px] md:text-[20px] pt-1"
                         >
-                              আসসালামু আলাইকুম... সম্মানিত গ্রাহক / বন্ধু সকলকে “পোশাক বাড়ি”
-                              তে স্বাগতম।
+                              সম্মানিত গ্রাহক/বন্ধু সকল আসসালামু আলাইকুম। পোশাক বাড়িতে আপনাকে জানাই "শুভেচ্ছা-অভিন্দন"
                         </marquee>
 
                   </div>
@@ -188,7 +187,7 @@ const Homes = () => {
                                     <h1 className="text-[#00a000] text-[18px] md:text-4xl font-extrabold leading-snug">
 
                                           আপনি কি নিজের পছন্দমত  <br></br>
-                                          ডিজাইন দিয়ে সরাসরি কারখানা থেকে সাবলিমেশন প্রিন্টিং  
+                                          ডিজাইন দিয়ে সরাসরি কারখানা থেকে সাবলিমেশন প্রিন্টিং
                                           মেশিনে
                                           কাস্টোমাইজ <span className=" text-red-600 text-[24px] md:text-[42px]">জার্সি <br></br>
                                           </span> তৈরি করতে চান ?
@@ -204,7 +203,7 @@ const Homes = () => {
       ====================================================== */}
 
                   <section className="bg-[#007600] px-4 py-8 pb-[100px]">
-                        <h3 className="text-center text-yellow-300  text-[22px] md:text-3xl font-semibold pb-6 mt-10 ">তাহলে আপানার পাশে আছে</h3>
+                        <h3 className="text-center text-yellow-300  text-[22px] md:text-3xl font-semibold pb-6 mt-10 ">তাহলে আপনার পাশে আছে</h3>
 
                         <div className="max-w-[900px] mx-auto border-[5px] border-white p-4 mb-5 rounded-4xl  
                         

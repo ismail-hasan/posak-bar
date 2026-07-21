@@ -202,6 +202,12 @@ export default function OrderForm() {
       e.phone = "সঠিক বাংলাদেশি মোবাইল নম্বর দিন (যেমন: 01XXXXXXXXX)";
     if (!customerAddress.trim()) e.address = "ঠিকানা লিখুন";
 
+    if (productType === "manufacturing") {
+      if (!kolarHalfQty.trim()) e.kolarHalfQty = "কলার হাফহাতা পরিমাণ লিখুন";
+      if (!kolarFullQty.trim()) e.kolarFullQty = "কলার ফুলহাতা পরিমাণ লিখুন";
+      if (!golGolaHalfQty.trim()) e.golGolaHalfQty = "গোলগলা হাফহাতা পরিমাণ লিখুন";
+      if (!golGolaFullQty.trim()) e.golGolaFullQty = "গোলগলা ফুলহাতা পরিমাণ লিখুন";
+    }
 
     if (!terms.t1) e.terms = "শর্তাবলী মেনে নিন";
     return e;
@@ -267,7 +273,7 @@ export default function OrderForm() {
         payload.append("09. বাচ্চাদের বয়স ও পরিমাণ", kidAge.trim());
       }
 
-      // বড়দের সাইজ ফিল্টারিং (শুধুমাত্র > 0 ভ্যালুগুলো যাবে)
+      // বড়দের সাইজ ফিল্টারিং (শুধুমাত্র > 0 ভ্যালুগুলো যাবে)
       const sizeEntries = SIZES.filter((s) => {
         const val = parseInt(sizes[s]);
         return !isNaN(val) && val > 0;
@@ -279,7 +285,7 @@ export default function OrderForm() {
         payload.append("10. সাইজ চার্ট ডিটেইলস", sizeEntries);
       }
 
-      // জার্সির স্টাইল অনুযায়ী পরিমাণ ফিল্টারিং (> 0 হলেই যাবে)
+      // জার্সির স্টাইল অনুযায়ী পরিমাণ ফিল্টারিং (> 0 হলেই যাবে)
       if (parseInt(kolarHalfQty) > 0) payload.append("11. পরিমাণ (কলার হাফহাতা)", `${kolarHalfQty} পিস`);
       if (parseInt(kolarFullQty) > 0) payload.append("12. পরিমাণ (কলার ফুলহাতা)", `${kolarFullQty} পিস`);
       if (parseInt(golGolaHalfQty) > 0) payload.append("13. পরিমাণ (গোলগলা হাফহাতা)", `${golGolaHalfQty} পিস`);
@@ -288,7 +294,7 @@ export default function OrderForm() {
 
     // ── ৩. কন্ডিশনাল ডাটা হ্যান্ডলিং (রেডিমেট) ──
     if (productType === "readymade") {
-      // শুধু সিলেক্টেড এবং পরিমাণ ০ এর বেশি হওয়া প্রোডাক্টগুলোই যাবে
+      // শুধু সিলেক্টেড এবং পরিমাণ ০ এর বেশি হওয়া প্রোডাক্টগুলোই যাবে
       const qtyDetails = selectedProduct
         .filter((p) => {
           const val = parseInt(readymadeQty[p]);
@@ -637,7 +643,7 @@ export default function OrderForm() {
                 </div>
               )}
 
-              {/* মোট সাইজের হিসাবটাও শুধু বড়দের জন্য দেখাবে, যেহেতু বাচ্চাদের হিসাব আলাদা */}
+              {/* মোট সাইজের হিসাবটাও শুধু বড়দের জন্য দেখাবে, যেহেতু বাচ্চাদের হিসাব আলাদা */}
               {sizeCategory === "adult" && sizeTotal > 0 && (
                 <p className="mt-3 text-sm text-gray-500 text-right">
                   মোট সাইজ:{" "}
@@ -651,52 +657,68 @@ export default function OrderForm() {
           {productType === "manufacturing" && (
             <SectionCard title="জার্সি এর পরিমাণ দিন">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-                <div>
-                  <Label htmlFor="kolarHalfQty">কলার হাফহাতা</Label>
-                  <Input
+                <div id="field-kolarHalfQty">
+                  <Label htmlFor="kolarHalfQty" required>কলার হাফহাতা</Label>
+                  <Input 
                     id="kolarHalfQty"
                     type="number"
                     min="0"
                     placeholder="পিস সংখ্যা লিখুন"
                     value={kolarHalfQty}
-                    onChange={(e) => setKolarHalfQty(e.target.value)}
+                    onChange={(e) => {
+                      setKolarHalfQty(e.target.value);
+                      clearErr("kolarHalfQty");
+                    }}
                   />
+                  <FieldError msg={errors.kolarHalfQty} />
                 </div>
 
-                <div>
-                  <Label htmlFor="kolarFullQty">কলার ফুলহাতা</Label>
-                  <Input
+                <div id="field-kolarFullQty">
+                  <Label htmlFor="kolarFullQty" required>কলার ফুলহাতা</Label>
+                  <Input 
                     id="kolarFullQty"
                     type="number"
                     min="0"
                     placeholder="পিস সংখ্যা লিখুন"
                     value={kolarFullQty}
-                    onChange={(e) => setKolarFullQty(e.target.value)}
+                    onChange={(e) => {
+                      setKolarFullQty(e.target.value);
+                      clearErr("kolarFullQty");
+                    }}
                   />
+                  <FieldError msg={errors.kolarFullQty} />
                 </div>
 
-                <div>
-                  <Label htmlFor="golGolaHalfQty">গোলগলা হাফহাতা</Label>
-                  <Input
+                <div id="field-golGolaHalfQty">
+                  <Label htmlFor="golGolaHalfQty" required>গোলগলা হাফহাতা</Label>
+                  <Input 
                     id="golGolaHalfQty"
                     type="number"
                     min="0"
                     placeholder="পিস সংখ্যা লিখুন"
                     value={golGolaHalfQty}
-                    onChange={(e) => setGolGolaHalfQty(e.target.value)}
+                    onChange={(e) => {
+                      setGolGolaHalfQty(e.target.value);
+                      clearErr("golGolaHalfQty");
+                    }}
                   />
+                  <FieldError msg={errors.golGolaHalfQty} />
                 </div>
 
-                <div>
-                  <Label htmlFor="golGolaFullQty">গোলগলা ফুলহাতা</Label>
-                  <Input
+                <div id="field-golGolaFullQty">
+                  <Label htmlFor="golGolaFullQty" required>গোলগলা ফুলহাতা</Label>
+                  <Input 
                     id="golGolaFullQty"
                     type="number"
                     min="0"
                     placeholder="পিস সংখ্যা লিখুন"
                     value={golGolaFullQty}
-                    onChange={(e) => setGolGolaFullQty(e.target.value)}
+                    onChange={(e) => {
+                      setGolGolaFullQty(e.target.value);
+                      clearErr("golGolaFullQty");
+                    }}
                   />
+                  <FieldError msg={errors.golGolaFullQty} />
                 </div>
               </div>
             </SectionCard>
