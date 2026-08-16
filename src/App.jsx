@@ -30,6 +30,7 @@ import AllDeal from './Layout/HomePage/AllDeal'
 import ManufactureOrder from './Layout/HomePage/ManufactureOrder'
 import Statistics from './DashBord/Statistics'
 import Category from './DashBord/Category'
+import AddBanner from './DashBord/AddBanner'
 
 function App() {
 
@@ -52,6 +53,7 @@ function App() {
           <Route path="alldeals" element={<AllDeal></AllDeal>} />
           <Route path="statistics" element={<Statistics></Statistics>} />
           <Route path="category" element={<Category></Category>} />
+          <Route path="banner" element={<AddBanner></AddBanner>} />
           <Route path="manufactureorder" element={<ManufactureOrder></ManufactureOrder>} />
         </Route>
 

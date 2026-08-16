@@ -162,7 +162,7 @@ const DashBordLayout = () => {
                                           <MdLocalOffer className="text-xl shrink-0" />
 
                                           <span>
-                                               Control Deal
+                                                Control Deal
                                           </span>
                                     </NavLink>
                                     <NavLink
@@ -179,6 +179,19 @@ const DashBordLayout = () => {
                                           </span>
                                     </NavLink>
                                     <NavLink
+                                          to="/dashboard/banner"
+                                          onClick={() =>
+                                                setSidebarOpen(false)
+                                          }
+                                          className={navLinkStyle}
+                                    >
+                                          <FaIndustry className="text-x shrink-0" />
+
+                                          <span>
+                                                Banner
+                                          </span>
+                                    </NavLink>
+                                    <NavLink
                                           to="/dashboard/category"
                                           onClick={() =>
                                                 setSidebarOpen(false)
@@ -188,7 +201,7 @@ const DashBordLayout = () => {
                                           <MdCategory className="text-x shrink-0" />
 
                                           <span>
-                                               Add Category
+                                                Add Category
                                           </span>
                                     </NavLink>
 
@@ -196,7 +209,7 @@ const DashBordLayout = () => {
                               </nav>
                         </div>
 
-                      
+
                   </aside>
             );
       };
