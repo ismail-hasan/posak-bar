@@ -37,7 +37,7 @@ const CaruselBanner = () => {
       useEffect(() => {
             const interval = setInterval(() => {
                   setCurrent((prev) => (prev + 1) % jerseys.length);
-            }, 4000);
+            }, 1000);
 
             return () => clearInterval(interval);
       }, []);
