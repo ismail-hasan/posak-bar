@@ -1,0 +1,214 @@
+import React, { useState, useEffect } from 'react';
+import Swal from 'sweetalert2';
+
+const Order = () => {
+      const [orders, setOrders] = useState([]);
+      const [filter, setFilter] = useState('all');
+      const [loading, setLoading] = useState(true);
+
+      // সব অর্ডার ফেচ করা
+      const fetchOrders = () => {
+            fetch('https://posak-bari-backend.vercel.app/order')
+                  .then(res => res.json())
+                  .then(data => {
+                        setOrders(data);
+                        setLoading(false);
+                  })
+                  .catch(err => {
+                        console.error("Error fetching orders:", err);
+                        setLoading(false);
+                  });
+      };
+
+      useEffect(() => {
+            fetchOrders();
+      }, []);
+
+      // অর্ডার স্ট্যাটাস আপডেট করার ফাংশন (Processing / Complete)
+      const handleStatusUpdate = (id, newStatus) => {
+            fetch(`https://posak-bari-backend.vercel.app/order/${id}`, {
+                  method: 'PATCH',
+                  headers: {
+                        'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({ status: newStatus }),
+            })
+                  .then(res => res.json())
+                  .then(data => {
+                        if (data.modifiedCount > 0 || data.success) {
+                              Swal.fire({
+                                    icon: 'success',
+                                    title: `Order marked as ${newStatus}!`,
+                                    showConfirmButton: false,
+                                    timer: 1500,
+                              });
+                              fetchOrders(); // লিস্ট রিফ্রেশ করা
+                        }
+                  })
+                  .catch(err => console.error("Error updating status:", err));
+      };
+
+      // অর্ডার ডিলিট করার ফাংশন
+      const handleDelete = (id) => {
+            Swal.fire({
+                  title: "Are you sure?",
+                  text: "You won't be able to revert this!",
+                  icon: "warning",
+                  showCancelButton: true,
+                  confirmButtonColor: "#d33",
+                  cancelButtonColor: "#3085d6",
+                  confirmButtonText: "Yes, delete it!",
+            }).then((result) => {
+                  if (result.isConfirmed) {
+                        fetch(`https://posak-bari-backend.vercel.app/order/${id}`, {
+                              method: 'DELETE',
+                        })
+                              .then(res => res.json())
+                              .then(data => {
+                                    if (data.deletedCount > 0) {
+                                          Swal.fire("Deleted!", "Order has been deleted.", "success");
+                                          setOrders(orders.filter(order => order._id !== id));
+                                    }
+                              })
+                              .catch(err => console.error("Error deleting order:", err));
+                  }
+            });
+      };
+
+      // ট্যাব অনুযায়ী অর্ডার ফিল্টার করা
+      const filteredOrders = orders.filter(order => {
+            if (filter === 'all') return true;
+            return order.status?.toLowerCase() === filter.toLowerCase();
+      });
+
+      // বিভিন্ন ক্যাটাগরির কাউন্ট হিসাব করা
+      const totalCount = orders.length;
+      const processingCount = orders.filter(o => o.status?.toLowerCase() === 'processing').length;
+      const completeCount = orders.filter(o => o.status?.toLowerCase() === 'complete').length;
+
+      if (loading) {
+            return <div className="text-center py-20 ">Loading orders...</div>;
+      }
+
+      return (
+            <div className="max-w-7xl mx-auto px-4 py-8">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
+                        <div>
+                              <h2 className="text-3xl font-bold text-gray-800">Admin Order Management</h2>
+                              <p className="text-sm text-gray-500 mt-1">Total Orders Found: <span className="font-semibold text-purple-900">{totalCount}</span></p>
+                        </div>
+                  </div>
+
+                  {/* Tabs Section with Count Badges */}
+                  <div className="flex flex-wrap gap-3 mb-6 border-b pb-4">
+                        {[
+                              { key: 'all', label: 'All', count: totalCount },
+                              { key: 'processing', label: 'Processing', count: processingCount },
+                              { key: 'complete', label: 'Complete', count: completeCount }
+                        ].map((tab) => (
+                              <button
+                                    key={tab.key}
+                                    onClick={() => setFilter(tab.key)}
+                                    className={`px-5 py-2 rounded-lg font-semibold capitalize transition flex items-center gap-2 ${filter === tab.key
+                                          ? 'bg-purple-900 text-white shadow-md'
+                                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                                          }`}
+                              >
+                                    <span>{tab.label}</span>
+                                    <span className={`text-xs px-2 py-0.5 rounded-full ${filter === tab.key ? 'bg-purple-800 text-white' : 'bg-gray-200 text-gray-700'
+                                          }`}>
+                                          {tab.count}
+                                    </span>
+                              </button>
+                        ))}
+                  </div>
+
+                  {/* Orders Table */}
+                  {filteredOrders.length === 0 ? (
+                        <div className="text-center py-12 text-gray-500 bg-gray-50 rounded-xl border">
+                              No orders found for "{filter}".
+                        </div>
+                  ) : (
+                        <div className="overflow-x-auto bg-white shadow-md rounded-xl border border-gray-200">
+                              <table className="w-full text-left border-collapse">
+                                    <thead>
+                                          <tr className="bg-gray-100 border-b border-gray-200 text-gray-700 text-sm uppercase">
+                                                <th className="py-4 px-6">Product</th>
+                                                <th className="py-4 px-6">Customer</th>
+                                                <th className="py-4 px-6">Grand Total</th>
+                                                <th className="py-4 px-6">Status</th>
+                                                <th className="py-4 px-6 text-center">Actions</th>
+                                          </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-gray-200 text-sm text-gray-600">
+                                          {filteredOrders.map((order) => {
+                                                const firstItem = order.items?.[0] || {};
+                                                return (
+                                                      <tr key={order._id} className="hover:bg-gray-50 transition">
+                                                            <td className="py-4 px-6">
+                                                                  <div className="flex items-center gap-3">
+                                                                        <img
+                                                                              src={firstItem.image || "https://via.placeholder.com/150"}
+                                                                              alt={firstItem.productName}
+                                                                              className="w-12 h-12 object-cover rounded-lg border"
+                                                                        />
+                                                                        <div>
+                                                                              <p className="font-semibold text-gray-800">{firstItem.productName || "Product"}</p>
+                                                                              <p className="text-xs text-gray-400">
+                                                                                    Qty: {firstItem.quantity || 1} {order.items?.length > 1 && `(+${order.items.length - 1} more)`}
+                                                                              </p>
+                                                                        </div>
+                                                                  </div>
+                                                            </td>
+                                                            <td className="py-4 px-6">
+                                                                  <p className="font-medium text-gray-800">{order.customer?.name || "N/A"}</p>
+                                                                  <p className="text-xs text-gray-500">{order.customer?.email}</p>
+                                                                  <p className="text-xs text-gray-400">{order.customer?.phone}</p>
+                                                            </td>
+                                                            <td className="py-4 px-6 font-bold text-amber-600">
+                                                                  ৳{order.grandTotal}
+                                                            </td>
+                                                            <td className="py-4 px-6">
+                                                                  <span className={`px-3 py-1 rounded-full text-xs font-semibold uppercase ${order.status === 'complete'
+                                                                        ? 'bg-green-100 text-green-700'
+                                                                        : order.status === 'processing'
+                                                                              ? 'bg-blue-100 text-blue-700'
+                                                                              : 'bg-yellow-100 text-yellow-700'
+                                                                        }`}>
+                                                                        {order.status || 'Pending'}
+                                                                  </span>
+                                                            </td>
+                                                            <td className="py-4 px-6 text-center">
+                                                                  <div className="flex items-center justify-center gap-2">
+                                                                        <button
+                                                                              onClick={() => handleStatusUpdate(order._id, 'processing')}
+                                                                              className="px-3 py-1.5 bg-blue-500 hover:bg-blue-600 text-white rounded text-xs font-medium transition cursor-pointer"
+                                                                        >
+                                                                              Processing
+                                                                        </button>
+                                                                        <button
+                                                                              onClick={() => handleStatusUpdate(order._id, 'complete')}
+                                                                              className="px-3 py-1.5 bg-green-500 hover:bg-green-600 text-white rounded text-xs font-medium transition cursor-pointer"
+                                                                        >
+                                                                              Complete
+                                                                        </button>
+                                                                        <button
+                                                                              onClick={() => handleDelete(order._id)}
+                                                                              className="px-3 py-1.5 bg-red-500 hover:bg-red-600 text-white rounded text-xs font-medium transition cursor-pointer"
+                                                                        >
+                                                                              Delete
+                                                                        </button>
+                                                                  </div>
+                                                            </td>
+                                                      </tr>
+                                                );
+                                          })}
+                                    </tbody>
+                              </table>
+                        </div>
+                  )}
+            </div>
+      );
+};
+
+export default Order;

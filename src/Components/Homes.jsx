@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from "react";
-
-
 import {
       ChevronLeft,
       ChevronRight,
@@ -10,9 +8,7 @@ import {
 } from "lucide-react";
 
 
-
 import logo from "../assets/siteLogo.png";
-
 import jerseyTop from "../assets/heroBanner.jpg";
 import shopJercy from "../assets/leftBanner.jpg";
 import jersey1 from "../assets/1.jpg";
@@ -29,33 +25,20 @@ import Navbar from "./Navbar";
 ========================= */
 
 const Homes = () => {
-      /* =========================
-         CAROUSEL DATA
-      ========================= */
 
       const jerseys = [jersey1, jersey2, jersey3, jersey4, jersey5];
-
       const [current, setCurrent] = useState(0);
 
-      /* =========================
-         NEXT SLIDE
-      ========================= */
 
       const nextSlide = () => {
             setCurrent((prev) => (prev + 1) % jerseys.length);
       };
 
-      /* =========================
-         PREVIOUS SLIDE
-      ========================= */
-
       const prevSlide = () => {
             setCurrent((prev) => (prev - 1 + jerseys.length) % jerseys.length);
       };
 
-      /* =========================
-         AUTO SLIDE
-      ========================= */
+
 
       useEffect(() => {
             const interval = setInterval(() => {
@@ -84,7 +67,7 @@ const Homes = () => {
           MARQUEE SECTION
       ====================================================== */}
 
-                  <div className="bg-red-600">
+                  <div className="bg-purple-700">
 
                         <marquee
                               behavior="scroll"
@@ -95,11 +78,7 @@ const Homes = () => {
                         </marquee>
 
                   </div>
-                  {/* <div className="bg-red-600 border-y-[3px] border-white py-2 overflow-hidden">
-                        <div className="whitespace-nowrap animate-marquee text-white font-bold text-[19px] md:text-2xl">
-                              আসসালামু আলাইকুম... সম্মানিত গ্রাহক / বন্ধু সকলকে “পোশাক বাড়ি” তে স্বাগতম।
-                        </div>
-                  </div> */}
+
 
                   {/* ======================================================
           GREEN CONTENT SECTION

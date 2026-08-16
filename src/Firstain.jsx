@@ -2,11 +2,13 @@ import React from "react";
 import Navbar from "./Components/Navbar";
 import Homes from "./Components/Homes";
 import ScrollToTop from "./Components/ScrollToTop";
+import HomePage from "./Layout/HomePage/HomePage";
 
 const Home = () => {
       return (
-            <>  
-                  <Homes></Homes>
+            <>
+                  <HomePage></HomePage>
+                  {/* <Homes></Homes> */}
             </>
       );
 };
