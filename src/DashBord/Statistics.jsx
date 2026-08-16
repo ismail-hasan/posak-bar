@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 
-const BASE_URL = "http://localhost:5000";
+const BASE_URL = "https://posak-bari-backend.vercel.app";
 
 const Statistics = () => {
       const [data, setData] = useState({
@@ -151,7 +151,7 @@ const Statistics = () => {
                   (order) =>
                         !order?.status ||
                         String(order.status).toLowerCase() ===
-                              "pending"
+                        "pending"
             ).length;
 
             const processingOrders = orders.filter((order) => {
