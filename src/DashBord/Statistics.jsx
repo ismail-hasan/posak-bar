@@ -11,107 +11,99 @@ const Statistics = () => {
             campaigns: [],
             superDeals: [],
             manufactureOrders: [],
+            banners: [],
       });
 
       const [loading, setLoading] = useState(true);
       const [error, setError] = useState("");
+      const [refreshing, setRefreshing] = useState(false);
 
-      // ==========================================
+      // =========================================================
       // FETCH ALL DATA
-      // ==========================================
-      useEffect(() => {
-            const fetchAllData = async () => {
-                  try {
+      // =========================================================
+      const fetchAllData = async (isRefresh = false) => {
+            try {
+                  if (isRefresh) {
+                        setRefreshing(true);
+                  } else {
                         setLoading(true);
-                        setError("");
-
-                        const [
-                              productsRes,
-                              categoriesRes,
-                              cartRes,
-                              ordersRes,
-                              campaignsRes,
-                              superDealsRes,
-                              manufactureRes,
-                        ] = await Promise.all([
-                              fetch(`${BASE_URL}/product`),
-                              fetch(`${BASE_URL}/category`),
-                              fetch(`${BASE_URL}/ceheckout`),
-                              fetch(`${BASE_URL}/order`),
-                              fetch(`${BASE_URL}/addcam`),
-                              fetch(`${BASE_URL}/superdeal`),
-                              fetch(`${BASE_URL}/manufacture`),
-                        ]);
-
-                        const [
-                              products,
-                              categories,
-                              cartItems,
-                              orders,
-                              campaigns,
-                              superDeals,
-                              manufactureOrders,
-                        ] = await Promise.all([
-                              productsRes.json(),
-                              categoriesRes.json(),
-                              cartRes.json(),
-                              ordersRes.json(),
-                              campaignsRes.json(),
-                              superDealsRes.json(),
-                              manufactureRes.json(),
-                        ]);
-
-                        setData({
-                              products: Array.isArray(products)
-                                    ? products
-                                    : [],
-
-                              categories: Array.isArray(categories)
-                                    ? categories
-                                    : [],
-
-                              cartItems: Array.isArray(cartItems)
-                                    ? cartItems
-                                    : [],
-
-                              orders: Array.isArray(orders)
-                                    ? orders
-                                    : [],
-
-                              campaigns: Array.isArray(campaigns)
-                                    ? campaigns
-                                    : [],
-
-                              superDeals: Array.isArray(superDeals)
-                                    ? superDeals
-                                    : [],
-
-                              manufactureOrders: Array.isArray(
-                                    manufactureOrders
-                              )
-                                    ? manufactureOrders
-                                    : [],
-                        });
-                  } catch (err) {
-                        console.error(
-                              "Statistics fetch error:",
-                              err
-                        );
-
-                        setError(
-                              "Dashboard data load করতে সমস্যা হয়েছে।"
-                        );
-                  } finally {
-                        setLoading(false);
                   }
-            };
 
+                  setError("");
+
+                  const endpoints = [
+                        ["products", `${BASE_URL}/product`],
+                        ["categories", `${BASE_URL}/category`],
+                        ["cartItems", `${BASE_URL}/ceheckout`],
+                        ["orders", `${BASE_URL}/order`],
+                        ["campaigns", `${BASE_URL}/addcam`],
+                        ["superDeals", `${BASE_URL}/superdeal`],
+                        ["manufactureOrders", `${BASE_URL}/manufacture`],
+                        ["banners", `${BASE_URL}/banner`],
+                  ];
+
+                  const responses = await Promise.all(
+                        endpoints.map(async ([key, url]) => {
+                              try {
+                                    const response = await fetch(url);
+
+                                    if (!response.ok) {
+                                          throw new Error(
+                                                `${key} API failed`
+                                          );
+                                    }
+
+                                    const result = await response.json();
+
+                                    return [
+                                          key,
+                                          Array.isArray(result)
+                                                ? result
+                                                : [],
+                                    ];
+                              } catch (err) {
+                                    console.error(
+                                          `${key} fetch error:`,
+                                          err
+                                    );
+
+                                    return [key, []];
+                              }
+                        })
+                  );
+
+                  const newData = Object.fromEntries(responses);
+
+                  setData({
+                        products: newData.products || [],
+                        categories: newData.categories || [],
+                        cartItems: newData.cartItems || [],
+                        orders: newData.orders || [],
+                        campaigns: newData.campaigns || [],
+                        superDeals: newData.superDeals || [],
+                        manufactureOrders:
+                              newData.manufactureOrders || [],
+                        banners: newData.banners || [],
+                  });
+            } catch (err) {
+                  console.error("Statistics error:", err);
+
+                  setError(
+                        "Dashboard data load করতে সমস্যা হয়েছে।"
+                  );
+            } finally {
+                  setLoading(false);
+                  setRefreshing(false);
+            }
+      };
+
+      useEffect(() => {
             fetchAllData();
       }, []);
 
-      // ==========================================
-      // BASIC COUNTS
-      // ==========================================
+      // =========================================================
+      // STATISTICS
+      // =========================================================
       const statistics = useMemo(() => {
             const {
                   products,
@@ -121,97 +113,110 @@ const Statistics = () => {
                   campaigns,
                   superDeals,
                   manufactureOrders,
+                  banners,
             } = data;
 
-            // ==========================================
+            // =====================================================
             // UNIQUE CUSTOMERS
-            // ==========================================
+            // =====================================================
             const customerEmails = new Set();
 
             cartItems.forEach((item) => {
-                  if (item?.userEmail) {
-                        customerEmails.add(item.userEmail);
+                  const email =
+                        item?.userEmail ||
+                        item?.email;
+
+                  if (email) {
+                        customerEmails.add(
+                              String(email).toLowerCase()
+                        );
                   }
             });
 
             orders.forEach((order) => {
-                  if (order?.customer?.email) {
-                        customerEmails.add(order.customer.email);
-                  }
+                  const customerEmail =
+                        order?.customer?.email ||
+                        order?.userEmail ||
+                        order?.email;
 
-                  if (order?.userEmail) {
-                        customerEmails.add(order.userEmail);
+                  if (customerEmail) {
+                        customerEmails.add(
+                              String(customerEmail).toLowerCase()
+                        );
                   }
             });
 
-            // ==========================================
-            // FINAL ORDER STATUS
-            // ==========================================
-            const pendingOrders = orders.filter(
-                  (order) =>
-                        !order?.status ||
-                        String(order.status).toLowerCase() ===
-                        "pending"
-            ).length;
+            // =====================================================
+            // ORDER STATUS
+            // =====================================================
+            let pendingOrders = 0;
+            let processingOrders = 0;
+            let completedOrders = 0;
+            let cancelledOrders = 0;
 
-            const processingOrders = orders.filter((order) => {
+            orders.forEach((order) => {
                   const status = String(
-                        order?.status || ""
+                        order?.status || "pending"
                   ).toLowerCase();
 
-                  return (
-                        status === "processing" ||
-                        status === "confirmed" ||
-                        status === "shipped"
-                  );
-            }).length;
-
-            const completedOrders = orders.filter((order) => {
-                  const status = String(
-                        order?.status || ""
-                  ).toLowerCase();
-
-                  return (
-                        status === "complete" ||
-                        status === "completed" ||
-                        status === "delivered"
-                  );
-            }).length;
-
-            const cancelledOrders = orders.filter((order) => {
-                  const status = String(
-                        order?.status || ""
-                  ).toLowerCase();
-
-                  return (
+                  if (
                         status === "cancel" ||
                         status === "cancelled" ||
                         status === "canceled"
-                  );
-            }).length;
+                  ) {
+                        cancelledOrders++;
+                  } else if (
+                        status === "complete" ||
+                        status === "completed" ||
+                        status === "delivered"
+                  ) {
+                        completedOrders++;
+                  } else if (
+                        status === "processing" ||
+                        status === "confirmed" ||
+                        status === "shipped"
+                  ) {
+                        processingOrders++;
+                  } else {
+                        pendingOrders++;
+                  }
+            });
 
-            // ==========================================
+            // =====================================================
             // MANUFACTURE STATUS
-            // ==========================================
+            // =====================================================
             const manufacturePending =
                   manufactureOrders.filter(
                         (item) =>
-                              String(item?.status || "").toLowerCase() ===
-                              "pending"
+                              String(
+                                    item?.status || ""
+                              ).toLowerCase() === "pending"
                   ).length;
 
             const manufactureComplete =
-                  manufactureOrders.filter(
-                        (item) =>
-                              String(item?.status || "").toLowerCase() ===
-                              "complete"
-                  ).length;
+                  manufactureOrders.filter((item) => {
+                        const status = String(
+                              item?.status || ""
+                        ).toLowerCase();
+
+                        return (
+                              status === "complete" ||
+                              status === "completed"
+                        );
+                  }).length;
+
+            const manufactureOther =
+                  Math.max(
+                        manufactureOrders.length -
+                        manufacturePending -
+                        manufactureComplete,
+                        0
+                  );
 
             return {
                   productCount: products.length,
-                  categoryCount: categories.filter(
-                        (item) => item?.slug
-                  ).length,
+
+                  categoryCount: categories.length,
 
                   cartCount: cartItems.length,
 
@@ -221,9 +226,13 @@ const Statistics = () => {
 
                   superDealCount: superDeals.length,
 
-                  manufactureCount: manufactureOrders.length,
+                  manufactureCount:
+                        manufactureOrders.length,
 
-                  customerCount: customerEmails.size,
+                  bannerCount: banners.length,
+
+                  customerCount:
+                        customerEmails.size,
 
                   pendingOrders,
 
@@ -236,113 +245,226 @@ const Statistics = () => {
                   manufacturePending,
 
                   manufactureComplete,
+
+                  manufactureOther,
             };
       }, [data]);
 
-      // ==========================================
-      // PIE CHART
-      // ==========================================
-      const orderPie = useMemo(() => {
-            const {
-                  pendingOrders,
-                  processingOrders,
-                  completedOrders,
-                  cancelledOrders,
-            } = statistics;
+      // =========================================================
+      // ORDER PIE DATA
+      // =========================================================
+      const orderChart = useMemo(() => {
+            const total = statistics.orderCount;
 
-            const total =
-                  pendingOrders +
-                  processingOrders +
-                  completedOrders +
-                  cancelledOrders;
+            const items = [
+                  {
+                        label: "Pending",
+                        value: statistics.pendingOrders,
+                        color: "#f59e0b",
+                        light: "#fffbeb",
+                  },
+                  {
+                        label: "Processing",
+                        value: statistics.processingOrders,
+                        color: "#3b82f6",
+                        light: "#eff6ff",
+                  },
+                  {
+                        label: "Completed",
+                        value: statistics.completedOrders,
+                        color: "#22c55e",
+                        light: "#f0fdf4",
+                  },
+                  {
+                        label: "Cancelled",
+                        value: statistics.cancelledOrders,
+                        color: "#ef4444",
+                        light: "#fef2f2",
+                  },
+            ];
 
-            if (!total) {
+            let currentDegree = 0;
+
+            const chartItems = items.map((item) => {
+                  const percentage = total
+                        ? (item.value / total) * 100
+                        : 0;
+
+                  const degree = percentage * 3.6;
+
+                  const start = currentDegree;
+                  const end = currentDegree + degree;
+
+                  currentDegree = end;
+
                   return {
-                        background:
-                              "conic-gradient(#e5e7eb 0deg 360deg)",
-                        total: 0,
+                        ...item,
+                        percentage,
+                        start,
+                        end,
                   };
-            }
+            });
 
-            const pendingDeg =
-                  (pendingOrders / total) * 360;
-
-            const processingDeg =
-                  (processingOrders / total) * 360;
-
-            const completedDeg =
-                  (completedOrders / total) * 360;
-
-            const pendingEnd = pendingDeg;
-
-            const processingEnd =
-                  pendingEnd + processingDeg;
-
-            const completedEnd =
-                  processingEnd + completedDeg;
+            const gradient = total
+                  ? `conic-gradient(${chartItems
+                        .map(
+                              (item) =>
+                                    `${item.color} ${item.start}deg ${item.end}deg`
+                        )
+                        .join(", ")})`
+                  : "#e5e7eb";
 
             return {
                   total,
-
-                  background: `conic-gradient(
-                        #f59e0b 0deg ${pendingEnd}deg,
-                        #3b82f6 ${pendingEnd}deg ${processingEnd}deg,
-                        #22c55e ${processingEnd}deg ${completedEnd}deg,
-                        #ef4444 ${completedEnd}deg 360deg
-                  )`,
+                  items: chartItems,
+                  gradient,
             };
       }, [statistics]);
 
-      // ==========================================
+      // =========================================================
+      // STAT CARDS
+      // =========================================================
+      const cards = [
+            {
+                  title: "মোট Product",
+                  value: statistics.productCount,
+                  description: "Website-এর সকল product",
+                  icon: "📦",
+                  bg: "bg-purple-50",
+                  iconBg: "bg-purple-100",
+                  text: "text-purple-700",
+            },
+            {
+                  title: "মোট Category",
+                  value: statistics.categoryCount,
+                  description: "Website categories",
+                  icon: "🗂️",
+                  bg: "bg-blue-50",
+                  iconBg: "bg-blue-100",
+                  text: "text-blue-700",
+            },
+            {
+                  title: "মোট Order",
+                  value: statistics.orderCount,
+                  description: "Customer final orders",
+                  icon: "🛍️",
+                  bg: "bg-green-50",
+                  iconBg: "bg-green-100",
+                  text: "text-green-700",
+            },
+            {
+                  title: "Customers",
+                  value: statistics.customerCount,
+                  description: "Unique customers",
+                  icon: "👥",
+                  bg: "bg-indigo-50",
+                  iconBg: "bg-indigo-100",
+                  text: "text-indigo-700",
+            },
+            {
+                  title: "Cart Items",
+                  value: statistics.cartCount,
+                  description: "Checkout collection",
+                  icon: "🛒",
+                  bg: "bg-orange-50",
+                  iconBg: "bg-orange-100",
+                  text: "text-orange-700",
+            },
+            {
+                  title: "Manufacture",
+                  value: statistics.manufactureCount,
+                  description: "Manufacturing orders",
+                  icon: "🏭",
+                  bg: "bg-cyan-50",
+                  iconBg: "bg-cyan-100",
+                  text: "text-cyan-700",
+            },
+            {
+                  title: "Campaign",
+                  value: statistics.campaignCount,
+                  description: "Advertisement campaigns",
+                  icon: "📢",
+                  bg: "bg-pink-50",
+                  iconBg: "bg-pink-100",
+                  text: "text-pink-700",
+            },
+            {
+                  title: "Super Deal",
+                  value: statistics.superDealCount,
+                  description: "Active deal items",
+                  icon: "🔥",
+                  bg: "bg-red-50",
+                  iconBg: "bg-red-100",
+                  text: "text-red-700",
+            },
+            {
+                  title: "Banner",
+                  value: statistics.bannerCount,
+                  description: "Website banners",
+                  icon: "🖼️",
+                  bg: "bg-violet-50",
+                  iconBg: "bg-violet-100",
+                  text: "text-violet-700",
+            },
+      ];
+
+      // =========================================================
       // LOADING
-      // ==========================================
+      // =========================================================
       if (loading) {
             return (
-                  <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-8">
+                  <div className="min-h-screen bg-gray-50 px-4 py-6 sm:px-6 lg:px-8">
                         <div className="mx-auto max-w-7xl">
 
                               <div className="mb-8">
-                                    <div className="h-8 w-52 animate-pulse rounded-lg bg-gray-200" />
-
-                                    <div className="mt-2 h-4 w-80 animate-pulse rounded bg-gray-200" />
+                                    <div className="h-9 w-60 animate-pulse rounded-lg bg-gray-200" />
+                                    <div className="mt-3 h-4 w-80 animate-pulse rounded bg-gray-200" />
                               </div>
 
-                              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+                              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
                                     {Array.from({
-                                          length: 8,
+                                          length: 9,
                                     }).map((_, index) => (
                                           <div
                                                 key={index}
-                                                className="h-32 animate-pulse rounded-2xl bg-white shadow-sm"
+                                                className="h-36 animate-pulse rounded-2xl bg-white shadow-sm"
                                           />
                                     ))}
                               </div>
 
                               <div className="mt-6 grid gap-6 lg:grid-cols-2">
-                                    <div className="h-80 animate-pulse rounded-2xl bg-white" />
-                                    <div className="h-80 animate-pulse rounded-2xl bg-white" />
+                                    <div className="h-[430px] animate-pulse rounded-2xl bg-white" />
+                                    <div className="h-[430px] animate-pulse rounded-2xl bg-white" />
                               </div>
                         </div>
                   </div>
             );
       }
 
-      // ==========================================
+      // =========================================================
       // ERROR
-      // ==========================================
+      // =========================================================
       if (error) {
             return (
-                  <div className="flex min-h-[400px] items-center justify-center px-4">
-                        <div className="rounded-2xl border border-red-100 bg-red-50 px-6 py-8 text-center">
-                              <p className="font-semibold text-red-600">
+                  <div className="flex min-h-[500px] items-center justify-center px-4">
+                        <div className="w-full max-w-md rounded-2xl border border-red-100 bg-white p-8 text-center shadow-lg">
+                              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-red-50 text-3xl">
+                                    ⚠️
+                              </div>
+
+                              <h2 className="mt-4 text-xl font-bold text-gray-900">
+                                    Something went wrong
+                              </h2>
+
+                              <p className="mt-2 text-sm text-gray-500">
                                     {error}
                               </p>
 
                               <button
                                     onClick={() =>
-                                          window.location.reload()
+                                          fetchAllData(true)
                                     }
-                                    className="mt-4 rounded-lg bg-red-600 px-5 py-2 text-sm font-semibold text-white hover:bg-red-700"
+                                    className="mt-6 rounded-xl bg-purple-600 px-6 py-3 text-sm font-bold text-white transition hover:bg-purple-700"
                               >
                                     আবার চেষ্টা করুন
                               </button>
@@ -351,299 +473,361 @@ const Statistics = () => {
             );
       }
 
-      // ==========================================
-      // STAT CARDS
-      // ==========================================
-      const cards = [
-            {
-                  title: "মোট Product",
-                  value: statistics.productCount,
-                  icon: "📦",
-                  description: "Website-এর সকল product",
-            },
-
-            {
-                  title: "মোট Category",
-                  value: statistics.categoryCount,
-                  icon: "🗂️",
-                  description: "Active categories",
-            },
-
-            {
-                  title: "মোট Order",
-                  value: statistics.orderCount,
-                  icon: "🛍️",
-                  description: "Final orders",
-            },
-
-            {
-                  title: "Customers",
-                  value: statistics.customerCount,
-                  icon: "👥",
-                  description: "Unique customers",
-            },
-
-            {
-                  title: "Cart Items",
-                  value: statistics.cartCount,
-                  icon: "🛒",
-                  description: "Checkout collection",
-            },
-
-            {
-                  title: "Manufacture",
-                  value: statistics.manufactureCount,
-                  icon: "🏭",
-                  description: "Manufacturing orders",
-            },
-
-            {
-                  title: "Campaign",
-                  value: statistics.campaignCount,
-                  icon: "📢",
-                  description: "Active campaign data",
-            },
-
-            {
-                  title: "Super Deal",
-                  value: statistics.superDealCount,
-                  icon: "🔥",
-                  description: "Super deal items",
-            },
-      ];
-
       return (
-            <div className="min-h-screen bg-gray-50 px-4 py-6 sm:px-6 lg:px-8">
+            <div className="min-h-screen bg-[#f7f7fb] px-3 py-5 sm:px-5 sm:py-7 lg:px-8">
 
                   <div className="mx-auto max-w-7xl">
 
-                        {/* ==========================================
+                        {/* =================================================
                             HEADER
-                        ========================================== */}
+                        ================================================= */}
 
-                        <div className="mb-7">
-                              <h1 className="text-2xl font-extrabold tracking-tight text-gray-900 sm:text-3xl">
-                                    Website Statistics
-                              </h1>
+                        <div className="mb-7 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
 
-                              <p className="mt-1 text-sm text-gray-500">
-                                    Posak Bari website-এর সম্পূর্ণ
-                                    overview
-                              </p>
+                              <div>
+                                    <div className="flex items-center gap-2">
+                                          <span className="h-2.5 w-2.5 rounded-full bg-green-500 shadow-sm shadow-green-300" />
+
+                                          <span className="text-xs font-bold uppercase tracking-wider text-green-600">
+                                                Dashboard Live
+                                          </span>
+                                    </div>
+
+                                    <h1 className="mt-2 text-2xl font-extrabold tracking-tight text-gray-900 sm:text-3xl">
+                                          Website Statistics
+                                    </h1>
+
+                                    <p className="mt-1 text-sm text-gray-500">
+                                          পোশাক বাড়ি ওয়েবসাইটের সম্পূর্ণ
+                                          overview এক জায়গায়
+                                    </p>
+                              </div>
+
+                              <button
+                                    onClick={() =>
+                                          fetchAllData(true)
+                                    }
+                                    disabled={refreshing}
+                                    className="inline-flex w-fit items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 shadow-sm transition hover:border-purple-200 hover:bg-purple-50 disabled:cursor-not-allowed disabled:opacity-60"
+                              >
+                                    <span
+                                          className={
+                                                refreshing
+                                                      ? "animate-spin"
+                                                      : ""
+                                          }
+                                    >
+                                          ↻
+                                    </span>
+
+                                    {refreshing
+                                          ? "Refreshing..."
+                                          : "Refresh Data"}
+                              </button>
+
                         </div>
 
-                        {/* ==========================================
-                            STAT CARDS
-                        ========================================== */}
 
-                        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+                        {/* =================================================
+                            STAT CARDS
+                        ================================================= */}
+
+                        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 xl:grid-cols-5">
 
                               {cards.map((card) => (
                                     <div
                                           key={card.title}
-                                          className="group rounded-2xl border border-gray-100 bg-white p-4 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg sm:p-5"
+                                          className="group relative overflow-hidden rounded-2xl border border-gray-100 bg-white p-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl sm:p-5"
                                     >
-                                          <div className="flex items-start justify-between">
 
-                                                <div>
-                                                      <p className="text-xs font-semibold text-gray-500 sm:text-sm">
-                                                            {card.title}
-                                                      </p>
+                                          {/* Decorative */}
+                                          <div
+                                                className={`absolute -right-8 -top-8 h-24 w-24 rounded-full ${card.bg} opacity-70 transition-transform duration-500 group-hover:scale-150`}
+                                          />
 
-                                                      <h2 className="mt-2 text-2xl font-extrabold text-gray-900 sm:text-3xl">
-                                                            {card.value}
-                                                      </h2>
+                                          <div className="relative">
+
+                                                <div className="flex items-start justify-between gap-2">
+
+                                                      <div className="min-w-0">
+                                                            <p className="truncate text-xs font-semibold text-gray-500 sm:text-sm">
+                                                                  {
+                                                                        card.title
+                                                                  }
+                                                            </p>
+
+                                                            <h2 className="mt-2 text-2xl font-extrabold tracking-tight text-gray-900 sm:text-3xl">
+                                                                  {card.value.toLocaleString()}
+                                                            </h2>
+                                                      </div>
+
+                                                      <div
+                                                            className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${card.iconBg} text-xl transition duration-300 group-hover:scale-110`}
+                                                      >
+                                                            {
+                                                                  card.icon
+                                                            }
+                                                      </div>
+
                                                 </div>
 
-                                                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-50 text-xl transition group-hover:scale-110 sm:h-12 sm:w-12">
-                                                      {card.icon}
-                                                </div>
+                                                <p className="mt-3 truncate text-[10px] text-gray-400 sm:text-xs">
+                                                      {
+                                                            card.description
+                                                      }
+                                                </p>
 
                                           </div>
 
-                                          <p className="mt-3 text-[11px] text-gray-400 sm:text-xs">
-                                                {card.description}
-                                          </p>
                                     </div>
                               ))}
 
                         </div>
 
-                        {/* ==========================================
-                            CHART SECTION
-                        ========================================== */}
 
-                        <div className="mt-6 grid gap-6 lg:grid-cols-2">
+                        {/* =================================================
+                            MAIN ANALYTICS
+                        ================================================= */}
 
-                              {/* ======================================
-                                  ORDER PIE CHART
-                              ====================================== */}
+                        <div className="mt-5 grid gap-5 lg:grid-cols-2">
 
-                              <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm sm:p-6">
-
-                                    <div className="mb-6">
-                                          <h2 className="text-lg font-bold text-gray-900 sm:text-xl">
-                                                Order Overview
-                                          </h2>
-
-                                          <p className="mt-1 text-xs text-gray-400 sm:text-sm">
-                                                Final order status
-                                          </p>
-                                    </div>
-
-                                    <div className="flex flex-col items-center justify-center gap-7 sm:flex-row">
-
-                                          {/* PIE */}
-
-                                          <div
-                                                className="relative flex h-44 w-44 shrink-0 items-center justify-center rounded-full"
-                                                style={{
-                                                      background:
-                                                            orderPie.background,
-                                                }}
-                                          >
-                                                <div className="flex h-28 w-28 flex-col items-center justify-center rounded-full bg-white shadow-inner">
-                                                      <span className="text-2xl font-extrabold text-gray-900">
-                                                            {
-                                                                  orderPie.total
-                                                            }
-                                                      </span>
-
-                                                      <span className="text-xs text-gray-400">
-                                                            Orders
-                                                      </span>
-                                                </div>
-                                          </div>
-
-                                          {/* LEGEND */}
-
-                                          <div className="w-full max-w-xs space-y-3">
-
-                                                <div className="flex items-center justify-between rounded-xl bg-amber-50 px-4 py-3">
-                                                      <div className="flex items-center gap-2">
-                                                            <span className="h-3 w-3 rounded-full bg-amber-500" />
-
-                                                            <span className="text-sm font-medium text-gray-700">
-                                                                  Pending
-                                                            </span>
-                                                      </div>
-
-                                                      <span className="font-bold text-gray-900">
-                                                            {
-                                                                  statistics.pendingOrders
-                                                            }
-                                                      </span>
-                                                </div>
-
-                                                <div className="flex items-center justify-between rounded-xl bg-blue-50 px-4 py-3">
-                                                      <div className="flex items-center gap-2">
-                                                            <span className="h-3 w-3 rounded-full bg-blue-500" />
-
-                                                            <span className="text-sm font-medium text-gray-700">
-                                                                  Processing
-                                                            </span>
-                                                      </div>
-
-                                                      <span className="font-bold text-gray-900">
-                                                            {
-                                                                  statistics.processingOrders
-                                                            }
-                                                      </span>
-                                                </div>
-
-                                                <div className="flex items-center justify-between rounded-xl bg-green-50 px-4 py-3">
-                                                      <div className="flex items-center gap-2">
-                                                            <span className="h-3 w-3 rounded-full bg-green-500" />
-
-                                                            <span className="text-sm font-medium text-gray-700">
-                                                                  Completed
-                                                            </span>
-                                                      </div>
-
-                                                      <span className="font-bold text-gray-900">
-                                                            {
-                                                                  statistics.completedOrders
-                                                            }
-                                                      </span>
-                                                </div>
-
-                                                <div className="flex items-center justify-between rounded-xl bg-red-50 px-4 py-3">
-                                                      <div className="flex items-center gap-2">
-                                                            <span className="h-3 w-3 rounded-full bg-red-500" />
-
-                                                            <span className="text-sm font-medium text-gray-700">
-                                                                  Cancelled
-                                                            </span>
-                                                      </div>
-
-                                                      <span className="font-bold text-gray-900">
-                                                            {
-                                                                  statistics.cancelledOrders
-                                                            }
-                                                      </span>
-                                                </div>
-
-                                          </div>
-
-                                    </div>
-                              </div>
-
-                              {/* ======================================
-                                  MANUFACTURE OVERVIEW
-                              ====================================== */}
+                              {/* =================================================
+                                  ORDER CHART
+                              ================================================= */}
 
                               <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm sm:p-6">
 
-                                    <div className="mb-6">
-                                          <h2 className="text-lg font-bold text-gray-900 sm:text-xl">
-                                                Manufacturing Overview
-                                          </h2>
-
-                                          <p className="mt-1 text-xs text-gray-400 sm:text-sm">
-                                                Manufacturing order summary
-                                          </p>
-                                    </div>
-
-                                    <div className="space-y-5">
-
-                                          {/* Total */}
+                                    <div className="flex items-start justify-between">
 
                                           <div>
-                                                <div className="mb-2 flex items-center justify-between">
-                                                      <span className="text-sm font-medium text-gray-600">
+                                                <h2 className="text-lg font-bold text-gray-900 sm:text-xl">
+                                                      Order Overview
+                                                </h2>
+
+                                                <p className="mt-1 text-xs text-gray-400 sm:text-sm">
+                                                      সব order-এর status breakdown
+                                                </p>
+                                          </div>
+
+                                          <div className="rounded-xl bg-purple-50 px-3 py-2 text-right">
+                                                <p className="text-[10px] font-semibold text-purple-500">
+                                                      TOTAL
+                                                </p>
+
+                                                <p className="text-lg font-extrabold text-purple-700">
+                                                      {
+                                                            statistics.orderCount
+                                                      }
+                                                </p>
+                                          </div>
+
+                                    </div>
+
+
+                                    <div className="mt-7 flex flex-col items-center gap-7 sm:flex-row sm:justify-center">
+
+                                          {/* =================================================
+                                              DONUT
+                                          ================================================= */}
+
+                                          <div
+                                                className="relative flex h-52 w-52 shrink-0 items-center justify-center rounded-full shadow-lg"
+                                                style={{
+                                                      background:
+                                                            orderChart.gradient,
+                                                }}
+                                          >
+
+                                                {/* Donut Inner */}
+                                                <div className="flex h-32 w-32 flex-col items-center justify-center rounded-full bg-white shadow-inner">
+
+                                                      <span className="text-3xl font-extrabold tracking-tight text-gray-900">
+                                                            {
+                                                                  orderChart.total
+                                                            }
+                                                      </span>
+
+                                                      <span className="mt-0.5 text-xs font-medium text-gray-400">
                                                             Total Orders
                                                       </span>
 
-                                                      <span className="font-bold text-gray-900">
+                                                </div>
+
+                                          </div>
+
+
+                                          {/* =================================================
+                                              LEGEND
+                                          ================================================= */}
+
+                                          <div className="w-full max-w-sm space-y-2.5">
+
+                                                {orderChart.items.map(
+                                                      (item) => (
+                                                            <div
+                                                                  key={
+                                                                        item.label
+                                                                  }
+                                                                  className="group flex items-center justify-between rounded-xl border border-gray-100 px-3 py-3 transition hover:border-gray-200 hover:shadow-sm"
+                                                                  style={{
+                                                                        backgroundColor:
+                                                                              item.light,
+                                                                  }}
+                                                            >
+
+                                                                  <div className="flex items-center gap-3">
+
+                                                                        <span
+                                                                              className="h-3 w-3 shrink-0 rounded-full shadow-sm"
+                                                                              style={{
+                                                                                    backgroundColor:
+                                                                                          item.color,
+                                                                              }}
+                                                                        />
+
+                                                                        <span className="text-sm font-semibold text-gray-700">
+                                                                              {
+                                                                                    item.label
+                                                                              }
+                                                                        </span>
+
+                                                                  </div>
+
+                                                                  <div className="flex items-center gap-3">
+
+                                                                        <span className="text-xs font-medium text-gray-400">
+                                                                              {item.percentage.toFixed(
+                                                                                    1
+                                                                              )}
+                                                                              %
+                                                                        </span>
+
+                                                                        <span className="min-w-[28px] text-right text-sm font-extrabold text-gray-900">
+                                                                              {
+                                                                                    item.value
+                                                                              }
+                                                                        </span>
+
+                                                                  </div>
+
+                                                            </div>
+                                                      )
+                                                )}
+
+                                          </div>
+
+                                    </div>
+
+
+                                    {/* Percentage Summary */}
+
+                                    <div className="mt-7 grid grid-cols-2 gap-3 sm:grid-cols-4">
+
+                                          {orderChart.items.map(
+                                                (item) => (
+                                                      <div
+                                                            key={
+                                                                  `${item.label}-summary`
+                                                            }
+                                                            className="rounded-xl bg-gray-50 p-3"
+                                                      >
+                                                            <div className="flex items-center gap-1.5">
+                                                                  <span
+                                                                        className="h-2 w-2 rounded-full"
+                                                                        style={{
+                                                                              backgroundColor:
+                                                                                    item.color,
+                                                                        }}
+                                                                  />
+
+                                                                  <span className="text-[11px] font-medium text-gray-500">
+                                                                        {
+                                                                              item.label
+                                                                        }
+                                                                  </span>
+                                                            </div>
+
+                                                            <p className="mt-1 text-lg font-extrabold text-gray-900">
+                                                                  {item.percentage.toFixed(
+                                                                        1
+                                                                  )}
+                                                                  %
+                                                            </p>
+                                                      </div>
+                                                )
+                                          )}
+
+                                    </div>
+
+                              </div>
+
+
+                              {/* =================================================
+                                  MANUFACTURE
+                              ================================================= */}
+
+                              <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm sm:p-6">
+
+                                    <div className="flex items-start justify-between">
+
+                                          <div>
+                                                <h2 className="text-lg font-bold text-gray-900 sm:text-xl">
+                                                      Manufacturing Overview
+                                                </h2>
+
+                                                <p className="mt-1 text-xs text-gray-400 sm:text-sm">
+                                                      Manufacturing order summary
+                                                </p>
+                                          </div>
+
+                                          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-purple-50 text-xl">
+                                                🏭
+                                          </div>
+
+                                    </div>
+
+
+                                    <div className="mt-7 space-y-6">
+
+                                          {/* TOTAL */}
+
+                                          <div>
+                                                <div className="mb-2 flex items-center justify-between">
+                                                      <span className="text-sm font-semibold text-gray-600">
+                                                            Total Orders
+                                                      </span>
+
+                                                      <span className="font-extrabold text-gray-900">
                                                             {
                                                                   statistics.manufactureCount
                                                             }
                                                       </span>
                                                 </div>
 
-                                                <div className="h-3 overflow-hidden rounded-full bg-gray-100">
-                                                      <div className="h-full w-full rounded-full bg-purple-500" />
+                                                <div className="h-2.5 overflow-hidden rounded-full bg-gray-100">
+                                                      <div className="h-full w-full rounded-full bg-gradient-to-r from-purple-500 to-violet-600" />
                                                 </div>
                                           </div>
 
-                                          {/* Pending */}
+
+                                          {/* PENDING */}
 
                                           <div>
                                                 <div className="mb-2 flex items-center justify-between">
-                                                      <span className="text-sm font-medium text-gray-600">
+                                                      <span className="text-sm font-semibold text-gray-600">
                                                             Pending
                                                       </span>
 
-                                                      <span className="font-bold text-amber-600">
+                                                      <span className="font-extrabold text-amber-600">
                                                             {
                                                                   statistics.manufacturePending
                                                             }
                                                       </span>
                                                 </div>
 
-                                                <div className="h-3 overflow-hidden rounded-full bg-gray-100">
+                                                <div className="h-2.5 overflow-hidden rounded-full bg-gray-100">
                                                       <div
-                                                            className="h-full rounded-full bg-amber-500"
+                                                            className="h-full rounded-full bg-amber-500 transition-all duration-700"
                                                             style={{
                                                                   width:
                                                                         statistics.manufactureCount
@@ -657,24 +841,25 @@ const Statistics = () => {
                                                 </div>
                                           </div>
 
-                                          {/* Complete */}
+
+                                          {/* COMPLETE */}
 
                                           <div>
                                                 <div className="mb-2 flex items-center justify-between">
-                                                      <span className="text-sm font-medium text-gray-600">
+                                                      <span className="text-sm font-semibold text-gray-600">
                                                             Completed
                                                       </span>
 
-                                                      <span className="font-bold text-green-600">
+                                                      <span className="font-extrabold text-green-600">
                                                             {
                                                                   statistics.manufactureComplete
                                                             }
                                                       </span>
                                                 </div>
 
-                                                <div className="h-3 overflow-hidden rounded-full bg-gray-100">
+                                                <div className="h-2.5 overflow-hidden rounded-full bg-gray-100">
                                                       <div
-                                                            className="h-full rounded-full bg-green-500"
+                                                            className="h-full rounded-full bg-green-500 transition-all duration-700"
                                                             style={{
                                                                   width:
                                                                         statistics.manufactureCount
@@ -690,30 +875,43 @@ const Statistics = () => {
 
                                     </div>
 
-                                    {/* Quick boxes */}
 
-                                    <div className="mt-8 grid grid-cols-2 gap-3">
+                                    {/* QUICK BOXES */}
 
-                                          <div className="rounded-xl bg-amber-50 p-4">
-                                                <p className="text-xs text-amber-600">
+                                    <div className="mt-8 grid grid-cols-3 gap-3">
+
+                                          <div className="rounded-xl border border-amber-100 bg-amber-50 p-3 sm:p-4">
+                                                <p className="text-[10px] font-semibold text-amber-600 sm:text-xs">
                                                       Pending
                                                 </p>
 
-                                                <p className="mt-1 text-2xl font-extrabold text-amber-700">
+                                                <p className="mt-1 text-xl font-extrabold text-amber-700 sm:text-2xl">
                                                       {
                                                             statistics.manufacturePending
                                                       }
                                                 </p>
                                           </div>
 
-                                          <div className="rounded-xl bg-green-50 p-4">
-                                                <p className="text-xs text-green-600">
+                                          <div className="rounded-xl border border-green-100 bg-green-50 p-3 sm:p-4">
+                                                <p className="text-[10px] font-semibold text-green-600 sm:text-xs">
                                                       Completed
                                                 </p>
 
-                                                <p className="mt-1 text-2xl font-extrabold text-green-700">
+                                                <p className="mt-1 text-xl font-extrabold text-green-700 sm:text-2xl">
                                                       {
                                                             statistics.manufactureComplete
+                                                      }
+                                                </p>
+                                          </div>
+
+                                          <div className="rounded-xl border border-gray-100 bg-gray-50 p-3 sm:p-4">
+                                                <p className="text-[10px] font-semibold text-gray-500 sm:text-xs">
+                                                      Other
+                                                </p>
+
+                                                <p className="mt-1 text-xl font-extrabold text-gray-700 sm:text-2xl">
+                                                      {
+                                                            statistics.manufactureOther
                                                       }
                                                 </p>
                                           </div>
@@ -724,11 +922,12 @@ const Statistics = () => {
 
                         </div>
 
-                        {/* ==========================================
-                            QUICK SUMMARY
-                        ========================================== */}
 
-                        <div className="mt-6 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm sm:p-6">
+                        {/* =================================================
+                            QUICK SUMMARY
+                        ================================================= */}
+
+                        <div className="mt-5 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm sm:p-6">
 
                               <div className="mb-5">
                                     <h2 className="text-lg font-bold text-gray-900 sm:text-xl">
@@ -736,81 +935,134 @@ const Statistics = () => {
                                     </h2>
 
                                     <p className="mt-1 text-xs text-gray-400 sm:text-sm">
-                                          Website-এর গুরুত্বপূর্ণ তথ্য এক
-                                          নজরে
+                                          Website-এর গুরুত্বপূর্ণ তথ্য এক নজরে
                                     </p>
                               </div>
 
-                              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
 
-                                    <div className="rounded-xl bg-purple-50 p-4">
-                                          <p className="text-xs text-purple-600">
+                              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+
+                                    {/* Products */}
+                                    <div className="rounded-xl border border-purple-100 bg-purple-50 p-4">
+                                          <p className="text-xs font-semibold text-purple-600">
                                                 Products
                                           </p>
 
-                                          <p className="mt-1 text-xl font-extrabold text-purple-800">
+                                          <p className="mt-1 text-2xl font-extrabold text-purple-800">
                                                 {
                                                       statistics.productCount
                                                 }
                                           </p>
                                     </div>
 
-                                    <div className="rounded-xl bg-blue-50 p-4">
-                                          <p className="text-xs text-blue-600">
+
+                                    {/* Categories */}
+                                    <div className="rounded-xl border border-blue-100 bg-blue-50 p-4">
+                                          <p className="text-xs font-semibold text-blue-600">
                                                 Categories
                                           </p>
 
-                                          <p className="mt-1 text-xl font-extrabold text-blue-800">
+                                          <p className="mt-1 text-2xl font-extrabold text-blue-800">
                                                 {
                                                       statistics.categoryCount
                                                 }
                                           </p>
                                     </div>
 
-                                    <div className="rounded-xl bg-green-50 p-4">
-                                          <p className="text-xs text-green-600">
+
+                                    {/* Orders */}
+                                    <div className="rounded-xl border border-green-100 bg-green-50 p-4">
+                                          <p className="text-xs font-semibold text-green-600">
                                                 Orders
                                           </p>
 
-                                          <p className="mt-1 text-xl font-extrabold text-green-800">
+                                          <p className="mt-1 text-2xl font-extrabold text-green-800">
                                                 {
                                                       statistics.orderCount
                                                 }
                                           </p>
                                     </div>
 
-                                    <div className="rounded-xl bg-orange-50 p-4">
-                                          <p className="text-xs text-orange-600">
+
+                                    {/* Banner */}
+                                    <div className="rounded-xl border border-violet-100 bg-violet-50 p-4">
+                                          <p className="text-xs font-semibold text-violet-600">
+                                                Banners
+                                          </p>
+
+                                          <p className="mt-1 text-2xl font-extrabold text-violet-800">
+                                                {
+                                                      statistics.bannerCount
+                                                }
+                                          </p>
+                                    </div>
+
+
+                                    {/* Customers */}
+                                    <div className="rounded-xl border border-indigo-100 bg-indigo-50 p-4">
+                                          <p className="text-xs font-semibold text-indigo-600">
+                                                Customers
+                                          </p>
+
+                                          <p className="mt-1 text-2xl font-extrabold text-indigo-800">
+                                                {
+                                                      statistics.customerCount
+                                                }
+                                          </p>
+                                    </div>
+
+
+                                    {/* Campaign */}
+                                    <div className="rounded-xl border border-orange-100 bg-orange-50 p-4">
+                                          <p className="text-xs font-semibold text-orange-600">
                                                 Campaign
                                           </p>
 
-                                          <p className="mt-1 text-xl font-extrabold text-orange-800">
+                                          <p className="mt-1 text-2xl font-extrabold text-orange-800">
                                                 {
                                                       statistics.campaignCount
                                                 }
                                           </p>
                                     </div>
 
-                                    <div className="rounded-xl bg-red-50 p-4">
-                                          <p className="text-xs text-red-600">
+
+                                    {/* Super Deal */}
+                                    <div className="rounded-xl border border-red-100 bg-red-50 p-4">
+                                          <p className="text-xs font-semibold text-red-600">
                                                 Super Deal
                                           </p>
 
-                                          <p className="mt-1 text-xl font-extrabold text-red-800">
+                                          <p className="mt-1 text-2xl font-extrabold text-red-800">
                                                 {
                                                       statistics.superDealCount
                                                 }
                                           </p>
                                     </div>
 
-                                    <div className="rounded-xl bg-indigo-50 p-4">
-                                          <p className="text-xs text-indigo-600">
-                                                Customers
+
+                                    {/* Cart */}
+                                    <div className="rounded-xl border border-cyan-100 bg-cyan-50 p-4">
+                                          <p className="text-xs font-semibold text-cyan-600">
+                                                Cart Items
                                           </p>
 
-                                          <p className="mt-1 text-xl font-extrabold text-indigo-800">
+                                          <p className="mt-1 text-2xl font-extrabold text-cyan-800">
                                                 {
-                                                      statistics.customerCount
+                                                      statistics.cartCount
+                                                }
+                                          </p>
+                                    </div>
+
+
+                                    {/* Manufacture */}
+                                    <div className="rounded-xl border border-pink-100 bg-pink-50 p-4">
+                                          <p className="text-xs font-semibold text-pink-600">
+                                                Manufacture
+                                          </p>
+
+                                          <p className="mt-1 text-2xl font-extrabold text-pink-800">
+                                                {
+                                                      statistics.manufactureCount
                                                 }
                                           </p>
                                     </div>
