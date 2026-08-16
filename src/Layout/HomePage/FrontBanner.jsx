@@ -44,7 +44,7 @@ const FrontBanner = () => {
                               href="https://wa.me/8801305506395"
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="mb-5 rounded-full border-2 border-white bg-gradient-to-b from-[#d900ff] via-[#9c00ed] to-[#6200c9] px-5 py-0.5 text-[22px] font-bold leading-tight text-white shadow-[0_3px_8px_rgba(0,0,0,0.45)] transition-all duration-300 hover:scale-105 hover:shadow-[0_5px_15px_rgba(160,0,255,0.65)] active:scale-95 sm:px-8 sm:py-1 sm:text-2xl md:border-3 md:px-12 md:py-1.5 md:text-2xl lg:border-4 lg:px-20 lg:py-2.5 lg:text-4xl"
+                              className="rounded-full border-2 border-white bg-gradient-to-b from-[#d900ff] via-[#9c00ed] to-[#6200c9] px-5 py-0.5 text-[22px] font-bold leading-tight text-white shadow-[0_3px_8px_rgba(0,0,0,0.45)] transition-all duration-300 hover:scale-105 hover:shadow-[0_5px_15px_rgba(160,0,255,0.65)] active:scale-95 sm:px-8 sm:py-1 sm:text-2xl md:border-3 md:px-12 md:py-1.5 md:text-2xl lg:border-4 lg:px-20 lg:py-2.5 lg:text-4xl"
                         >
                               হটলাইন
                         </a>

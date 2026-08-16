@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Swal from "sweetalert2";
 import ImageUpload from "../Components/ImagePost.jsx";
 
-const API_URL = "http://localhost:5000/category";
+const API_URL = "https://posak-bari-backend.vercel.app/category";
 
 const INITIAL_FORM = {
       title: "",
@@ -274,9 +274,9 @@ const Category = () => {
                                                       !formData.image
                                                 }
                                                 className={`w-full rounded-xl py-3.5 font-bold text-white shadow-lg transition ${loading ||
-                                                            !formData.image
-                                                            ? "cursor-not-allowed bg-gray-400 shadow-none"
-                                                            : "bg-gradient-to-r from-purple-500 to-purple-600 shadow-purple-200 hover:from-purple-600 hover:to-purple-700"
+                                                      !formData.image
+                                                      ? "cursor-not-allowed bg-gray-400 shadow-none"
+                                                      : "bg-gradient-to-r from-purple-500 to-purple-600 shadow-purple-200 hover:from-purple-600 hover:to-purple-700"
                                                       }`}
                                           >
                                                 {loading

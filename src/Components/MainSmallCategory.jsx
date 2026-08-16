@@ -6,7 +6,7 @@ import { Link } from "react-router";
 import "swiper/css";
 import { Left } from "./Animation";
 
-const API_URL = "http://localhost:5000/category";
+const API_URL = "https://posak-bari-backend.vercel.app/category";
 
 const MainSmallCategory = () => {
       const [categories, setCategories] = useState([]);
@@ -33,11 +33,11 @@ const MainSmallCategory = () => {
                         // শুধু যেসব object-এ slug আছে
                         const filteredCategories = Array.isArray(data)
                               ? data.filter(
-                                      (item) =>
-                                            item?.slug &&
-                                            item?.title &&
-                                            item?.image
-                                )
+                                    (item) =>
+                                          item?.slug &&
+                                          item?.title &&
+                                          item?.image
+                              )
                               : [];
 
                         setCategories(filteredCategories);

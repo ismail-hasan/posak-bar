@@ -282,9 +282,9 @@ const CategoryControl = () => {
                                                                               category._id
                                                                         }
                                                                         className={`inline-flex h-10 w-10 items-center justify-center rounded-lg transition ${deleteLoading ===
-                                                                                    category._id
-                                                                                    ? "cursor-not-allowed bg-gray-100 text-gray-400"
-                                                                                    : "cursor-pointer bg-red-50 text-red-600 hover:bg-red-600 hover:text-white"
+                                                                              category._id
+                                                                              ? "cursor-not-allowed bg-gray-100 text-gray-400"
+                                                                              : "cursor-pointer bg-red-50 text-red-600 hover:bg-red-600 hover:text-white"
                                                                               }`}
                                                                         title="Delete Category"
                                                                   >
