@@ -21,6 +21,7 @@ const Statistics = () => {
       // =========================================================
       // FETCH ALL DATA
       // =========================================================
+
       const fetchAllData = async (isRefresh = false) => {
             try {
                   if (isRefresh) {
@@ -48,9 +49,7 @@ const Statistics = () => {
                                     const response = await fetch(url);
 
                                     if (!response.ok) {
-                                          throw new Error(
-                                                `${key} API failed`
-                                          );
+                                          throw new Error(`${key} API failed`);
                                     }
 
                                     const result = await response.json();
@@ -104,6 +103,7 @@ const Statistics = () => {
       // =========================================================
       // STATISTICS
       // =========================================================
+
       const statistics = useMemo(() => {
             const {
                   products,
@@ -119,6 +119,7 @@ const Statistics = () => {
             // =====================================================
             // UNIQUE CUSTOMERS
             // =====================================================
+
             const customerEmails = new Set();
 
             cartItems.forEach((item) => {
@@ -149,6 +150,7 @@ const Statistics = () => {
             // =====================================================
             // ORDER STATUS
             // =====================================================
+
             let pendingOrders = 0;
             let processingOrders = 0;
             let completedOrders = 0;
@@ -185,74 +187,68 @@ const Statistics = () => {
             // =====================================================
             // MANUFACTURE STATUS
             // =====================================================
-            const manufacturePending =
-                  manufactureOrders.filter(
-                        (item) =>
-                              String(
-                                    item?.status || ""
-                              ).toLowerCase() === "pending"
-                  ).length;
 
-            const manufactureComplete =
-                  manufactureOrders.filter((item) => {
-                        const status = String(
-                              item?.status || ""
-                        ).toLowerCase();
+            let manufacturePending = 0;
+            let manufactureProcessing = 0;
+            let manufactureComplete = 0;
+            let manufactureCancelled = 0;
 
-                        return (
-                              status === "complete" ||
-                              status === "completed"
-                        );
-                  }).length;
+            manufactureOrders.forEach((item) => {
+                  const status = String(
+                        item?.status || "pending"
+                  ).toLowerCase();
 
-            const manufactureOther =
-                  Math.max(
-                        manufactureOrders.length -
-                        manufacturePending -
-                        manufactureComplete,
-                        0
-                  );
+                  if (
+                        status === "cancel" ||
+                        status === "cancelled" ||
+                        status === "canceled"
+                  ) {
+                        manufactureCancelled++;
+                  } else if (
+                        status === "complete" ||
+                        status === "completed" ||
+                        status === "delivered"
+                  ) {
+                        manufactureComplete++;
+                  } else if (
+                        status === "processing" ||
+                        status === "confirmed" ||
+                        status === "shipped"
+                  ) {
+                        manufactureProcessing++;
+                  } else {
+                        manufacturePending++;
+                  }
+            });
 
             return {
                   productCount: products.length,
-
                   categoryCount: categories.length,
-
                   cartCount: cartItems.length,
-
                   orderCount: orders.length,
-
                   campaignCount: campaigns.length,
-
                   superDealCount: superDeals.length,
-
-                  manufactureCount:
-                        manufactureOrders.length,
-
+                  manufactureCount: manufactureOrders.length,
                   bannerCount: banners.length,
 
-                  customerCount:
-                        customerEmails.size,
+                  customerCount: customerEmails.size,
 
                   pendingOrders,
-
                   processingOrders,
-
                   completedOrders,
-
                   cancelledOrders,
 
                   manufacturePending,
-
+                  manufactureProcessing,
                   manufactureComplete,
-
-                  manufactureOther,
+                  manufactureCancelled,
             };
       }, [data]);
 
       // =========================================================
-      // ORDER PIE DATA
+      // ORDER CHART
       // =========================================================
+
       const orderChart = useMemo(() => {
             const total = statistics.orderCount;
 
@@ -322,8 +318,82 @@ const Statistics = () => {
       }, [statistics]);
 
       // =========================================================
+      // MANUFACTURE CHART
+      // SAME DESIGN AS ORDER CHART
+      // =========================================================
+
+      const manufactureChart = useMemo(() => {
+            const total = statistics.manufactureCount;
+
+            const items = [
+                  {
+                        label: "Pending",
+                        value: statistics.manufacturePending,
+                        color: "#f59e0b",
+                        light: "#fffbeb",
+                  },
+                  {
+                        label: "Processing",
+                        value: statistics.manufactureProcessing,
+                        color: "#3b82f6",
+                        light: "#eff6ff",
+                  },
+                  {
+                        label: "Completed",
+                        value: statistics.manufactureComplete,
+                        color: "#22c55e",
+                        light: "#f0fdf4",
+                  },
+                  {
+                        label: "Cancelled",
+                        value: statistics.manufactureCancelled,
+                        color: "#ef4444",
+                        light: "#fef2f2",
+                  },
+            ];
+
+            let currentDegree = 0;
+
+            const chartItems = items.map((item) => {
+                  const percentage = total
+                        ? (item.value / total) * 100
+                        : 0;
+
+                  const degree = percentage * 3.6;
+
+                  const start = currentDegree;
+                  const end = currentDegree + degree;
+
+                  currentDegree = end;
+
+                  return {
+                        ...item,
+                        percentage,
+                        start,
+                        end,
+                  };
+            });
+
+            const gradient = total
+                  ? `conic-gradient(${chartItems
+                        .map(
+                              (item) =>
+                                    `${item.color} ${item.start}deg ${item.end}deg`
+                        )
+                        .join(", ")})`
+                  : "#e5e7eb";
+
+            return {
+                  total,
+                  items: chartItems,
+                  gradient,
+            };
+      }, [statistics]);
+
+      // =========================================================
       // STAT CARDS
       // =========================================================
+
       const cards = [
             {
                   title: "মোট Product",
@@ -332,7 +402,6 @@ const Statistics = () => {
                   icon: "📦",
                   bg: "bg-purple-50",
                   iconBg: "bg-purple-100",
-                  text: "text-purple-700",
             },
             {
                   title: "মোট Category",
@@ -341,7 +410,6 @@ const Statistics = () => {
                   icon: "🗂️",
                   bg: "bg-blue-50",
                   iconBg: "bg-blue-100",
-                  text: "text-blue-700",
             },
             {
                   title: "মোট Order",
@@ -350,7 +418,6 @@ const Statistics = () => {
                   icon: "🛍️",
                   bg: "bg-green-50",
                   iconBg: "bg-green-100",
-                  text: "text-green-700",
             },
             {
                   title: "Customers",
@@ -359,7 +426,6 @@ const Statistics = () => {
                   icon: "👥",
                   bg: "bg-indigo-50",
                   iconBg: "bg-indigo-100",
-                  text: "text-indigo-700",
             },
             {
                   title: "Cart Items",
@@ -368,7 +434,6 @@ const Statistics = () => {
                   icon: "🛒",
                   bg: "bg-orange-50",
                   iconBg: "bg-orange-100",
-                  text: "text-orange-700",
             },
             {
                   title: "Manufacture",
@@ -377,7 +442,6 @@ const Statistics = () => {
                   icon: "🏭",
                   bg: "bg-cyan-50",
                   iconBg: "bg-cyan-100",
-                  text: "text-cyan-700",
             },
             {
                   title: "Campaign",
@@ -386,7 +450,6 @@ const Statistics = () => {
                   icon: "📢",
                   bg: "bg-pink-50",
                   iconBg: "bg-pink-100",
-                  text: "text-pink-700",
             },
             {
                   title: "Super Deal",
@@ -395,7 +458,6 @@ const Statistics = () => {
                   icon: "🔥",
                   bg: "bg-red-50",
                   iconBg: "bg-red-100",
-                  text: "text-red-700",
             },
             {
                   title: "Banner",
@@ -404,13 +466,13 @@ const Statistics = () => {
                   icon: "🖼️",
                   bg: "bg-violet-50",
                   iconBg: "bg-violet-100",
-                  text: "text-violet-700",
             },
       ];
 
       // =========================================================
       // LOADING
       // =========================================================
+
       if (loading) {
             return (
                   <div className="min-h-screen bg-gray-50 px-4 py-6 sm:px-6 lg:px-8">
@@ -436,6 +498,7 @@ const Statistics = () => {
                                     <div className="h-[430px] animate-pulse rounded-2xl bg-white" />
                                     <div className="h-[430px] animate-pulse rounded-2xl bg-white" />
                               </div>
+
                         </div>
                   </div>
             );
@@ -444,10 +507,13 @@ const Statistics = () => {
       // =========================================================
       // ERROR
       // =========================================================
+
       if (error) {
             return (
                   <div className="flex min-h-[500px] items-center justify-center px-4">
+
                         <div className="w-full max-w-md rounded-2xl border border-red-100 bg-white p-8 text-center shadow-lg">
+
                               <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-red-50 text-3xl">
                                     ⚠️
                               </div>
@@ -468,7 +534,9 @@ const Statistics = () => {
                               >
                                     আবার চেষ্টা করুন
                               </button>
+
                         </div>
+
                   </div>
             );
       }
@@ -479,120 +547,14 @@ const Statistics = () => {
                   <div className="mx-auto max-w-7xl">
 
                         {/* =================================================
-                            HEADER
+                            OVERVIEW SECTION
+                            TOP
                         ================================================= */}
 
-                        <div className="mb-7 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-
-                              <div>
-                                    <div className="flex items-center gap-2">
-                                          <span className="h-2.5 w-2.5 rounded-full bg-green-500 shadow-sm shadow-green-300" />
-
-                                          <span className="text-xs font-bold uppercase tracking-wider text-green-600">
-                                                Dashboard Live
-                                          </span>
-                                    </div>
-
-                                    <h1 className="mt-2 text-2xl font-extrabold tracking-tight text-gray-900 sm:text-3xl">
-                                          Website Statistics
-                                    </h1>
-
-                                    <p className="mt-1 text-sm text-gray-500">
-                                          পোশাক বাড়ি ওয়েবসাইটের সম্পূর্ণ
-                                          overview এক জায়গায়
-                                    </p>
-                              </div>
-
-                              <button
-                                    onClick={() =>
-                                          fetchAllData(true)
-                                    }
-                                    disabled={refreshing}
-                                    className="inline-flex w-fit items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 shadow-sm transition hover:border-purple-200 hover:bg-purple-50 disabled:cursor-not-allowed disabled:opacity-60"
-                              >
-                                    <span
-                                          className={
-                                                refreshing
-                                                      ? "animate-spin"
-                                                      : ""
-                                          }
-                                    >
-                                          ↻
-                                    </span>
-
-                                    {refreshing
-                                          ? "Refreshing..."
-                                          : "Refresh Data"}
-                              </button>
-
-                        </div>
-
-
-                        {/* =================================================
-                            STAT CARDS
-                        ================================================= */}
-
-                        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 xl:grid-cols-5">
-
-                              {cards.map((card) => (
-                                    <div
-                                          key={card.title}
-                                          className="group relative overflow-hidden rounded-2xl border border-gray-100 bg-white p-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl sm:p-5"
-                                    >
-
-                                          {/* Decorative */}
-                                          <div
-                                                className={`absolute -right-8 -top-8 h-24 w-24 rounded-full ${card.bg} opacity-70 transition-transform duration-500 group-hover:scale-150`}
-                                          />
-
-                                          <div className="relative">
-
-                                                <div className="flex items-start justify-between gap-2">
-
-                                                      <div className="min-w-0">
-                                                            <p className="truncate text-xs font-semibold text-gray-500 sm:text-sm">
-                                                                  {
-                                                                        card.title
-                                                                  }
-                                                            </p>
-
-                                                            <h2 className="mt-2 text-2xl font-extrabold tracking-tight text-gray-900 sm:text-3xl">
-                                                                  {card.value.toLocaleString()}
-                                                            </h2>
-                                                      </div>
-
-                                                      <div
-                                                            className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${card.iconBg} text-xl transition duration-300 group-hover:scale-110`}
-                                                      >
-                                                            {
-                                                                  card.icon
-                                                            }
-                                                      </div>
-
-                                                </div>
-
-                                                <p className="mt-3 truncate text-[10px] text-gray-400 sm:text-xs">
-                                                      {
-                                                            card.description
-                                                      }
-                                                </p>
-
-                                          </div>
-
-                                    </div>
-                              ))}
-
-                        </div>
-
-
-                        {/* =================================================
-                            MAIN ANALYTICS
-                        ================================================= */}
-
-                        <div className="mt-5 grid gap-5 lg:grid-cols-2">
+                        <div className="grid gap-5 lg:grid-cols-2">
 
                               {/* =================================================
-                                  ORDER CHART
+                                  ORDER OVERVIEW
                               ================================================= */}
 
                               <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm sm:p-6">
@@ -600,6 +562,7 @@ const Statistics = () => {
                                     <div className="flex items-start justify-between">
 
                                           <div>
+
                                                 <h2 className="text-lg font-bold text-gray-900 sm:text-xl">
                                                       Order Overview
                                                 </h2>
@@ -607,9 +570,11 @@ const Statistics = () => {
                                                 <p className="mt-1 text-xs text-gray-400 sm:text-sm">
                                                       সব order-এর status breakdown
                                                 </p>
+
                                           </div>
 
                                           <div className="rounded-xl bg-purple-50 px-3 py-2 text-right">
+
                                                 <p className="text-[10px] font-semibold text-purple-500">
                                                       TOTAL
                                                 </p>
@@ -619,16 +584,16 @@ const Statistics = () => {
                                                             statistics.orderCount
                                                       }
                                                 </p>
+
                                           </div>
 
                                     </div>
 
+                                    {/* DONUT + LEGEND */}
 
                                     <div className="mt-7 flex flex-col items-center gap-7 sm:flex-row sm:justify-center">
 
-                                          {/* =================================================
-                                              DONUT
-                                          ================================================= */}
+                                          {/* DONUT */}
 
                                           <div
                                                 className="relative flex h-52 w-52 shrink-0 items-center justify-center rounded-full shadow-lg"
@@ -638,7 +603,6 @@ const Statistics = () => {
                                                 }}
                                           >
 
-                                                {/* Donut Inner */}
                                                 <div className="flex h-32 w-32 flex-col items-center justify-center rounded-full bg-white shadow-inner">
 
                                                       <span className="text-3xl font-extrabold tracking-tight text-gray-900">
@@ -655,10 +619,7 @@ const Statistics = () => {
 
                                           </div>
 
-
-                                          {/* =================================================
-                                              LEGEND
-                                          ================================================= */}
+                                          {/* LEGEND */}
 
                                           <div className="w-full max-w-sm space-y-2.5">
 
@@ -718,20 +679,19 @@ const Statistics = () => {
 
                                     </div>
 
-
-                                    {/* Percentage Summary */}
+                                    {/* SUMMARY */}
 
                                     <div className="mt-7 grid grid-cols-2 gap-3 sm:grid-cols-4">
 
                                           {orderChart.items.map(
                                                 (item) => (
                                                       <div
-                                                            key={
-                                                                  `${item.label}-summary`
-                                                            }
+                                                            key={`${item.label}-summary`}
                                                             className="rounded-xl bg-gray-50 p-3"
                                                       >
+
                                                             <div className="flex items-center gap-1.5">
+
                                                                   <span
                                                                         className="h-2 w-2 rounded-full"
                                                                         style={{
@@ -745,6 +705,7 @@ const Statistics = () => {
                                                                               item.label
                                                                         }
                                                                   </span>
+
                                                             </div>
 
                                                             <p className="mt-1 text-lg font-extrabold text-gray-900">
@@ -753,6 +714,7 @@ const Statistics = () => {
                                                                   )}
                                                                   %
                                                             </p>
+
                                                       </div>
                                                 )
                                           )}
@@ -763,7 +725,7 @@ const Statistics = () => {
 
 
                               {/* =================================================
-                                  MANUFACTURE
+                                  MANUFACTURING OVERVIEW
                               ================================================= */}
 
                               <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm sm:p-6">
@@ -771,150 +733,162 @@ const Statistics = () => {
                                     <div className="flex items-start justify-between">
 
                                           <div>
+
                                                 <h2 className="text-lg font-bold text-gray-900 sm:text-xl">
                                                       Manufacturing Overview
                                                 </h2>
 
                                                 <p className="mt-1 text-xs text-gray-400 sm:text-sm">
-                                                      Manufacturing order summary
+                                                      Manufacturing order status breakdown
                                                 </p>
+
                                           </div>
 
-                                          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-purple-50 text-xl">
-                                                🏭
+                                          <div className="rounded-xl bg-purple-50 px-3 py-2 text-right">
+
+                                                <p className="text-[10px] font-semibold text-purple-500">
+                                                      TOTAL
+                                                </p>
+
+                                                <p className="text-lg font-extrabold text-purple-700">
+                                                      {
+                                                            statistics.manufactureCount
+                                                      }
+                                                </p>
+
                                           </div>
 
                                     </div>
 
+                                    {/* DONUT + LEGEND */}
 
-                                    <div className="mt-7 space-y-6">
+                                    <div className="mt-7 flex flex-col items-center gap-7 sm:flex-row sm:justify-center">
 
-                                          {/* TOTAL */}
+                                          {/* DONUT */}
 
-                                          <div>
-                                                <div className="mb-2 flex items-center justify-between">
-                                                      <span className="text-sm font-semibold text-gray-600">
+                                          <div
+                                                className="relative flex h-52 w-52 shrink-0 items-center justify-center rounded-full shadow-lg"
+                                                style={{
+                                                      background:
+                                                            manufactureChart.gradient,
+                                                }}
+                                          >
+
+                                                <div className="flex h-32 w-32 flex-col items-center justify-center rounded-full bg-white shadow-inner">
+
+                                                      <span className="text-3xl font-extrabold tracking-tight text-gray-900">
+                                                            {
+                                                                  manufactureChart.total
+                                                            }
+                                                      </span>
+
+                                                      <span className="mt-0.5 text-xs font-medium text-gray-400">
                                                             Total Orders
                                                       </span>
 
-                                                      <span className="font-extrabold text-gray-900">
-                                                            {
-                                                                  statistics.manufactureCount
-                                                            }
-                                                      </span>
                                                 </div>
 
-                                                <div className="h-2.5 overflow-hidden rounded-full bg-gray-100">
-                                                      <div className="h-full w-full rounded-full bg-gradient-to-r from-purple-500 to-violet-600" />
-                                                </div>
                                           </div>
 
+                                          {/* LEGEND */}
 
-                                          {/* PENDING */}
+                                          <div className="w-full max-w-sm space-y-2.5">
 
-                                          <div>
-                                                <div className="mb-2 flex items-center justify-between">
-                                                      <span className="text-sm font-semibold text-gray-600">
-                                                            Pending
-                                                      </span>
+                                                {manufactureChart.items.map(
+                                                      (item) => (
+                                                            <div
+                                                                  key={
+                                                                        item.label
+                                                                  }
+                                                                  className="group flex items-center justify-between rounded-xl border border-gray-100 px-3 py-3 transition hover:border-gray-200 hover:shadow-sm"
+                                                                  style={{
+                                                                        backgroundColor:
+                                                                              item.light,
+                                                                  }}
+                                                            >
 
-                                                      <span className="font-extrabold text-amber-600">
-                                                            {
-                                                                  statistics.manufacturePending
-                                                            }
-                                                      </span>
-                                                </div>
+                                                                  <div className="flex items-center gap-3">
 
-                                                <div className="h-2.5 overflow-hidden rounded-full bg-gray-100">
-                                                      <div
-                                                            className="h-full rounded-full bg-amber-500 transition-all duration-700"
-                                                            style={{
-                                                                  width:
-                                                                        statistics.manufactureCount
-                                                                              ? `${(statistics.manufacturePending /
-                                                                                    statistics.manufactureCount) *
-                                                                              100
-                                                                              }%`
-                                                                              : "0%",
-                                                            }}
-                                                      />
-                                                </div>
-                                          </div>
+                                                                        <span
+                                                                              className="h-3 w-3 shrink-0 rounded-full shadow-sm"
+                                                                              style={{
+                                                                                    backgroundColor:
+                                                                                          item.color,
+                                                                              }}
+                                                                        />
 
+                                                                        <span className="text-sm font-semibold text-gray-700">
+                                                                              {
+                                                                                    item.label
+                                                                              }
+                                                                        </span>
 
-                                          {/* COMPLETE */}
+                                                                  </div>
 
-                                          <div>
-                                                <div className="mb-2 flex items-center justify-between">
-                                                      <span className="text-sm font-semibold text-gray-600">
-                                                            Completed
-                                                      </span>
+                                                                  <div className="flex items-center gap-3">
 
-                                                      <span className="font-extrabold text-green-600">
-                                                            {
-                                                                  statistics.manufactureComplete
-                                                            }
-                                                      </span>
-                                                </div>
+                                                                        <span className="text-xs font-medium text-gray-400">
+                                                                              {item.percentage.toFixed(
+                                                                                    1
+                                                                              )}
+                                                                              %
+                                                                        </span>
 
-                                                <div className="h-2.5 overflow-hidden rounded-full bg-gray-100">
-                                                      <div
-                                                            className="h-full rounded-full bg-green-500 transition-all duration-700"
-                                                            style={{
-                                                                  width:
-                                                                        statistics.manufactureCount
-                                                                              ? `${(statistics.manufactureComplete /
-                                                                                    statistics.manufactureCount) *
-                                                                              100
-                                                                              }%`
-                                                                              : "0%",
-                                                            }}
-                                                      />
-                                                </div>
+                                                                        <span className="min-w-[28px] text-right text-sm font-extrabold text-gray-900">
+                                                                              {
+                                                                                    item.value
+                                                                              }
+                                                                        </span>
+
+                                                                  </div>
+
+                                                            </div>
+                                                      )
+                                                )}
+
                                           </div>
 
                                     </div>
 
+                                    {/* SUMMARY */}
 
-                                    {/* QUICK BOXES */}
+                                    <div className="mt-7 grid grid-cols-2 gap-3 sm:grid-cols-4">
 
-                                    <div className="mt-8 grid grid-cols-3 gap-3">
+                                          {manufactureChart.items.map(
+                                                (item) => (
+                                                      <div
+                                                            key={`${item.label}-manufacture-summary`}
+                                                            className="rounded-xl bg-gray-50 p-3"
+                                                      >
 
-                                          <div className="rounded-xl border border-amber-100 bg-amber-50 p-3 sm:p-4">
-                                                <p className="text-[10px] font-semibold text-amber-600 sm:text-xs">
-                                                      Pending
-                                                </p>
+                                                            <div className="flex items-center gap-1.5">
 
-                                                <p className="mt-1 text-xl font-extrabold text-amber-700 sm:text-2xl">
-                                                      {
-                                                            statistics.manufacturePending
-                                                      }
-                                                </p>
-                                          </div>
+                                                                  <span
+                                                                        className="h-2 w-2 rounded-full"
+                                                                        style={{
+                                                                              backgroundColor:
+                                                                                    item.color,
+                                                                        }}
+                                                                  />
 
-                                          <div className="rounded-xl border border-green-100 bg-green-50 p-3 sm:p-4">
-                                                <p className="text-[10px] font-semibold text-green-600 sm:text-xs">
-                                                      Completed
-                                                </p>
+                                                                  <span className="text-[11px] font-medium text-gray-500">
+                                                                        {
+                                                                              item.label
+                                                                        }
+                                                                  </span>
 
-                                                <p className="mt-1 text-xl font-extrabold text-green-700 sm:text-2xl">
-                                                      {
-                                                            statistics.manufactureComplete
-                                                      }
-                                                </p>
-                                          </div>
+                                                            </div>
 
-                                          <div className="rounded-xl border border-gray-100 bg-gray-50 p-3 sm:p-4">
-                                                <p className="text-[10px] font-semibold text-gray-500 sm:text-xs">
-                                                      Other
-                                                </p>
+                                                            <p className="mt-1 text-lg font-extrabold text-gray-900">
+                                                                  {item.percentage.toFixed(
+                                                                        1
+                                                                  )}
+                                                                  %
+                                                            </p>
 
-                                                <p className="mt-1 text-xl font-extrabold text-gray-700 sm:text-2xl">
-                                                      {
-                                                            statistics.manufactureOther
-                                                      }
-                                                </p>
-                                          </div>
+                                                      </div>
+                                                )
+                                          )}
 
                                     </div>
 
@@ -924,154 +898,127 @@ const Statistics = () => {
 
 
                         {/* =================================================
-                            QUICK SUMMARY
+                            WEBSITE STATISTICS SECTION
+                            BELOW OVERVIEW
                         ================================================= */}
 
-                        <div className="mt-5 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm sm:p-6">
+                        <div className="mt-7">
 
-                              <div className="mb-5">
-                                    <h2 className="text-lg font-bold text-gray-900 sm:text-xl">
-                                          Quick Summary
-                                    </h2>
+                              {/* HEADER */}
 
-                                    <p className="mt-1 text-xs text-gray-400 sm:text-sm">
-                                          Website-এর গুরুত্বপূর্ণ তথ্য এক নজরে
-                                    </p>
+                              <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+
+                                    <div>
+
+                                          <div className="flex items-center gap-2">
+
+                                                <span className="h-2.5 w-2.5 rounded-full bg-green-500 shadow-sm shadow-green-300" />
+
+                                                <span className="text-xs font-bold uppercase tracking-wider text-green-600">
+                                                      Dashboard Live
+                                                </span>
+
+                                          </div>
+
+                                          <h1 className="mt-2 text-2xl font-extrabold tracking-tight text-gray-900 sm:text-3xl">
+                                                Website Statistics
+                                          </h1>
+
+                                          <p className="mt-1 text-sm text-gray-500">
+                                                পোশাক বাড়ি ওয়েবসাইটের সম্পূর্ণ
+                                                overview এক জায়গায়
+                                          </p>
+
+                                    </div>
+
+                                    <button
+                                          onClick={() =>
+                                                fetchAllData(true)
+                                          }
+                                          disabled={refreshing}
+                                          className="inline-flex w-fit items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 shadow-sm transition hover:border-purple-200 hover:bg-purple-50 disabled:cursor-not-allowed disabled:opacity-60"
+                                    >
+
+                                          <span
+                                                className={
+                                                      refreshing
+                                                            ? "animate-spin"
+                                                            : ""
+                                                }
+                                          >
+                                                ↻
+                                          </span>
+
+                                          {refreshing
+                                                ? "Refreshing..."
+                                                : "Refresh Data"}
+
+                                    </button>
+
                               </div>
 
 
-                              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+                              {/* STAT CARDS */}
 
-                                    {/* Products */}
-                                    <div className="rounded-xl border border-purple-100 bg-purple-50 p-4">
-                                          <p className="text-xs font-semibold text-purple-600">
-                                                Products
-                                          </p>
+                              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 xl:grid-cols-5">
 
-                                          <p className="mt-1 text-2xl font-extrabold text-purple-800">
-                                                {
-                                                      statistics.productCount
-                                                }
-                                          </p>
-                                    </div>
+                                    {cards.map((card) => (
+                                          <div
+                                                key={card.title}
+                                                className="group relative overflow-hidden rounded-2xl border border-gray-100 bg-white p-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl sm:p-5"
+                                          >
 
+                                                {/* Decorative */}
 
-                                    {/* Categories */}
-                                    <div className="rounded-xl border border-blue-100 bg-blue-50 p-4">
-                                          <p className="text-xs font-semibold text-blue-600">
-                                                Categories
-                                          </p>
+                                                <div
+                                                      className={`absolute -right-8 -top-8 h-24 w-24 rounded-full ${card.bg} opacity-70 transition-transform duration-500 group-hover:scale-150`}
+                                                />
 
-                                          <p className="mt-1 text-2xl font-extrabold text-blue-800">
-                                                {
-                                                      statistics.categoryCount
-                                                }
-                                          </p>
-                                    </div>
+                                                <div className="relative">
 
+                                                      <div className="flex items-start justify-between gap-2">
 
-                                    {/* Orders */}
-                                    <div className="rounded-xl border border-green-100 bg-green-50 p-4">
-                                          <p className="text-xs font-semibold text-green-600">
-                                                Orders
-                                          </p>
+                                                            <div className="min-w-0">
 
-                                          <p className="mt-1 text-2xl font-extrabold text-green-800">
-                                                {
-                                                      statistics.orderCount
-                                                }
-                                          </p>
-                                    </div>
+                                                                  <p className="truncate text-xs font-semibold text-gray-500 sm:text-sm">
+                                                                        {
+                                                                              card.title
+                                                                        }
+                                                                  </p>
 
+                                                                  <h2 className="mt-2 text-2xl font-extrabold tracking-tight text-gray-900 sm:text-3xl">
+                                                                        {card.value.toLocaleString()}
+                                                                  </h2>
 
-                                    {/* Banner */}
-                                    <div className="rounded-xl border border-violet-100 bg-violet-50 p-4">
-                                          <p className="text-xs font-semibold text-violet-600">
-                                                Banners
-                                          </p>
+                                                            </div>
 
-                                          <p className="mt-1 text-2xl font-extrabold text-violet-800">
-                                                {
-                                                      statistics.bannerCount
-                                                }
-                                          </p>
-                                    </div>
+                                                            <div
+                                                                  className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${card.iconBg} text-xl transition duration-300 group-hover:scale-110`}
+                                                            >
+                                                                  {
+                                                                        card.icon
+                                                                  }
+                                                            </div>
 
+                                                      </div>
 
-                                    {/* Customers */}
-                                    <div className="rounded-xl border border-indigo-100 bg-indigo-50 p-4">
-                                          <p className="text-xs font-semibold text-indigo-600">
-                                                Customers
-                                          </p>
+                                                      <p className="mt-3 truncate text-[10px] text-gray-400 sm:text-xs">
+                                                            {
+                                                                  card.description
+                                                            }
+                                                      </p>
 
-                                          <p className="mt-1 text-2xl font-extrabold text-indigo-800">
-                                                {
-                                                      statistics.customerCount
-                                                }
-                                          </p>
-                                    </div>
+                                                </div>
 
-
-                                    {/* Campaign */}
-                                    <div className="rounded-xl border border-orange-100 bg-orange-50 p-4">
-                                          <p className="text-xs font-semibold text-orange-600">
-                                                Campaign
-                                          </p>
-
-                                          <p className="mt-1 text-2xl font-extrabold text-orange-800">
-                                                {
-                                                      statistics.campaignCount
-                                                }
-                                          </p>
-                                    </div>
-
-
-                                    {/* Super Deal */}
-                                    <div className="rounded-xl border border-red-100 bg-red-50 p-4">
-                                          <p className="text-xs font-semibold text-red-600">
-                                                Super Deal
-                                          </p>
-
-                                          <p className="mt-1 text-2xl font-extrabold text-red-800">
-                                                {
-                                                      statistics.superDealCount
-                                                }
-                                          </p>
-                                    </div>
-
-
-                                    {/* Cart */}
-                                    <div className="rounded-xl border border-cyan-100 bg-cyan-50 p-4">
-                                          <p className="text-xs font-semibold text-cyan-600">
-                                                Cart Items
-                                          </p>
-
-                                          <p className="mt-1 text-2xl font-extrabold text-cyan-800">
-                                                {
-                                                      statistics.cartCount
-                                                }
-                                          </p>
-                                    </div>
-
-
-                                    {/* Manufacture */}
-                                    <div className="rounded-xl border border-pink-100 bg-pink-50 p-4">
-                                          <p className="text-xs font-semibold text-pink-600">
-                                                Manufacture
-                                          </p>
-
-                                          <p className="mt-1 text-2xl font-extrabold text-pink-800">
-                                                {
-                                                      statistics.manufactureCount
-                                                }
-                                          </p>
-                                    </div>
+                                          </div>
+                                    ))}
 
                               </div>
 
                         </div>
 
                   </div>
+
             </div>
       );
 };

@@ -103,7 +103,7 @@ const MainNav = () => {
                                     {user ? (
                                           <div className="flex items-center">
                                                 {dashBordMail && (
-                                                      <Link to="/dashboard">
+                                                      <Link to="/dashboard/statistics">
                                                             <button className="px-3 mr-3 py-1.5 border border-purple-700 text-purple-700 rounded hover:bg-purple-50 transition-colors cursor-pointer">
                                                                   Dashboard
                                                             </button>
