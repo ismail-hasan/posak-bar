@@ -564,7 +564,7 @@ const Statistics = () => {
                                           <div>
 
                                                 <h2 className="text-lg font-bold text-gray-900 sm:text-xl">
-                                                      Order Overview
+                                                      Online Order Overview
                                                 </h2>
 
                                                 <p className="mt-1 text-xs text-gray-400 sm:text-sm">
