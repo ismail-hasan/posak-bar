@@ -108,7 +108,21 @@ const DashBordLayout = () => {
                                           <RxLayers className="text-xl shrink-0" />
 
                                           <span>
-                                                Orders
+                                                Online Store Orders
+                                          </span>
+                                    </NavLink>
+
+                                    <NavLink
+                                          to="/dashboard/manufactureorder"
+                                          onClick={() =>
+                                                setSidebarOpen(false)
+                                          }
+                                          className={navLinkStyle}
+                                    >
+                                          <FaIndustry className="text-x shrink-0" />
+
+                                          <span>
+                                                Manufacturing Orders
                                           </span>
                                     </NavLink>
 
@@ -165,19 +179,7 @@ const DashBordLayout = () => {
                                                 Control Deal
                                           </span>
                                     </NavLink>
-                                    <NavLink
-                                          to="/dashboard/manufactureorder"
-                                          onClick={() =>
-                                                setSidebarOpen(false)
-                                          }
-                                          className={navLinkStyle}
-                                    >
-                                          <FaIndustry className="text-x shrink-0" />
 
-                                          <span>
-                                                Manufacturing Orders
-                                          </span>
-                                    </NavLink>
                                     <NavLink
                                           to="/dashboard/banner"
                                           onClick={() =>
