@@ -8,6 +8,9 @@ const ManufactureOrder = () => {
       const [loading, setLoading] = useState(true);
       const [actionLoading, setActionLoading] = useState(null);
 
+      // Payment Proof Modal
+      const [selectedPaymentImage, setSelectedPaymentImage] = useState(null);
+
       // =========================
       // Jersey Style Bengali Names
       // =========================
@@ -58,6 +61,30 @@ const ManufactureOrder = () => {
 
       useEffect(() => {
             fetchOrders();
+      }, []);
+
+      // =========================
+      // Close Image Modal
+      // =========================
+      const closePaymentImage = () => {
+            setSelectedPaymentImage(null);
+      };
+
+      // =========================
+      // ESC Close Modal
+      // =========================
+      useEffect(() => {
+            const handleEscape = (e) => {
+                  if (e.key === "Escape") {
+                        closePaymentImage();
+                  }
+            };
+
+            window.addEventListener("keydown", handleEscape);
+
+            return () => {
+                  window.removeEventListener("keydown", handleEscape);
+            };
       }, []);
 
       // =========================
@@ -218,20 +245,22 @@ const ManufactureOrder = () => {
                                     onClick={() =>
                                           setActiveTab("all")
                                     }
-                                    className={`flex min-h-[58px] w-full items-center justify-center gap-2 rounded-xl border px-2 transition-all duration-200 sm:px-3 ${activeTab === "all"
-                                          ? "border-purple-600 bg-purple-600 text-white shadow-lg shadow-purple-200"
-                                          : "border-purple-100 bg-white text-gray-600 hover:border-purple-300 hover:bg-purple-50"
-                                          }`}
+                                    className={`flex min-h-[58px] w-full items-center justify-center gap-2 rounded-xl border px-2 transition-all duration-200 sm:px-3 ${
+                                          activeTab === "all"
+                                                ? "border-purple-600 bg-purple-600 text-white shadow-lg shadow-purple-200"
+                                                : "border-purple-100 bg-white text-gray-600 hover:border-purple-300 hover:bg-purple-50"
+                                    }`}
                               >
                                     <span className="whitespace-nowrap text-xs font-bold sm:text-sm md:text-base">
                                           All Orders
                                     </span>
 
                                     <span
-                                          className={`flex h-6 min-w-6 items-center justify-center rounded-full px-2 text-xs font-bold ${activeTab === "all"
-                                                ? "bg-white/20 text-white"
-                                                : "bg-purple-100 text-purple-700"
-                                                }`}
+                                          className={`flex h-6 min-w-6 items-center justify-center rounded-full px-2 text-xs font-bold ${
+                                                activeTab === "all"
+                                                      ? "bg-white/20 text-white"
+                                                      : "bg-purple-100 text-purple-700"
+                                          }`}
                                     >
                                           {allCount}
                                     </span>
@@ -243,20 +272,22 @@ const ManufactureOrder = () => {
                                     onClick={() =>
                                           setActiveTab("pending")
                                     }
-                                    className={`flex min-h-[58px] w-full items-center justify-center gap-2 rounded-xl border px-2 transition-all duration-200 sm:px-3 ${activeTab === "pending"
-                                          ? "border-purple-600 bg-purple-600 text-white shadow-lg shadow-purple-200"
-                                          : "border-purple-100 bg-white text-gray-600 hover:border-purple-300 hover:bg-purple-50"
-                                          }`}
+                                    className={`flex min-h-[58px] w-full items-center justify-center gap-2 rounded-xl border px-2 transition-all duration-200 sm:px-3 ${
+                                          activeTab === "pending"
+                                                ? "border-purple-600 bg-purple-600 text-white shadow-lg shadow-purple-200"
+                                                : "border-purple-100 bg-white text-gray-600 hover:border-purple-300 hover:bg-purple-50"
+                                    }`}
                               >
                                     <span className="whitespace-nowrap text-xs font-bold sm:text-sm md:text-base">
                                           Pending
                                     </span>
 
                                     <span
-                                          className={`flex h-6 min-w-6 items-center justify-center rounded-full px-2 text-xs font-bold ${activeTab === "pending"
-                                                ? "bg-white/20 text-white"
-                                                : "bg-purple-100 text-purple-700"
-                                                }`}
+                                          className={`flex h-6 min-w-6 items-center justify-center rounded-full px-2 text-xs font-bold ${
+                                                activeTab === "pending"
+                                                      ? "bg-white/20 text-white"
+                                                      : "bg-purple-100 text-purple-700"
+                                          }`}
                                     >
                                           {pendingCount}
                                     </span>
@@ -268,20 +299,22 @@ const ManufactureOrder = () => {
                                     onClick={() =>
                                           setActiveTab("processing")
                                     }
-                                    className={`flex min-h-[58px] w-full items-center justify-center gap-2 rounded-xl border px-2 transition-all duration-200 sm:px-3 ${activeTab === "processing"
-                                          ? "border-purple-600 bg-purple-600 text-white shadow-lg shadow-purple-200"
-                                          : "border-purple-100 bg-white text-gray-600 hover:border-purple-300 hover:bg-purple-50"
-                                          }`}
+                                    className={`flex min-h-[58px] w-full items-center justify-center gap-2 rounded-xl border px-2 transition-all duration-200 sm:px-3 ${
+                                          activeTab === "processing"
+                                                ? "border-purple-600 bg-purple-600 text-white shadow-lg shadow-purple-200"
+                                                : "border-purple-100 bg-white text-gray-600 hover:border-purple-300 hover:bg-purple-50"
+                                    }`}
                               >
                                     <span className="whitespace-nowrap text-xs font-bold sm:text-sm md:text-base">
                                           Processing
                                     </span>
 
                                     <span
-                                          className={`flex h-6 min-w-6 items-center justify-center rounded-full px-2 text-xs font-bold ${activeTab === "processing"
-                                                ? "bg-white/20 text-white"
-                                                : "bg-purple-100 text-purple-700"
-                                                }`}
+                                          className={`flex h-6 min-w-6 items-center justify-center rounded-full px-2 text-xs font-bold ${
+                                                activeTab === "processing"
+                                                      ? "bg-white/20 text-white"
+                                                      : "bg-purple-100 text-purple-700"
+                                          }`}
                                     >
                                           {processingCount}
                                     </span>
@@ -293,20 +326,22 @@ const ManufactureOrder = () => {
                                     onClick={() =>
                                           setActiveTab("completed")
                                     }
-                                    className={`flex min-h-[58px] w-full items-center justify-center gap-2 rounded-xl border px-2 transition-all duration-200 sm:px-3 ${activeTab === "completed"
-                                          ? "border-purple-600 bg-purple-600 text-white shadow-lg shadow-purple-200"
-                                          : "border-purple-100 bg-white text-gray-600 hover:border-purple-300 hover:bg-purple-50"
-                                          }`}
+                                    className={`flex min-h-[58px] w-full items-center justify-center gap-2 rounded-xl border px-2 transition-all duration-200 sm:px-3 ${
+                                          activeTab === "completed"
+                                                ? "border-purple-600 bg-purple-600 text-white shadow-lg shadow-purple-200"
+                                                : "border-purple-100 bg-white text-gray-600 hover:border-purple-300 hover:bg-purple-50"
+                                    }`}
                               >
                                     <span className="whitespace-nowrap text-xs font-bold sm:text-sm md:text-base">
                                           Completed
                                     </span>
 
                                     <span
-                                          className={`flex h-6 min-w-6 items-center justify-center rounded-full px-2 text-xs font-bold ${activeTab === "completed"
-                                                ? "bg-white/20 text-white"
-                                                : "bg-purple-100 text-purple-700"
-                                                }`}
+                                          className={`flex h-6 min-w-6 items-center justify-center rounded-full px-2 text-xs font-bold ${
+                                                activeTab === "completed"
+                                                      ? "bg-white/20 text-white"
+                                                      : "bg-purple-100 text-purple-700"
+                                          }`}
                                     >
                                           {completedCount}
                                     </span>
@@ -344,7 +379,7 @@ const ManufactureOrder = () => {
 
                                     {/* Horizontal Scroll Container */}
                                     <div className="w-full overflow-x-auto">
-                                          <table className="w-max min-w-[2050px] border-collapse">
+                                          <table className="w-max min-w-[2450px] border-collapse">
 
                                                 {/* =========================
                                                     HEADER
@@ -388,8 +423,14 @@ const ManufactureOrder = () => {
                                                                   Delivery
                                                             </th>
 
+                                                            {/* TRANSACTION ID */}
                                                             <th className="w-[180px] min-w-[180px] border-r border-purple-600 px-3 py-4 text-center text-xs font-bold uppercase tracking-wide text-white">
-                                                                  Terms
+                                                                  Transaction ID
+                                                            </th>
+
+                                                            {/* PAYMENT PROOF */}
+                                                            <th className="w-[150px] min-w-[150px] border-r border-purple-600 px-3 py-4 text-center text-xs font-bold uppercase tracking-wide text-white">
+                                                                  Payment Proof
                                                             </th>
 
                                                             <th className="w-[125px] min-w-[125px] border-r border-purple-600 px-3 py-4 text-center text-xs font-bold uppercase tracking-wide text-white">
@@ -435,8 +476,20 @@ const ManufactureOrder = () => {
                                                                         order.delivery ||
                                                                         {};
 
-                                                                  const terms =
-                                                                        order.terms;
+                                                                  // =========================
+                                                                  // Payment Data
+                                                                  // =========================
+                                                                  const payment =
+                                                                        order.payment ||
+                                                                        {};
+
+                                                                  const transactionId =
+                                                                        payment.transactionId ||
+                                                                        "-";
+
+                                                                  const paymentProof =
+                                                                        payment.paymentProof ||
+                                                                        "";
 
                                                                   const status =
                                                                         normalizeStatus(
@@ -694,49 +747,75 @@ const ManufactureOrder = () => {
                                                                                     </div>
                                                                               </td>
 
-                                                                              {/* TERMS */}
+                                                                              {/* =========================
+                                                                                  TRANSACTION ID
+                                                                              ========================= */}
                                                                               <td className="px-3 py-4 text-center align-middle">
-                                                                                    <div className="mx-auto w-[155px]">
-                                                                                          {Array.isArray(
-                                                                                                terms
-                                                                                          ) ? (
-                                                                                                <div className="space-y-1">
-                                                                                                      {terms.map(
-                                                                                                            (
-                                                                                                                  term,
-                                                                                                                  i
-                                                                                                            ) => (
-                                                                                                                  <p
-                                                                                                                        key={
-                                                                                                                              i
-                                                                                                                        }
-                                                                                                                        className="text-xs leading-4 text-gray-600"
-                                                                                                                  >
-                                                                                                                        {term}
-                                                                                                                  </p>
-                                                                                                            )
-                                                                                                      )}
-                                                                                                </div>
+                                                                                    <div className="mx-auto w-[160px]">
+                                                                                          {transactionId !==
+                                                                                          "-" ? (
+                                                                                                <span className="block break-all rounded-lg border border-blue-100 bg-blue-50 px-3 py-2 text-xs font-bold text-blue-700">
+                                                                                                      {
+                                                                                                            transactionId
+                                                                                                      }
+                                                                                                </span>
                                                                                           ) : (
-                                                                                                <p className="break-words text-xs leading-4 text-gray-600">
-                                                                                                      {terms ||
-                                                                                                            "-"}
-                                                                                                </p>
+                                                                                                <span className="text-sm text-gray-400">
+                                                                                                      -
+                                                                                                </span>
                                                                                           )}
                                                                                     </div>
+                                                                              </td>
+
+                                                                              {/* =========================
+                                                                                  PAYMENT PROOF
+                                                                              ========================= */}
+                                                                              <td className="px-3 py-4 text-center align-middle">
+                                                                                    {paymentProof ? (
+                                                                                          <div className="flex justify-center">
+                                                                                                <button
+                                                                                                      type="button"
+                                                                                                      onClick={() =>
+                                                                                                            setSelectedPaymentImage(
+                                                                                                                  paymentProof
+                                                                                                            )
+                                                                                                      }
+                                                                                                      className="group relative overflow-hidden rounded-lg border border-purple-100 bg-purple-50 p-1 shadow-sm transition-all duration-200 hover:border-purple-400 hover:shadow-md"
+                                                                                                >
+                                                                                                      <img
+                                                                                                            src={
+                                                                                                                  paymentProof
+                                                                                                            }
+                                                                                                            alt="Payment Proof"
+                                                                                                            className="h-16 w-24 rounded-md object-cover transition-transform duration-200 group-hover:scale-105"
+                                                                                                      />
+
+                                                                                                      <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition-all group-hover:bg-black/20">
+                                                                                                            <span className="text-white opacity-0 transition-opacity group-hover:opacity-100">
+                                                                                                                  🔍
+                                                                                                            </span>
+                                                                                                      </div>
+                                                                                                </button>
+                                                                                          </div>
+                                                                                    ) : (
+                                                                                          <span className="text-sm text-gray-400">
+                                                                                                -
+                                                                                          </span>
+                                                                                    )}
                                                                               </td>
 
                                                                               {/* STATUS */}
                                                                               <td className="px-3 py-4 text-center align-middle">
                                                                                     <span
-                                                                                          className={`inline-flex rounded-full px-3 py-1.5 text-xs font-bold uppercase ${status ===
+                                                                                          className={`inline-flex rounded-full px-3 py-1.5 text-xs font-bold uppercase ${
+                                                                                                status ===
                                                                                                 "completed"
-                                                                                                ? "bg-purple-100 text-purple-700"
-                                                                                                : status ===
-                                                                                                      "processing"
-                                                                                                      ? "bg-blue-100 text-blue-700"
-                                                                                                      : "bg-amber-100 text-amber-700"
-                                                                                                }`}
+                                                                                                      ? "bg-purple-100 text-purple-700"
+                                                                                                      : status ===
+                                                                                                            "processing"
+                                                                                                            ? "bg-blue-100 text-blue-700"
+                                                                                                            : "bg-amber-100 text-amber-700"
+                                                                                          }`}
                                                                                     >
                                                                                           {
                                                                                                 status
@@ -754,9 +833,9 @@ const ManufactureOrder = () => {
                                                                                                 disabled={
                                                                                                       rowLoading ||
                                                                                                       status ===
-                                                                                                      "processing" ||
+                                                                                                            "processing" ||
                                                                                                       status ===
-                                                                                                      "completed"
+                                                                                                            "completed"
                                                                                                 }
                                                                                                 onClick={() =>
                                                                                                       handleStatusChange(
@@ -764,14 +843,15 @@ const ManufactureOrder = () => {
                                                                                                             "processing"
                                                                                                       )
                                                                                                 }
-                                                                                                className={`inline-flex min-w-[95px] items-center justify-center rounded-lg px-3 py-2 text-xs font-bold shadow-sm transition-all duration-200 ${status ===
+                                                                                                className={`inline-flex min-w-[95px] items-center justify-center rounded-lg px-3 py-2 text-xs font-bold shadow-sm transition-all duration-200 ${
+                                                                                                      status ===
                                                                                                       "processing"
-                                                                                                      ? "cursor-not-allowed bg-blue-100 text-blue-400"
-                                                                                                      : status ===
-                                                                                                            "completed"
-                                                                                                            ? "cursor-not-allowed bg-gray-100 text-gray-400"
-                                                                                                            : "bg-blue-600 text-white hover:bg-blue-700 hover:shadow-md"
-                                                                                                      }`}
+                                                                                                            ? "cursor-not-allowed bg-blue-100 text-blue-400"
+                                                                                                            : status ===
+                                                                                                                  "completed"
+                                                                                                                  ? "cursor-not-allowed bg-gray-100 text-gray-400"
+                                                                                                                  : "bg-blue-600 text-white hover:bg-blue-700 hover:shadow-md"
+                                                                                                }`}
                                                                                           >
                                                                                                 {processingLoading
                                                                                                       ? "..."
@@ -784,7 +864,7 @@ const ManufactureOrder = () => {
                                                                                                 disabled={
                                                                                                       rowLoading ||
                                                                                                       status ===
-                                                                                                      "completed"
+                                                                                                            "completed"
                                                                                                 }
                                                                                                 onClick={() =>
                                                                                                       handleStatusChange(
@@ -792,11 +872,12 @@ const ManufactureOrder = () => {
                                                                                                             "completed"
                                                                                                       )
                                                                                                 }
-                                                                                                className={`inline-flex min-w-[90px] items-center justify-center rounded-lg px-3 py-2 text-xs font-bold shadow-sm transition-all duration-200 ${status ===
+                                                                                                className={`inline-flex min-w-[90px] items-center justify-center rounded-lg px-3 py-2 text-xs font-bold shadow-sm transition-all duration-200 ${
+                                                                                                      status ===
                                                                                                       "completed"
-                                                                                                      ? "cursor-not-allowed bg-purple-100 text-purple-400"
-                                                                                                      : "bg-purple-600 text-white hover:bg-purple-700 hover:shadow-md"
-                                                                                                      }`}
+                                                                                                            ? "cursor-not-allowed bg-purple-100 text-purple-400"
+                                                                                                            : "bg-purple-600 text-white hover:bg-purple-700 hover:shadow-md"
+                                                                                                }`}
                                                                                           >
                                                                                                 {completeLoading
                                                                                                       ? "..."
@@ -830,7 +911,7 @@ const ManufactureOrder = () => {
                                           </table>
                                     </div>
 
-                                    {/* Mobile / Small Screen Hint */}
+                                    {/* Horizontal Scroll Hint */}
                                     <div className="border-t border-purple-50 bg-purple-50/30 px-4 py-2 text-center text-[11px] font-medium text-purple-500 sm:text-xs">
                                           ← Swipe left or right to view all
                                           columns →
@@ -838,6 +919,37 @@ const ManufactureOrder = () => {
                               </div>
                         )}
                   </div>
+
+                  {/* =========================
+                      PAYMENT IMAGE MODAL
+                  ========================= */}
+                  {selectedPaymentImage && (
+                        <div
+                              className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm"
+                              onClick={closePaymentImage}
+                        >
+                              <div
+                                    className="relative flex max-h-[92vh] max-w-[95vw] items-center justify-center"
+                                    onClick={(e) => e.stopPropagation()}
+                              >
+                                    {/* CLOSE BUTTON */}
+                                    <button
+                                          type="button"
+                                          onClick={closePaymentImage}
+                                          className="absolute -right-3 -top-3 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white text-xl font-bold text-gray-700 shadow-lg transition hover:bg-red-500 hover:text-white"
+                                    >
+                                          ✕
+                                    </button>
+
+                                    {/* LARGE IMAGE */}
+                                    <img
+                                          src={selectedPaymentImage}
+                                          alt="Payment Proof Preview"
+                                          className="max-h-[90vh] max-w-[90vw] rounded-xl bg-white object-contain shadow-2xl"
+                                    />
+                              </div>
+                        </div>
+                  )}
             </div>
       );
 };

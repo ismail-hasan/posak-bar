@@ -396,7 +396,7 @@ const Statistics = () => {
 
       const cards = [
             {
-                  title: "মোট Product",
+                  title: "Total Product",
                   value: statistics.productCount,
                   description: "Website-এর সকল product",
                   icon: "📦",
@@ -404,7 +404,7 @@ const Statistics = () => {
                   iconBg: "bg-purple-100",
             },
             {
-                  title: "মোট Category",
+                  title: "Total Category",
                   value: statistics.categoryCount,
                   description: "Website categories",
                   icon: "🗂️",
@@ -412,9 +412,9 @@ const Statistics = () => {
                   iconBg: "bg-blue-100",
             },
             {
-                  title: "মোট Order",
+                  title: "Online Store Order",
                   value: statistics.orderCount,
-                  description: "Customer final orders",
+                  description: "Online Store Orders",
                   icon: "🛍️",
                   bg: "bg-green-50",
                   iconBg: "bg-green-100",
@@ -436,7 +436,7 @@ const Statistics = () => {
                   iconBg: "bg-orange-100",
             },
             {
-                  title: "Manufacture",
+                  title: "Manufacture order",
                   value: statistics.manufactureCount,
                   description: "Manufacturing orders",
                   icon: "🏭",
@@ -564,11 +564,11 @@ const Statistics = () => {
                                           <div>
 
                                                 <h2 className="text-lg font-bold text-gray-900 sm:text-xl">
-                                                      Online Order Overview
+                                                      Online Store Overview
                                                 </h2>
 
                                                 <p className="mt-1 text-xs text-gray-400 sm:text-sm">
-                                                      সব order-এর status breakdown
+                                                      Online Store Order status breakdown
                                                 </p>
 
                                           </div>

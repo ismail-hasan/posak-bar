@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Footer from "./Footer";
+import ImageUpload from "../Components/ImagePost.jsx";
 
 const API_URL = "https://posak-bari-backend.vercel.app/manufacture";
 
@@ -53,8 +54,8 @@ const TERMS_LIST = [
 
 const SectionCard = ({ title, children }) => {
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 sm:p-6 mb-4">
-      <h2 className="text-[22px] sm:text-base font-semibold text-gray-800 border-b border-gray-100 pb-3 mb-4">
+    <div className="mb-4 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm sm:p-6">
+      <h2 className="mb-4 border-b border-gray-100 pb-3 text-[22px] font-semibold text-gray-800 sm:text-base">
         {title}
       </h2>
 
@@ -69,13 +70,13 @@ const ToggleBtn = ({ label, active, onClick }) => {
       type="button"
       onClick={onClick}
       className={[
-        "flex-1 min-w-0 py-2 px-2 sm:px-4 rounded-xl",
-        "text-xs sm:text-sm font-medium border",
+        "min-w-0 flex-1 rounded-xl px-2 py-2 sm:px-4",
         "whitespace-nowrap overflow-hidden text-ellipsis",
+        "border text-xs font-medium sm:text-sm",
         "transition-all duration-150",
         active
-          ? "bg-blue-600 text-white border-blue-600 shadow-sm"
-          : "bg-white text-gray-500 border-gray-200 hover:border-blue-300 hover:text-blue-700",
+          ? "border-blue-600 bg-blue-600 text-white shadow-sm"
+          : "border-gray-200 bg-white text-gray-500 hover:border-blue-300 hover:text-blue-700",
       ].join(" ")}
     >
       {label}
@@ -87,19 +88,19 @@ const Label = ({ children, required, htmlFor }) => {
   return (
     <label
       htmlFor={htmlFor}
-      className="block text-sm font-medium text-gray-600 mb-1.5"
+      className="mb-1.5 block text-sm font-medium text-gray-600"
     >
       {children}
 
-      {required && <span className="text-red-500 ml-1">*</span>}
+      {required && <span className="ml-1 text-red-500">*</span>}
     </label>
   );
 };
 
 const inputCls =
-  "w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-gray-50 " +
+  "w-full rounded-xl border border-gray-200 bg-gray-50 px-3.5 py-2.5 " +
   "text-sm text-gray-800 placeholder-gray-400 " +
-  "focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition";
+  "transition focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-400";
 
 const Input = ({ type, onChange, ...props }) => {
   return (
@@ -126,7 +127,7 @@ const Textarea = ({ onChange, ...props }) => {
 
 const InfoBox = ({ children }) => {
   return (
-    <div className="bg-blue-50 border-l-4 border-red-500 rounded-r-xl px-4 py-3 text-sm text-blue-900 mb-4 leading-relaxed">
+    <div className="mb-4 rounded-r-xl border-l-4 border-red-500 bg-blue-50 px-4 py-3 text-sm leading-relaxed text-blue-900">
       {children}
     </div>
   );
@@ -134,7 +135,7 @@ const InfoBox = ({ children }) => {
 
 const FieldError = ({ msg }) => {
   return msg ? (
-    <p className="text-red-500 text-xs mt-1">{msg}</p>
+    <p className="mt-1 text-xs text-red-500">{msg}</p>
   ) : null;
 };
 
@@ -167,6 +168,13 @@ const OrderForm = () => {
     delivery: {
       type: "courier",
       payer: "customer",
+    },
+
+    // ⭐ NEW: Advance Payment
+    payment: {
+      advancePercentage: 30,
+      transactionId: "",
+      paymentProof: "",
     },
 
     termsAccepted: false,
@@ -215,6 +223,23 @@ const OrderForm = () => {
         [key]: value,
       },
     }));
+  };
+
+  // ⭐ NEW: Payment Update
+  const updatePayment = (key, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      payment: {
+        ...prev.payment,
+        [key]: value,
+      },
+    }));
+  };
+
+  // ⭐ NEW: Payment Proof Upload
+  const handlePaymentProofUpload = (imageUrl) => {
+    updatePayment("paymentProof", imageUrl);
+    clearErr("paymentProof");
   };
 
   // ─────────────────────────────────────────────
@@ -383,7 +408,6 @@ const OrderForm = () => {
     if (formData.productType === "manufacturing") {
       const jersey = formData.manufacturing.jerseyStyle;
 
-      // চারটি স্টাইলের মধ্যে অন্তত একটি ইনপুট পূরণ করতে হবে।
       const hasJerseyStyle = Object.values(jersey).some(
         (value) => value !== "" && Number(value) > 0
       );
@@ -393,12 +417,10 @@ const OrderForm = () => {
           "কলার/গোলগলা স্টাইলের যেকোনো একটি পরিমাণ লিখুন";
       }
 
-      // বড়দের সাইজ হলে সাইজের মোট ও জার্সির মোট সমান হতে হবে।
       if (formData.manufacturing.sizeCategory === "adult") {
-        const sizeTotal = Object.values(formData.manufacturing.sizes).reduce(
-          (sum, value) => sum + Number(value || 0),
-          0
-        );
+        const sizeTotal = Object.values(
+          formData.manufacturing.sizes
+        ).reduce((sum, value) => sum + Number(value || 0), 0);
 
         const jerseyTotal =
           Number(jersey.kolarHalf || 0) +
@@ -410,6 +432,16 @@ const OrderForm = () => {
           e.sizeMismatch = `মোট সাইজ: ${sizeTotal} পিস এবং মোট জার্সির পরিমাণ: ${jerseyTotal} পিস — সমান দিন`;
         }
       }
+    }
+
+    // ⭐ NEW: Advance Payment Validation
+
+    if (!formData.payment.transactionId.trim()) {
+      e.transactionId = "Transaction ID লিখুন";
+    }
+
+    if (!formData.payment.paymentProof) {
+      e.paymentProof = "পেমেন্টের প্রমাণ হিসেবে ছবি আপলোড করুন";
     }
 
     if (!formData.termsAccepted) {
@@ -466,7 +498,6 @@ const OrderForm = () => {
         );
       }
 
-
       setSubmitted(true);
     } catch (error) {
       console.error("Order submit error:", error);
@@ -511,6 +542,13 @@ const OrderForm = () => {
         payer: "customer",
       },
 
+      // ⭐ NEW
+      payment: {
+        advancePercentage: 30,
+        transactionId: "",
+        paymentProof: "",
+      },
+
       termsAccepted: false,
     });
 
@@ -540,15 +578,15 @@ const OrderForm = () => {
 
   if (submitted) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-red-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-3xl shadow-xl p-8 sm:p-12 text-center max-w-sm w-full">
-          <div className="text-5xl mb-4">🎉</div>
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 to-red-50 p-4">
+        <div className="w-full max-w-sm rounded-3xl bg-white p-8 text-center shadow-xl sm:p-12">
+          <div className="mb-4 text-5xl">🎉</div>
 
-          <h1 className="text-xl sm:text-2xl font-bold text-blue-700 mb-3">
+          <h1 className="mb-3 text-xl font-bold text-blue-700 sm:text-2xl">
             ধন্যবাদ!
           </h1>
 
-          <p className="text-gray-600 leading-relaxed mb-6 text-sm sm:text-base">
+          <p className="mb-6 text-sm leading-relaxed text-gray-600 sm:text-base">
             আপনার অর্ডার সফলভাবে গৃহীত হয়েছে। আমাদের টিম খুব শীঘ্রই আপনার
             সাথে যোগাযোগ করবে। অনুগ্রহ করে অপেক্ষা করুন।
           </p>
@@ -556,7 +594,7 @@ const OrderForm = () => {
           <button
             type="button"
             onClick={resetForm}
-            className="w-full py-3 rounded-xl font-medium text-white transition bg-gradient-to-r from-blue-600 to-red-600 hover:from-blue-700 hover:to-red-700"
+            className="w-full rounded-xl bg-gradient-to-r from-blue-600 to-red-600 py-3 font-medium text-white transition hover:from-blue-700 hover:to-red-700"
           >
             নতুন অর্ডার করুন
           </button>
@@ -570,12 +608,12 @@ const OrderForm = () => {
   // ─────────────────────────────────────────────
 
   return (
-    <div className="min-h-screen bg-slate-50 py-6 px-3 sm:px-6">
-      <div className="max-w-2xl mx-auto">
+    <div className="min-h-screen bg-slate-50 px-3 py-6 sm:px-6">
+      <div className="mx-auto max-w-2xl">
 
         {/* Header */}
-        <div className="bg-gradient-to-r from-green-700 to-red-600 rounded-2xl p-6 sm:p-8 mb-5 text-center shadow-md">
-          <h1 className="text-[21px] sm:text-3xl font-bold text-white mb-1">
+        <div className="mb-5 rounded-2xl bg-gradient-to-r from-green-700 to-red-600 p-6 text-center shadow-md sm:p-8">
+          <h1 className="mb-1 text-[21px] font-bold text-white sm:text-3xl">
             🎽 কাস্টমাইজ জার্সি অর্ডার ফরম
           </h1>
         </div>
@@ -584,7 +622,7 @@ const OrderForm = () => {
 
           {/* Product Type */}
           <SectionCard title="কোন পণ্যটি অর্ডার করতে চান? নির্বাচন করুন">
-            <div className="flex gap-2 mb-4">
+            <div className="mb-4 flex gap-2">
               <ToggleBtn
                 label="🏭 মেনুফেকচারিং"
                 active={formData.productType === "manufacturing"}
@@ -605,7 +643,7 @@ const OrderForm = () => {
 
             <div
               id="field-product"
-              className="grid grid-cols-1 sm:grid-cols-2 gap-3"
+              className="grid grid-cols-1 gap-3 sm:grid-cols-2"
             >
               {(formData.productType === "manufacturing"
                 ? MANUFACTURING_PRODUCTS
@@ -614,7 +652,7 @@ const OrderForm = () => {
                 <label
                   key={product}
                   className={[
-                    "flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all duration-200",
+                    "flex cursor-pointer items-center gap-3 rounded-xl border p-3 transition-all duration-200",
                     formData.products.includes(product)
                       ? "border-red-500 bg-blue-50 shadow-sm"
                       : "border-gray-200 bg-white hover:border-blue-300",
@@ -624,10 +662,10 @@ const OrderForm = () => {
                     type="checkbox"
                     checked={formData.products.includes(product)}
                     onChange={() => toggleProduct(product)}
-                    className="w-5 h-5 accent-blue-600 cursor-pointer flex-shrink-0"
+                    className="h-5 w-5 flex-shrink-0 cursor-pointer accent-blue-600"
                   />
 
-                  <span className="text-sm font-medium text-gray-800 flex-1">
+                  <span className="flex-1 text-sm font-medium text-gray-800">
                     {product}
                   </span>
 
@@ -647,7 +685,7 @@ const OrderForm = () => {
                             e.target.value
                           );
                         }}
-                        className="w-20 text-center px-2 py-1.5 rounded-lg border border-gray-300 bg-white text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition"
+                        className="w-20 rounded-lg border border-gray-300 bg-white px-2 py-1.5 text-center text-sm text-gray-800 transition focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-400"
                       />
                     )}
                 </label>
@@ -659,8 +697,7 @@ const OrderForm = () => {
 
           {/* Customer Info */}
           <SectionCard title="গ্রাহকের তথ্য">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-
+            <div className="mb-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div id="field-name">
                 <Label htmlFor="customerName" required>
                   গ্রাহকের নাম
@@ -723,15 +760,14 @@ const OrderForm = () => {
           {formData.productType === "manufacturing" && (
             <SectionCard title="ফেব্রিক ও স্টাইল">
               <div id="field-fabric">
-
                 <FieldError msg={errors.fabric} />
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-2">
+                <div className="mb-2 grid grid-cols-1 gap-3 sm:grid-cols-2">
                   {FABRICS.map((fabric) => (
                     <div
                       key={fabric.id}
                       className={[
-                        "p-4 rounded-xl border transition-all duration-150",
+                        "rounded-xl border p-4 transition-all duration-150",
                         formData.manufacturing.fabric?.id === fabric.id
                           ? "border-red-500 bg-blue-50 shadow-sm"
                           : "border-gray-200 bg-white",
@@ -739,11 +775,11 @@ const OrderForm = () => {
                     >
                       <div className="flex items-center justify-between gap-3">
                         <div>
-                          <h3 className="text-sm md:text-base font-semibold text-gray-800">
+                          <h3 className="text-sm font-semibold text-gray-800 md:text-base">
                             {fabric.name}
                           </h3>
 
-                          <p className="text-xs text-gray-400 mt-1">
+                          <p className="mt-1 text-xs text-gray-400">
                             {fabric.gsm}
                           </p>
                         </div>
@@ -759,7 +795,7 @@ const OrderForm = () => {
                             updateManufacturing("fabric", fabric);
                             clearErr("fabric");
                           }}
-                          className="w-5 h-5 accent-blue-600 cursor-pointer"
+                          className="h-5 w-5 cursor-pointer accent-blue-600"
                         />
                       </div>
                     </div>
@@ -781,7 +817,6 @@ const OrderForm = () => {
           {/* Size Chart */}
           {formData.productType === "manufacturing" && (
             <SectionCard title="সাইজ চার্ট">
-
               <div className="mb-4">
                 <Label>সাইজ ক্যাটাগরি</Label>
 
@@ -859,14 +894,14 @@ const OrderForm = () => {
                             updateSize(size, e.target.value);
                             clearErr("sizeMismatch");
                           }}
-                          className="w-full text-center px-1 py-2 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition"
+                          className="w-full rounded-xl border border-gray-200 bg-gray-50 px-1 py-2 text-center text-sm text-gray-800 transition focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-400"
                         />
                       </div>
                     ))}
                   </div>
 
                   <div className="mt-4 text-right">
-                    <p className="text-sm sm:text-base text-gray-600">
+                    <p className="text-sm text-gray-600 sm:text-base">
                       মোট সাইজ:{" "}
                       <span className="font-bold text-blue-600">
                         {totalSizeQty} পিস
@@ -887,11 +922,9 @@ const OrderForm = () => {
           {/* Jersey Quantity */}
           {formData.productType === "manufacturing" && (
             <SectionCard title="জার্সির স্টাইল ও পরিমাণ দিন">
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-
+              <div className="mb-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div id="field-kolarHalf">
-                  <Label htmlFor="kolarHalf" >
+                  <Label htmlFor="kolarHalf">
                     কলার হাফহাতা
                   </Label>
 
@@ -908,11 +941,10 @@ const OrderForm = () => {
                       )
                     }
                   />
-
                 </div>
 
                 <div id="field-kolarFull">
-                  <Label htmlFor="kolarFull" >
+                  <Label htmlFor="kolarFull">
                     কলার ফুলহাতা
                   </Label>
 
@@ -929,11 +961,10 @@ const OrderForm = () => {
                       )
                     }
                   />
-
                 </div>
 
                 <div id="field-golGolaHalf">
-                  <Label htmlFor="golGolaHalf" >
+                  <Label htmlFor="golGolaHalf">
                     গোলগলা হাফহাতা
                   </Label>
 
@@ -950,11 +981,10 @@ const OrderForm = () => {
                       )
                     }
                   />
-
                 </div>
 
                 <div id="field-golGolaFull">
-                  <Label htmlFor="golGolaFull" >
+                  <Label htmlFor="golGolaFull">
                     গোলগলা ফুলহাতা
                   </Label>
 
@@ -971,7 +1001,6 @@ const OrderForm = () => {
                       )
                     }
                   />
-
                 </div>
               </div>
 
@@ -984,22 +1013,17 @@ const OrderForm = () => {
                   type="number"
                   value={totalJerseyQty}
                   readOnly
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-gray-100 text-sm font-semibold text-purple-700 cursor-not-allowed"
+                  className="w-full cursor-not-allowed rounded-xl border border-gray-200 bg-gray-100 px-3.5 py-2.5 text-sm font-semibold text-purple-700"
                 />
               </div>
             </SectionCard>
           )}
 
           {/* Delivery */}
-
-
-
-
           <SectionCard title="ডেলিভারি পদ্ধতি">
-
             <Label>ডেলিভারির ধরন নির্বাচন করুন</Label>
 
-            <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-4">
+            <div className="mb-4 grid grid-cols-3 gap-2 sm:gap-3">
               {DELIVERY_OPTIONS.map(({ val, emoji, label }) => (
                 <button
                   key={val}
@@ -1008,13 +1032,13 @@ const OrderForm = () => {
                     updateDelivery("type", val)
                   }
                   className={[
-                    "py-3 px-1 rounded-xl border text-center transition-all",
+                    "rounded-xl border px-1 py-3 text-center transition-all",
                     formData.delivery.type === val
                       ? "border-blue-600 bg-blue-50 text-blue-800"
                       : "border-gray-200 bg-white text-gray-600 hover:border-blue-300",
                   ].join(" ")}
                 >
-                  <div className="text-xl mb-1">
+                  <div className="mb-1 text-xl">
                     {emoji}
                   </div>
 
@@ -1050,26 +1074,140 @@ const OrderForm = () => {
             </div>
           </SectionCard>
 
+          {/* =====================================================
+              ⭐ ADVANCE PAYMENT
+          ===================================================== */}
+
+          <SectionCard title="অগ্রিম পেমেন্ট">
+            <div
+              id="field-transactionId"
+              className="rounded-2xl border border-purple-100 bg-gradient-to-br from-purple-50 via-white to-blue-50 p-4 sm:p-5"
+            >
+
+
+              {/* Payment Notice */}
+
+              {/* Payment Notice */}
+              <div className="mb-5 rounded-xl border border-red-600 bg-red-600 p-4">
+                <div className="flex items-start gap-3">
+
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/20 text-xl">
+                    💰
+                  </div>
+
+                  <div className="flex-1">
+                    <h3 className="font-bold text-white">
+                      ৩০% অগ্রিম পেমেন্ট আবশ্যক
+                    </h3>
+
+                    <p className="mt-1 text-sm leading-relaxed text-white/95">
+                      অর্ডার কনফার্ম করার জন্য মোট অর্ডার মূল্যের
+                      <strong className="text-white"> ৩০% অগ্রিম </strong>
+                      প্রদান করতে হবে। পেমেন্ট করার পর Transaction ID
+                      এবং পেমেন্টের Screenshot/Proof নিচে দিন।
+                      অগ্রীম পেমেন্ট সম্পর্কে বিস্তারিত জানতে হটলাইনে যোগাযোগ করুন।
+                    </p>
+                  </div>
+
+                </div>
+              </div>
+
+              <div className="mt-2 flex w-full justify-center px-4">
+                <div className="w-full max-w-xl text-center text-green-600">
+
+
+                  <a
+                    href="https://wa.me/8801305506395"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mb-8 inline-flex items-center justify-center rounded-full bg-red-600 px-5 py-2 text-sm font-semibold text-white sm:text-base"
+                  >
+                    সাপোর্ট টিম
+                  </a>
+                </div>
+              </div>
+
+              {/* Transaction ID */}
+              <div className="mb-5">
+                <Label htmlFor="transactionId" required>
+                  Transaction ID
+                </Label>
+
+                <Input
+                  id="transactionId"
+                  type="text"
+                  placeholder="আপনার Transaction ID লিখুন"
+                  value={formData.payment.transactionId}
+                  onChange={(e) => {
+                    updatePayment(
+                      "transactionId",
+                      e.target.value
+                    );
+                    clearErr("transactionId");
+                  }}
+                />
+
+                <FieldError msg={errors.transactionId} />
+              </div>
+
+              {/* Payment Proof */}
+              <div id="field-paymentProof">
+                <Label required>
+                  পেমেন্টের Screenshot / Proof
+                </Label>
+
+                <ImageUpload
+                  collectionName="manufactureOrder"
+                  onUploadSuccess={
+                    handlePaymentProofUpload
+                  }
+                />
+
+                {/* Uploaded Image Preview */}
+                {formData.payment.paymentProof && (
+                  <div className="mt-4 overflow-hidden rounded-xl border border-green-200 bg-green-50 p-3">
+                    <div className="mb-2 flex items-center gap-2">
+                      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-green-500 text-xs text-white">
+                        ✓
+                      </span>
+
+                      <p className="text-sm font-semibold text-green-700">
+                        Payment Proof সফলভাবে আপলোড হয়েছে
+                      </p>
+                    </div>
+
+                    <img
+                      src={formData.payment.paymentProof}
+                      alt="Payment Proof"
+                      className="max-h-64 w-full rounded-lg border border-green-100 bg-white object-contain"
+                    />
+                  </div>
+                )}
+
+                <FieldError msg={errors.paymentProof} />
+              </div>
+            </div>
+          </SectionCard>
+
           {/* Terms */}
           <SectionCard title="শর্তাবলী ও চুক্তি">
-
             <div
-              className="space-y-3 mb-5"
+              className="mb-5 space-y-3"
               id="field-terms"
             >
               {TERMS_LIST.map(({ key, text }) => (
                 <label
                   key={key}
-                  className="flex items-start gap-3 cursor-pointer group"
+                  className="group flex cursor-pointer items-start gap-3"
                 >
                   <input
                     type="checkbox"
                     checked={formData.termsAccepted}
                     onChange={toggleTerms}
-                    className="mt-0.5 w-5 h-5 rounded accent-blue-600 cursor-pointer flex-shrink-0"
+                    className="mt-0.5 h-5 w-5 flex-shrink-0 cursor-pointer rounded accent-blue-600"
                   />
 
-                  <span className="text-sm text-gray-600 group-hover:text-gray-800 transition leading-relaxed">
+                  <span className="text-sm leading-relaxed text-gray-600 transition group-hover:text-gray-800">
                     {text}
                   </span>
                 </label>
@@ -1082,12 +1220,12 @@ const OrderForm = () => {
               type="submit"
               disabled={submitting}
               className={[
-                "mt-3 w-full py-4 rounded-2xl font-semibold text-base text-white shadow-lg",
+                "cursor-pointer mt-3 w-full rounded-2xl py-4 text-base font-semibold text-white shadow-lg",
                 "bg-gradient-to-r from-blue-600 to-red-600",
-                "hover:from-blue-700 hover:to-red-700",
-                "transition-all duration-200 active:scale-[0.99]",
+                "transition-all duration-200 hover:from-blue-700 hover:to-red-700",
+                "active:scale-[0.99]",
                 submitting
-                  ? "opacity-70 cursor-not-allowed"
+                  ? "cursor-not-allowed opacity-70"
                   : "",
               ].join(" ")}
             >
@@ -1097,21 +1235,6 @@ const OrderForm = () => {
             </button>
           </SectionCard>
 
-          <div className="w-full flex justify-center px-4 mt-6">
-            <div className="w-full max-w-xl text-center text-green-600">
-              <p className="text-base sm:text-lg font-medium">
-                👉 আরো জানাতে আমাদের সাপোর্ট টিমের সাথে যোগাযোগ করুন
-              </p>
-              <a
-                href="https://wa.me/8801305506395"
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center justify-center mt-3 text-white bg-purple-600 px-5 py-2 rounded-full text-sm sm:text-base font-semibold"
-              >
-                সাপোর্ট টিম
-              </a>
-            </div>
-          </div>
 
         </form>
       </div>

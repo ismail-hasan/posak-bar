@@ -127,7 +127,7 @@ const LoginPage = () => {
                               <button
                                     type="submit"
                                     disabled={isSubmitting}
-                                    className="w-full py-3 bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-600 hover:to-yellow-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold rounded-lg shadow-md transition duration-200"
+                                    className="w-full py-3 bg-purple-600 disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold rounded-lg shadow-md transition duration-200"
                               >
                                     {isSubmitting
                                           ? "লগিন হচ্ছে..."

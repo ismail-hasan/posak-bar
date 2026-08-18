@@ -173,7 +173,7 @@ const AdCampaign = () => {
                         ====================================== */}
 
                         <h2 className="mb-8 text-center text-2xl font-bold text-gray-800 sm:text-3xl">
-                              Ad Campaign & Product Form
+                             Main Ad Campaign Banner
                         </h2>
 
                         <form
