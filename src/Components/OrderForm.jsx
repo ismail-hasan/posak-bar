@@ -1088,12 +1088,10 @@ const OrderForm = () => {
               {/* Payment Notice */}
 
               {/* Payment Notice */}
-              <div className="mb-5 rounded-xl border border-red-600 bg-red-600 p-4">
+              <div className="mb-5 rounded-xl border border-red-600 bg-red-600 p-4 text-center">
                 <div className="flex items-start gap-3">
 
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/20 text-xl">
-                    💰
-                  </div>
+
 
                   <div className="flex-1">
                     <h3 className="font-bold text-white">
@@ -1122,7 +1120,7 @@ const OrderForm = () => {
                     rel="noreferrer"
                     className="mb-8 inline-flex items-center justify-center rounded-full bg-red-600 px-5 py-2 text-sm font-semibold text-white sm:text-base"
                   >
-                    সাপোর্ট টিম
+                    হটলাইন
                   </a>
                 </div>
               </div>
