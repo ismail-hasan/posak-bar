@@ -1128,7 +1128,7 @@ const OrderForm = () => {
               {/* Transaction ID */}
               <div className="mb-5">
                 <Label htmlFor="transactionId" required>
-                  Transaction ID
+                  ট্রানজেকশন আইডি 
                 </Label>
 
                 <Input
@@ -1151,7 +1151,7 @@ const OrderForm = () => {
               {/* Payment Proof */}
               <div id="field-paymentProof">
                 <Label required>
-                  পেমেন্টের Screenshot / Proof
+                  পেমেন্টের স্ক্রিনশট / প্রমাণ 
                 </Label>
 
                 <ImageUpload
@@ -1170,7 +1170,7 @@ const OrderForm = () => {
                       </span>
 
                       <p className="text-sm font-semibold text-green-700">
-                        Payment Proof সফলভাবে আপলোড হয়েছে
+                        ছবি সফলভাবে আপলোড হয়েছে
                       </p>
                     </div>
 
