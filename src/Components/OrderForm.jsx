@@ -1081,24 +1081,18 @@ const OrderForm = () => {
           <SectionCard title="অগ্রিম পেমেন্ট">
             <div
               id="field-transactionId"
-              className="rounded-2xl border border-purple-100 bg-gradient-to-br from-purple-50 via-white to-blue-50 p-4 sm:p-5"
             >
-
-
-              {/* Payment Notice */}
 
               {/* Payment Notice */}
               <div className="mb-5 rounded-xl border border-red-600 bg-red-600 p-4 text-center">
                 <div className="flex items-start gap-3">
-
-
 
                   <div className="flex-1">
                     <h3 className="font-bold text-white">
                       ৩০% অগ্রিম পেমেন্ট আবশ্যক
                     </h3>
 
-                    <p className="mt-1 text-sm leading-relaxed text-white/95">
+                    <p className="mt-1 text- leading-relaxed text-white/95">
                       অর্ডার কনফার্ম করার জন্য মোট অর্ডার মূল্যের
                       <strong className="text-white"> ৩০% অগ্রিম </strong>
                       প্রদান করতে হবে। পেমেন্ট করার পর Transaction ID
@@ -1113,12 +1107,11 @@ const OrderForm = () => {
               <div className="mt-2 flex w-full justify-center px-4">
                 <div className="w-full max-w-xl text-center text-green-600">
 
-
                   <a
                     href="https://wa.me/8801305506395"
                     target="_blank"
                     rel="noreferrer"
-                    className="mb-8 inline-flex items-center justify-center rounded-full bg-red-600 px-5 py-2 text-sm font-semibold text-white sm:text-base"
+                    className="mb-8 inline-flex items-center justify-center rounded-full bg-red-600 px-7 py-2 text-xl font-semibold text-white sm:text-base"
                   >
                     হটলাইন
                   </a>
@@ -1128,7 +1121,7 @@ const OrderForm = () => {
               {/* Transaction ID */}
               <div className="mb-5">
                 <Label htmlFor="transactionId" required>
-                  ট্রানজেকশন আইডি 
+                  ট্রানজেকশন আইডি
                 </Label>
 
                 <Input
@@ -1151,7 +1144,7 @@ const OrderForm = () => {
               {/* Payment Proof */}
               <div id="field-paymentProof">
                 <Label required>
-                  পেমেন্টের স্ক্রিনশট / প্রমাণ 
+                  পেমেন্টের স্ক্রিনশট / প্রমাণ
                 </Label>
 
                 <ImageUpload
