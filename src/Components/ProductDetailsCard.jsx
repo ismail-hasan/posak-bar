@@ -192,7 +192,7 @@ const ProductDetailsCard = () => {
                                     <div className="border border-gray-200 rounded-2xl overflow-hidden bg-gray-50 h-[450px] flex items-center justify-center p-4">
                                           <img
                                                 src={activeImage}
-                                                alt={product.name}
+                                                alt="Product Image"
                                                 className="object-contain transition duration-300"
                                           />
                                     </div>

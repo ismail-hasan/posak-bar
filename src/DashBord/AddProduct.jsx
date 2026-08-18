@@ -160,11 +160,7 @@ const AddProduct = () => {
 
                   const data = await response.json();
 
-                  console.log(
-                        "Add Product Response:",
-                        data
-                  );
-
+                
                   if (!response.ok) {
                         throw new Error(
                               data?.message ||

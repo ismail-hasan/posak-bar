@@ -44,7 +44,7 @@ const Brand = () => {
                   <div className="w-full max-w-7xl mx-auto px-3 sm:px-4">
                         <Swiper
                               modules={[Autoplay]}
-                              loop={true}
+                              loop={brands.length > 6}
                               grabCursor={true}
                               speed={700}
                               slidesPerView={3}

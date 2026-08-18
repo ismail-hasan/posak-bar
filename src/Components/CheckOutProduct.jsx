@@ -51,7 +51,7 @@ const CheckOutProduct = () => {
             phone: '',
             address: '',
             city: '',
-            deliveryType: 'store',
+            deliveryType: '',
             status: 'pending'
       });
 
@@ -236,9 +236,6 @@ const CheckOutProduct = () => {
                   /*
                    * Backend এ পাঠানোর আগে
                    * প্রতিটি item's totalPrice আবার calculate করছি।
-                   *
-                   * Original price string হিসেবেই থাকবে,
-                   * কিন্তু calculation এর সময় number হবে।
                    */
                   const calculatedItems = orders.map(order => {
                         const price = toNumber(order?.price);
@@ -246,38 +243,21 @@ const CheckOutProduct = () => {
 
                         return {
                               ...order,
-
-                              // Original price রাখা হচ্ছে
                               price: order.price,
-
-                              // Original quantity রাখা হচ্ছে
                               quantity: order.quantity,
-
-                              // Accurate calculated total
                               totalPrice: price * quantity
                         };
                   });
 
                   const orderData = {
                         customer: formData,
-
                         items: calculatedItems,
-
                         subTotal: subTotal,
-
                         deliveryCharge: deliveryCharge,
-
                         grandTotal: grandTotal,
-
                         totalQuantity: totalQuantity,
-
                         orderDate: new Date()
                   };
-
-                  console.log('FINAL ORDER DATA:', orderData);
-                  console.log('SUB TOTAL:', subTotal);
-                  console.log('DELIVERY:', deliveryCharge);
-                  console.log('GRAND TOTAL:', grandTotal);
 
                   // =========================
                   // Main Order Create
@@ -410,9 +390,10 @@ const CheckOutProduct = () => {
                                                                         <div className="flex items-center gap-3">
 
                                                                               <img
-                                                                                    src={order.image}
+                                                                                    src={order?.image || null}
                                                                                     alt={
-                                                                                          order.productName
+                                                                                          order?.productName ||
+                                                                                          'Product'
                                                                                     }
                                                                                     className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 object-cover rounded-lg border border-gray-200 shrink-0"
                                                                               />
@@ -651,7 +632,7 @@ const CheckOutProduct = () => {
                                                 <div className="sm:col-span-2 mt-2">
 
                                                       <label className="mb-2 block text-xs font-medium text-gray-700 md:text-sm">
-                                                            ডেলিভারি টাইপ
+                                                            ডেলিভারি টাইপ *
                                                       </label>
 
                                                       <div className="flex flex-col gap-3 sm:flex-row sm:gap-6">
@@ -724,16 +705,7 @@ const CheckOutProduct = () => {
                                           {/* DELIVERY */}
                                           <div className="flex justify-between items-center text-sm text-gray-600">
 
-                                                <span>
-                                                      ডেলিভারি চার্জ
-                                                </span>
-
-                                                <span className="font-medium text-gray-800">
-                                                      ৳
-                                                      {deliveryCharge.toLocaleString(
-                                                            'en-US'
-                                                      )}
-                                                </span>
+                                              
 
                                           </div>
 
