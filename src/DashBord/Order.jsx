@@ -24,7 +24,7 @@ const Order = () => {
             fetchOrders();
       }, []);
 
-      // অর্ডার স্ট্যাটাস আপডেট করার ফাংশন (Processing / Complete)
+      // অর্ডার স্ট্যাটাস আপডেট করার ফাংশন (Processing / Complete / Cancelled)
       const handleStatusUpdate = (id, newStatus) => {
             fetch(`https://posak-bari-backend.vercel.app/order/${id}`, {
                   method: 'PATCH',
@@ -44,6 +44,19 @@ const Order = () => {
                               });
 
                               fetchOrders();
+
+                              // Cancel করলে Cancelled tab-এ চলে যাবে
+                              if (newStatus === 'cancelled') {
+                                    setFilter('cancelled');
+                              }
+
+                              if (newStatus === 'processing') {
+                                    setFilter('processing');
+                              }
+
+                              if (newStatus === 'complete') {
+                                    setFilter('complete');
+                              }
                         }
                   })
                   .catch(err => console.error("Error updating status:", err));
@@ -100,6 +113,11 @@ const Order = () => {
                   return !status || status === 'pending';
             }
 
+            // Cancelled
+            if (filter === 'cancelled') {
+                  return status === 'cancelled';
+            }
+
             // Processing / Complete
             return status === filter.toLowerCase();
       });
@@ -119,6 +137,10 @@ const Order = () => {
 
       const completeCount = orders.filter(
             order => order.status?.toLowerCase() === 'complete'
+      ).length;
+
+      const cancelledCount = orders.filter(
+            order => order.status?.toLowerCase() === 'cancelled'
       ).length;
 
       if (loading) {
@@ -170,6 +192,11 @@ const Order = () => {
                                     key: 'complete',
                                     label: 'Completed',
                                     count: completeCount
+                              },
+                              {
+                                    key: 'cancelled',
+                                    label: 'Cancelled',
+                                    count: cancelledCount
                               }
                         ].map((tab) => (
                               <button
@@ -241,9 +268,13 @@ const Order = () => {
                                                 const orderStatus =
                                                       order.status?.toLowerCase();
 
-                                                // Complete হলে দুইটা status button disable হবে
+                                                // Complete হলে status button disable হবে
                                                 const isCompleted =
                                                       orderStatus === 'complete';
+
+                                                // Cancelled হলে সব status button disable হবে
+                                                const isCancelled =
+                                                      orderStatus === 'cancelled';
 
                                                 return (
                                                       <tr
@@ -323,7 +354,10 @@ const Order = () => {
                                                                                     : orderStatus ===
                                                                                           'processing'
                                                                                           ? 'bg-blue-100 text-blue-700'
-                                                                                          : 'bg-yellow-100 text-yellow-700'
+                                                                                          : orderStatus ===
+                                                                                                'cancelled'
+                                                                                                ? 'bg-red-100 text-red-700'
+                                                                                                : 'bg-yellow-100 text-yellow-700'
                                                                               }`}
                                                                   >
                                                                         {order.status ||
@@ -345,8 +379,12 @@ const Order = () => {
                                                                                           'processing'
                                                                                     )
                                                                               }
-                                                                              disabled={isCompleted}
-                                                                              className={`px-3 py-1.5 rounded text-xs font-medium transition ${isCompleted
+                                                                              disabled={
+                                                                                    isCompleted ||
+                                                                                    isCancelled
+                                                                              }
+                                                                              className={`px-3 py-1.5 rounded text-xs font-medium transition ${isCompleted ||
+                                                                                          isCancelled
                                                                                           ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                                                                                           : 'bg-blue-500 hover:bg-blue-600 text-white cursor-pointer'
                                                                                     }`}
@@ -362,13 +400,38 @@ const Order = () => {
                                                                                           'complete'
                                                                                     )
                                                                               }
-                                                                              disabled={isCompleted}
-                                                                              className={`px-3 py-1.5 rounded text-xs font-medium transition ${isCompleted
+                                                                              disabled={
+                                                                                    isCompleted ||
+                                                                                    isCancelled
+                                                                              }
+                                                                              className={`px-3 py-1.5 rounded text-xs font-medium transition ${isCompleted ||
+                                                                                          isCancelled
                                                                                           ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                                                                                           : 'bg-green-500 hover:bg-green-600 text-white cursor-pointer'
                                                                                     }`}
                                                                         >
                                                                               Complete
+                                                                        </button>
+
+                                                                        {/* Cancel */}
+                                                                        <button
+                                                                              onClick={() =>
+                                                                                    handleStatusUpdate(
+                                                                                          order._id,
+                                                                                          'cancelled'
+                                                                                    )
+                                                                              }
+                                                                              disabled={
+                                                                                    isCancelled ||
+                                                                                    isCompleted
+                                                                              }
+                                                                              className={`px-3 py-1.5 rounded text-xs font-medium transition ${isCancelled ||
+                                                                                          isCompleted
+                                                                                          ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                                                                          : 'bg-orange-500 hover:bg-orange-600 text-white cursor-pointer'
+                                                                                    }`}
+                                                                        >
+                                                                              Cancel
                                                                         </button>
 
                                                                         {/* Delete - সবসময় active */}

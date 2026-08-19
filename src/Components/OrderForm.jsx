@@ -1078,43 +1078,25 @@ const OrderForm = () => {
               ⭐ ADVANCE PAYMENT
           ===================================================== */}
 
-          <SectionCard title="অগ্রিম পেমেন্ট">
+          <SectionCard title="অবশ্যই অগ্রিম পেমেন্ট আবশ্যক ">
             <div
               id="field-transactionId"
             >
 
               {/* Payment Notice */}
-              <div className="mb-5 rounded-xl border border-red-600 bg-red-600 p-4 text-center">
+              <div className="mb-5 rounded-xl border-red-600 border-2 text-red-600 p-4 text-center">
                 <div className="flex items-start gap-3">
 
                   <div className="flex-1">
-                    <h3 className="font-bold text-white">
-                      ৩০% অগ্রিম পেমেন্ট আবশ্যক
-                    </h3>
-
-                    <p className="mt-1 text- leading-relaxed text-white/95">
+                    <p className="mt-1 text- leading-relaxed text-red">
                       অর্ডার কনফার্ম করার জন্য মোট অর্ডার মূল্যের
-                      <strong className="text-white"> ৩০% অগ্রিম </strong>
+                      ৩০% অগ্রিম
                       প্রদান করতে হবে। পেমেন্ট করার পর Transaction ID
                       এবং পেমেন্টের Screenshot/Proof নিচে দিন।
                       অগ্রীম পেমেন্ট সম্পর্কে বিস্তারিত জানতে হটলাইনে যোগাযোগ করুন।
                     </p>
                   </div>
 
-                </div>
-              </div>
-
-              <div className="mt-2 flex w-full justify-center px-4">
-                <div className="w-full max-w-xl text-center text-green-600">
-
-                  <a
-                    href="https://wa.me/8801305506395"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="mb-8 inline-flex items-center justify-center rounded-full bg-red-600 px-7 py-2 text-xl font-semibold text-white sm:text-base"
-                  >
-                    হটলাইন
-                  </a>
                 </div>
               </div>
 
@@ -1127,7 +1109,7 @@ const OrderForm = () => {
                 <Input
                   id="transactionId"
                   type="text"
-                  placeholder="আপনার Transaction ID লিখুন"
+                  placeholder="Transaction ID এখানে লিখুন"
                   value={formData.payment.transactionId}
                   onChange={(e) => {
                     updatePayment(

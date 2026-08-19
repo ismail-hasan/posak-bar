@@ -32,6 +32,8 @@ const ManufactureOrder = () => {
             if (value === "complete") return "completed";
             if (value === "completed") return "completed";
             if (value === "processing") return "processing";
+            if (value === "cancel") return "cancelled";
+            if (value === "cancelled") return "cancelled";
 
             return "pending";
       };
@@ -130,6 +132,10 @@ const ManufactureOrder = () => {
                   if (newStatus === "completed") {
                         setActiveTab("completed");
                   }
+
+                  if (newStatus === "cancelled") {
+                        setActiveTab("cancelled");
+                  }
             } catch (error) {
                   console.error("Status change failed:", error);
                   alert("Failed to update order status");
@@ -192,6 +198,11 @@ const ManufactureOrder = () => {
                   normalizeStatus(order.status) === "completed"
       ).length;
 
+      const cancelledCount = orders.filter(
+            (order) =>
+                  normalizeStatus(order.status) === "cancelled"
+      ).length;
+
       // =========================
       // Filter Orders
       // =========================
@@ -208,6 +219,10 @@ const ManufactureOrder = () => {
 
             if (activeTab === "completed") {
                   return status === "completed";
+            }
+
+            if (activeTab === "cancelled") {
+                  return status === "cancelled";
             }
 
             return true;
@@ -232,12 +247,27 @@ const ManufactureOrder = () => {
 
       return (
             <div className="min-h-screen w-full overflow-x-hidden bg-[#faf9ff] p-3 sm:p-5 lg:p-6">
+                  <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                        <div>
+                              <h2 className="text-3xl font-bold text-gray-800">
+                                    Manufacturing Orders Management
+                              </h2>
+
+                              <p className="mt-1 text-sm text-gray-500">
+                                    Total Orders Found:{" "}
+                                    <span className="font-semibold text-purple-900">
+                                          {orders.length}
+                                    </span>
+                              </p>
+                        </div>
+                  </div>
+
                   <div className="mx-auto w-full max-w-[1900px]">
 
                         {/* =========================
                             TABS
                         ========================= */}
-                        <div className="mb-5 grid grid-cols-2 gap-2 sm:gap-3 md:grid-cols-4">
+                        <div className="mb-5 grid grid-cols-2 gap-2 sm:gap-3 md:grid-cols-5">
 
                               {/* ALL */}
                               <button
@@ -245,22 +275,20 @@ const ManufactureOrder = () => {
                                     onClick={() =>
                                           setActiveTab("all")
                                     }
-                                    className={`flex min-h-[58px] w-full items-center justify-center gap-2 rounded-xl border px-2 transition-all duration-200 sm:px-3 ${
-                                          activeTab === "all"
+                                    className={`flex min-h-[58px] w-full items-center justify-center gap-2 rounded-xl border px-2 transition-all duration-200 sm:px-3 ${activeTab === "all"
                                                 ? "border-purple-600 bg-purple-600 text-white shadow-lg shadow-purple-200"
                                                 : "border-purple-100 bg-white text-gray-600 hover:border-purple-300 hover:bg-purple-50"
-                                    }`}
+                                          }`}
                               >
                                     <span className="whitespace-nowrap text-xs font-bold sm:text-sm md:text-base">
                                           All Orders
                                     </span>
 
                                     <span
-                                          className={`flex h-6 min-w-6 items-center justify-center rounded-full px-2 text-xs font-bold ${
-                                                activeTab === "all"
+                                          className={`flex h-6 min-w-6 items-center justify-center rounded-full px-2 text-xs font-bold ${activeTab === "all"
                                                       ? "bg-white/20 text-white"
                                                       : "bg-purple-100 text-purple-700"
-                                          }`}
+                                                }`}
                                     >
                                           {allCount}
                                     </span>
@@ -272,22 +300,20 @@ const ManufactureOrder = () => {
                                     onClick={() =>
                                           setActiveTab("pending")
                                     }
-                                    className={`flex min-h-[58px] w-full items-center justify-center gap-2 rounded-xl border px-2 transition-all duration-200 sm:px-3 ${
-                                          activeTab === "pending"
+                                    className={`flex min-h-[58px] w-full items-center justify-center gap-2 rounded-xl border px-2 transition-all duration-200 sm:px-3 ${activeTab === "pending"
                                                 ? "border-purple-600 bg-purple-600 text-white shadow-lg shadow-purple-200"
                                                 : "border-purple-100 bg-white text-gray-600 hover:border-purple-300 hover:bg-purple-50"
-                                    }`}
+                                          }`}
                               >
                                     <span className="whitespace-nowrap text-xs font-bold sm:text-sm md:text-base">
                                           Pending
                                     </span>
 
                                     <span
-                                          className={`flex h-6 min-w-6 items-center justify-center rounded-full px-2 text-xs font-bold ${
-                                                activeTab === "pending"
+                                          className={`flex h-6 min-w-6 items-center justify-center rounded-full px-2 text-xs font-bold ${activeTab === "pending"
                                                       ? "bg-white/20 text-white"
                                                       : "bg-purple-100 text-purple-700"
-                                          }`}
+                                                }`}
                                     >
                                           {pendingCount}
                                     </span>
@@ -299,22 +325,20 @@ const ManufactureOrder = () => {
                                     onClick={() =>
                                           setActiveTab("processing")
                                     }
-                                    className={`flex min-h-[58px] w-full items-center justify-center gap-2 rounded-xl border px-2 transition-all duration-200 sm:px-3 ${
-                                          activeTab === "processing"
+                                    className={`flex min-h-[58px] w-full items-center justify-center gap-2 rounded-xl border px-2 transition-all duration-200 sm:px-3 ${activeTab === "processing"
                                                 ? "border-purple-600 bg-purple-600 text-white shadow-lg shadow-purple-200"
                                                 : "border-purple-100 bg-white text-gray-600 hover:border-purple-300 hover:bg-purple-50"
-                                    }`}
+                                          }`}
                               >
                                     <span className="whitespace-nowrap text-xs font-bold sm:text-sm md:text-base">
                                           Processing
                                     </span>
 
                                     <span
-                                          className={`flex h-6 min-w-6 items-center justify-center rounded-full px-2 text-xs font-bold ${
-                                                activeTab === "processing"
+                                          className={`flex h-6 min-w-6 items-center justify-center rounded-full px-2 text-xs font-bold ${activeTab === "processing"
                                                       ? "bg-white/20 text-white"
                                                       : "bg-purple-100 text-purple-700"
-                                          }`}
+                                                }`}
                                     >
                                           {processingCount}
                                     </span>
@@ -326,24 +350,47 @@ const ManufactureOrder = () => {
                                     onClick={() =>
                                           setActiveTab("completed")
                                     }
-                                    className={`flex min-h-[58px] w-full items-center justify-center gap-2 rounded-xl border px-2 transition-all duration-200 sm:px-3 ${
-                                          activeTab === "completed"
+                                    className={`flex min-h-[58px] w-full items-center justify-center gap-2 rounded-xl border px-2 transition-all duration-200 sm:px-3 ${activeTab === "completed"
                                                 ? "border-purple-600 bg-purple-600 text-white shadow-lg shadow-purple-200"
                                                 : "border-purple-100 bg-white text-gray-600 hover:border-purple-300 hover:bg-purple-50"
-                                    }`}
+                                          }`}
                               >
                                     <span className="whitespace-nowrap text-xs font-bold sm:text-sm md:text-base">
                                           Completed
                                     </span>
 
                                     <span
-                                          className={`flex h-6 min-w-6 items-center justify-center rounded-full px-2 text-xs font-bold ${
-                                                activeTab === "completed"
+                                          className={`flex h-6 min-w-6 items-center justify-center rounded-full px-2 text-xs font-bold ${activeTab === "completed"
                                                       ? "bg-white/20 text-white"
                                                       : "bg-purple-100 text-purple-700"
-                                          }`}
+                                                }`}
                                     >
                                           {completedCount}
+                                    </span>
+                              </button>
+
+                              {/* CANCELLED */}
+                              <button
+                                    type="button"
+                                    onClick={() =>
+                                          setActiveTab("cancelled")
+                                    }
+                                    className={`flex min-h-[58px] w-full items-center justify-center gap-2 rounded-xl border px-2 transition-all duration-200 sm:px-3 ${activeTab === "cancelled"
+                                                ? "border-red-600 bg-red-600 text-white shadow-lg shadow-red-200"
+                                                : "border-purple-100 bg-white text-gray-600 hover:border-red-300 hover:bg-red-50"
+                                          }`}
+                              >
+                                    <span className="whitespace-nowrap text-xs font-bold sm:text-sm md:text-base">
+                                          Cancelled
+                                    </span>
+
+                                    <span
+                                          className={`flex h-6 min-w-6 items-center justify-center rounded-full px-2 text-xs font-bold ${activeTab === "cancelled"
+                                                      ? "bg-white/20 text-white"
+                                                      : "bg-red-100 text-red-700"
+                                                }`}
+                                    >
+                                          {cancelledCount}
                                     </span>
                               </button>
                         </div>
@@ -437,7 +484,7 @@ const ManufactureOrder = () => {
                                                                   Status
                                                             </th>
 
-                                                            <th className="w-[330px] min-w-[330px] px-3 py-4 text-center text-xs font-bold uppercase tracking-wide text-white">
+                                                            <th className="w-[420px] min-w-[420px] px-3 py-4 text-center text-xs font-bold uppercase tracking-wide text-white">
                                                                   Action
                                                             </th>
                                                       </tr>
@@ -503,6 +550,10 @@ const ManufactureOrder = () => {
                                                                   const completeLoading =
                                                                         actionLoading ===
                                                                         `${order._id}-completed`;
+
+                                                                  const cancelledLoading =
+                                                                        actionLoading ===
+                                                                        `${order._id}-cancelled`;
 
                                                                   const deleteLoading =
                                                                         actionLoading ===
@@ -747,13 +798,11 @@ const ManufactureOrder = () => {
                                                                                     </div>
                                                                               </td>
 
-                                                                              {/* =========================
-                                                                                  TRANSACTION ID
-                                                                              ========================= */}
+                                                                              {/* TRANSACTION ID */}
                                                                               <td className="px-3 py-4 text-center align-middle">
                                                                                     <div className="mx-auto w-[160px]">
                                                                                           {transactionId !==
-                                                                                          "-" ? (
+                                                                                                "-" ? (
                                                                                                 <span className="block break-all rounded-lg border border-blue-100 bg-blue-50 px-3 py-2 text-xs font-bold text-blue-700">
                                                                                                       {
                                                                                                             transactionId
@@ -767,9 +816,7 @@ const ManufactureOrder = () => {
                                                                                     </div>
                                                                               </td>
 
-                                                                              {/* =========================
-                                                                                  PAYMENT PROOF
-                                                                              ========================= */}
+                                                                              {/* PAYMENT PROOF */}
                                                                               <td className="px-3 py-4 text-center align-middle">
                                                                                     {paymentProof ? (
                                                                                           <div className="flex justify-center">
@@ -807,15 +854,17 @@ const ManufactureOrder = () => {
                                                                               {/* STATUS */}
                                                                               <td className="px-3 py-4 text-center align-middle">
                                                                                     <span
-                                                                                          className={`inline-flex rounded-full px-3 py-1.5 text-xs font-bold uppercase ${
-                                                                                                status ===
-                                                                                                "completed"
+                                                                                          className={`inline-flex rounded-full px-3 py-1.5 text-xs font-bold uppercase ${status ===
+                                                                                                      "completed"
                                                                                                       ? "bg-purple-100 text-purple-700"
                                                                                                       : status ===
                                                                                                             "processing"
                                                                                                             ? "bg-blue-100 text-blue-700"
-                                                                                                            : "bg-amber-100 text-amber-700"
-                                                                                          }`}
+                                                                                                            : status ===
+                                                                                                                  "cancelled"
+                                                                                                                  ? "bg-red-100 text-red-700"
+                                                                                                                  : "bg-amber-100 text-amber-700"
+                                                                                                }`}
                                                                                     >
                                                                                           {
                                                                                                 status
@@ -824,7 +873,7 @@ const ManufactureOrder = () => {
                                                                               </td>
 
                                                                               {/* ACTION */}
-                                                                              <td className="w-[330px] px-3 py-4 text-center align-middle">
+                                                                              <td className="w-[420px] px-3 py-4 text-center align-middle">
                                                                                     <div className="flex items-center justify-center gap-2">
 
                                                                                           {/* PROCESSING */}
@@ -833,9 +882,11 @@ const ManufactureOrder = () => {
                                                                                                 disabled={
                                                                                                       rowLoading ||
                                                                                                       status ===
-                                                                                                            "processing" ||
+                                                                                                      "processing" ||
                                                                                                       status ===
-                                                                                                            "completed"
+                                                                                                      "completed" ||
+                                                                                                      status ===
+                                                                                                      "cancelled"
                                                                                                 }
                                                                                                 onClick={() =>
                                                                                                       handleStatusChange(
@@ -843,15 +894,16 @@ const ManufactureOrder = () => {
                                                                                                             "processing"
                                                                                                       )
                                                                                                 }
-                                                                                                className={`inline-flex min-w-[95px] items-center justify-center rounded-lg px-3 py-2 text-xs font-bold shadow-sm transition-all duration-200 ${
-                                                                                                      status ===
-                                                                                                      "processing"
+                                                                                                className={`inline-flex min-w-[95px] items-center justify-center rounded-lg px-3 py-2 text-xs font-bold shadow-sm transition-all duration-200 ${status ===
+                                                                                                            "processing"
                                                                                                             ? "cursor-not-allowed bg-blue-100 text-blue-400"
                                                                                                             : status ===
-                                                                                                                  "completed"
+                                                                                                                  "completed" ||
+                                                                                                                  status ===
+                                                                                                                  "cancelled"
                                                                                                                   ? "cursor-not-allowed bg-gray-100 text-gray-400"
                                                                                                                   : "bg-blue-600 text-white hover:bg-blue-700 hover:shadow-md"
-                                                                                                }`}
+                                                                                                      }`}
                                                                                           >
                                                                                                 {processingLoading
                                                                                                       ? "..."
@@ -864,7 +916,9 @@ const ManufactureOrder = () => {
                                                                                                 disabled={
                                                                                                       rowLoading ||
                                                                                                       status ===
-                                                                                                            "completed"
+                                                                                                      "completed" ||
+                                                                                                      status ===
+                                                                                                      "cancelled"
                                                                                                 }
                                                                                                 onClick={() =>
                                                                                                       handleStatusChange(
@@ -872,16 +926,43 @@ const ManufactureOrder = () => {
                                                                                                             "completed"
                                                                                                       )
                                                                                                 }
-                                                                                                className={`inline-flex min-w-[90px] items-center justify-center rounded-lg px-3 py-2 text-xs font-bold shadow-sm transition-all duration-200 ${
-                                                                                                      status ===
-                                                                                                      "completed"
+                                                                                                className={`inline-flex min-w-[90px] items-center justify-center rounded-lg px-3 py-2 text-xs font-bold shadow-sm transition-all duration-200 ${status ===
+                                                                                                            "completed"
                                                                                                             ? "cursor-not-allowed bg-purple-100 text-purple-400"
-                                                                                                            : "bg-purple-600 text-white hover:bg-purple-700 hover:shadow-md"
-                                                                                                }`}
+                                                                                                            : status ===
+                                                                                                                  "cancelled"
+                                                                                                                  ? "cursor-not-allowed bg-gray-100 text-gray-400"
+                                                                                                                  : "bg-purple-600 text-white hover:bg-purple-700 hover:shadow-md"
+                                                                                                      }`}
                                                                                           >
                                                                                                 {completeLoading
                                                                                                       ? "..."
                                                                                                       : "✓ Complete"}
+                                                                                          </button>
+
+                                                                                          {/* CANCEL */}
+                                                                                          <button
+                                                                                                type="button"
+                                                                                                disabled={
+                                                                                                      rowLoading ||
+                                                                                                      status ===
+                                                                                                      "cancelled"
+                                                                                                }
+                                                                                                onClick={() =>
+                                                                                                      handleStatusChange(
+                                                                                                            order._id,
+                                                                                                            "cancelled"
+                                                                                                      )
+                                                                                                }
+                                                                                                className={`inline-flex min-w-[80px] items-center justify-center rounded-lg px-3 py-2 text-xs font-bold shadow-sm transition-all duration-200 ${status ===
+                                                                                                            "cancelled"
+                                                                                                            ? "cursor-not-allowed bg-red-100 text-red-400"
+                                                                                                            : "bg-red-600 text-white hover:bg-red-700 hover:shadow-md"
+                                                                                                      }`}
+                                                                                          >
+                                                                                                {cancelledLoading
+                                                                                                      ? "..."
+                                                                                                      : "Cancel"}
                                                                                           </button>
 
                                                                                           {/* DELETE */}
@@ -930,7 +1011,9 @@ const ManufactureOrder = () => {
                         >
                               <div
                                     className="relative flex max-h-[92vh] max-w-[95vw] items-center justify-center"
-                                    onClick={(e) => e.stopPropagation()}
+                                    onClick={(e) =>
+                                          e.stopPropagation()
+                                    }
                               >
                                     {/* CLOSE BUTTON */}
                                     <button
