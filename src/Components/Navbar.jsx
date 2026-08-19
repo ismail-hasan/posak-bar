@@ -1,5 +1,5 @@
 import React from "react";
-import logo from "../assets/siteLogo.png";
+import newLogo from '../assets/newLogo.png';
 import { Link } from "react-router";
 
 
@@ -13,7 +13,7 @@ const Navbar = () => {
         {/* LOGO */}
         <Link to={"/"}>
           <img
-            src={logo}
+            src={newLogo}
             alt="logo"
             className="w-[110px] md:w-[200px] object-contain"
           />

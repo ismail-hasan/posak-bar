@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 
 
-import logo from "../assets/siteLogo.png";
+import newLogo from '../assets/newLogo.png';
 import jerseyTop from "../assets/heroBanner.jpg";
 import shopJercy from "../assets/leftBanner.jpg";
 import jersey1 from "../assets/1.jpg";
@@ -192,7 +192,7 @@ const Homes = () => {
 
                                     {/* LOGO */}
                                     <img
-                                          src={logo}
+                                          src={newLogo}
                                           alt="logo"
                                           className="w-[220px] md:w-[520px] mx-auto"
                                     />
