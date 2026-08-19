@@ -1020,59 +1020,7 @@ const OrderForm = () => {
           )}
 
           {/* Delivery */}
-          <SectionCard title="ডেলিভারি পদ্ধতি">
-            <Label>ডেলিভারির ধরন নির্বাচন করুন</Label>
 
-            <div className="mb-4 grid grid-cols-3 gap-2 sm:gap-3">
-              {DELIVERY_OPTIONS.map(({ val, emoji, label }) => (
-                <button
-                  key={val}
-                  type="button"
-                  onClick={() =>
-                    updateDelivery("type", val)
-                  }
-                  className={[
-                    "rounded-xl border px-1 py-3 text-center transition-all",
-                    formData.delivery.type === val
-                      ? "border-blue-600 bg-blue-50 text-blue-800"
-                      : "border-gray-200 bg-white text-gray-600 hover:border-blue-300",
-                  ].join(" ")}
-                >
-                  <div className="mb-1 text-xl">
-                    {emoji}
-                  </div>
-
-                  <div className="text-xs font-medium leading-snug">
-                    {label}
-                  </div>
-                </button>
-              ))}
-            </div>
-
-            <Label>কুরিয়ার চার্জ কে বহন করবেন?</Label>
-
-            <div className="flex gap-2">
-              <ToggleBtn
-                label="গ্রাহক"
-                active={
-                  formData.delivery.payer === "customer"
-                }
-                onClick={() =>
-                  updateDelivery("payer", "customer")
-                }
-              />
-
-              <ToggleBtn
-                label="কোম্পানি"
-                active={
-                  formData.delivery.payer === "company"
-                }
-                onClick={() =>
-                  updateDelivery("payer", "company")
-                }
-              />
-            </div>
-          </SectionCard>
 
           {/* =====================================================
               ⭐ ADVANCE PAYMENT
@@ -1089,11 +1037,7 @@ const OrderForm = () => {
 
                   <div className="flex-1">
                     <p className="mt-1 text- leading-relaxed text-red">
-                      অর্ডার কনফার্ম করার জন্য মোট অর্ডার মূল্যের
-                      ৩০% অগ্রিম
-                      প্রদান করতে হবে। পেমেন্ট করার পর Transaction ID
-                      এবং পেমেন্টের Screenshot/Proof নিচে দিন।
-                      অগ্রীম পেমেন্ট সম্পর্কে বিস্তারিত জানতে হটলাইনে যোগাযোগ করুন।
+                      অগ্রিম ৩০% পরদানকৃত টাকা Screenshot/Proof এখানে আপলোড করুন।
                     </p>
                   </div>
 
@@ -1159,6 +1103,62 @@ const OrderForm = () => {
 
                 <FieldError msg={errors.paymentProof} />
               </div>
+            </div>
+          </SectionCard>
+
+
+
+          <SectionCard title="ডেলিভারি পদ্ধতি">
+            <Label>ডেলিভারির ধরন নির্বাচন করুন</Label>
+
+            <div className="mb-4 grid grid-cols-3 gap-2 sm:gap-3">
+              {DELIVERY_OPTIONS.map(({ val, emoji, label }) => (
+                <button
+                  key={val}
+                  type="button"
+                  onClick={() =>
+                    updateDelivery("type", val)
+                  }
+                  className={[
+                    "rounded-xl border px-1 py-3 text-center transition-all",
+                    formData.delivery.type === val
+                      ? "border-blue-600 bg-blue-50 text-blue-800"
+                      : "border-gray-200 bg-white text-gray-600 hover:border-blue-300",
+                  ].join(" ")}
+                >
+                  <div className="mb-1 text-xl">
+                    {emoji}
+                  </div>
+
+                  <div className="text-xs font-medium leading-snug">
+                    {label}
+                  </div>
+                </button>
+              ))}
+            </div>
+
+            <Label>কুরিয়ার চার্জ কে বহন করবেন?</Label>
+
+            <div className="flex gap-2">
+              <ToggleBtn
+                label="গ্রাহক"
+                active={
+                  formData.delivery.payer === "customer"
+                }
+                onClick={() =>
+                  updateDelivery("payer", "customer")
+                }
+              />
+
+              <ToggleBtn
+                label="কোম্পানি"
+                active={
+                  formData.delivery.payer === "company"
+                }
+                onClick={() =>
+                  updateDelivery("payer", "company")
+                }
+              />
             </div>
           </SectionCard>
 
