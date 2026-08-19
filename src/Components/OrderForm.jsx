@@ -1037,7 +1037,7 @@ const OrderForm = () => {
 
                   <div className="flex-1">
                     <p className="mt-1 text- leading-relaxed text-red">
-                      অগ্রিম ৩০% পরদানকৃত টাকা Screenshot/Proof এখানে আপলোড করুন।
+                      অগ্রিম ৩০% প্রদানকৃত টাকা Screenshot/Proof এখানে আপলোড করুন।
                     </p>
                   </div>
 
