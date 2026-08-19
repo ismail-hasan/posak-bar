@@ -1036,7 +1036,7 @@ const OrderForm = () => {
                 <div className="flex items-start gap-3">
 
                   <div className="flex-1">
-                    <p className="mt-1 text-[15px] leading-relaxed text-red">
+                    <p className="mt-1 text-[14px] leading-relaxed text-red">
                       অগ্রিম ৩০% প্রদানকৃত টাকা Screenshot/Proof এখানে আপলোড করুন।
                     </p>
                   </div>
