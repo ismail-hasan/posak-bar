@@ -12,26 +12,23 @@ const ImageUpload = ({
 
       const inputRef = useRef(null);
 
-      const handleUpload = async () => {
-            if (!file) {
-                  alert("দয়া করে একটি ছবি সিলেক্ট করুন!");
+      const handleUpload = async (selectedFile) => {
+            if (!selectedFile) {
                   return;
             }
 
             const formData = new FormData();
 
-            formData.append("image", file);
+            formData.append("image", selectedFile);
             formData.append("collectionName", collectionName);
 
             try {
                   setLoading(true);
 
-
                   const response = await axios.post(
                         API_URL,
                         formData,
                         {
-                              // ⭐ Content-Type manually set করছি না
                               timeout: 120000,
                         }
                   );
@@ -39,18 +36,17 @@ const ImageUpload = ({
                   const imageUrl = response.data?.url;
 
                   if (!imageUrl) {
-                        throw new Error("Cloudinary URL পাওয়া যায়নি!");
+                        throw new Error(
+                              "The image was uploaded, but no image URL was returned."
+                        );
                   }
 
-
-                  // ⭐ Parent component এ URL পাঠানো
+                  // Send image URL to parent component
                   if (onUploadSuccess) {
                         onUploadSuccess(imageUrl);
                   }
 
-                  alert("ছবি সফলভাবে আপলোড হয়েছে!");
-
-                  // Clear file
+                  // Clear file after successful upload
                   setFile(null);
 
                   // Clear input
@@ -61,25 +57,43 @@ const ImageUpload = ({
             } catch (error) {
                   console.error("Image Upload Error:", error);
 
+                  let errorMessage = "Image upload failed. Please try again.";
+
                   if (error.code === "ECONNABORTED") {
-                        alert(
-                              "ছবি upload হতে বেশি সময় লাগছে। আবার চেষ্টা করুন।"
-                        );
+                        errorMessage =
+                              "Image upload timed out. Please check your internet connection and try again.";
                   } else if (error.response?.status === 404) {
-                        alert(
-                              "Upload API পাওয়া যাচ্ছে না। Backend-এর /upload route check করুন।"
-                        );
-                  } else {
-                        alert(
-                              error.response?.data?.error ||
-                              error.message ||
-                              "আপলোড করতে সমস্যা হয়েছে!"
-                        );
+                        errorMessage =
+                              "Upload API was not found. Please check the backend /upload route.";
+                  } else if (error.response?.data?.error) {
+                        errorMessage = error.response.data.error;
+                  } else if (error.response?.data?.message) {
+                        errorMessage = error.response.data.message;
+                  } else if (error.message) {
+                        errorMessage = error.message;
                   }
+
+                  alert(errorMessage);
+
+                  // Keep the selected file so the user can try again
+                  setFile(selectedFile);
 
             } finally {
                   setLoading(false);
             }
+      };
+
+      const handleFileChange = (e) => {
+            const selectedFile = e.target.files?.[0] || null;
+
+            if (!selectedFile) {
+                  return;
+            }
+
+            setFile(selectedFile);
+
+            // Automatically upload immediately after selecting
+            handleUpload(selectedFile);
       };
 
       return (
@@ -92,24 +106,11 @@ const ImageUpload = ({
                               ref={inputRef}
                               type="file"
                               accept="image/jpeg,image/png,image/webp,image/jpg"
-                              onChange={(e) => {
-                                    const selectedFile =
-                                          e.target.files?.[0] || null;
-
-                                    setFile(selectedFile);
-                              }}
-                              className="w-full cursor-pointer rounded-md border border-dashed border-purple-200 p-1 text-xs text-gray-500 file:mr-2 file:rounded-md file:border-0 file:bg-purple-50 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-purple-700 hover:file:bg-purple-100"
+                              onChange={handleFileChange}
+                              disabled={loading}
+                              className="w-full cursor-pointer rounded-md border border-dashed border-purple-200 p-1 text-xs text-gray-500 file:mr-2 file:rounded-md file:border-0 file:bg-purple-50 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-purple-700 hover:file:bg-purple-100 disabled:cursor-not-allowed disabled:opacity-50"
                         />
 
-                        {/* Upload */}
-                        <button
-                              type="button"
-                              onClick={handleUpload}
-                              disabled={loading || !file}
-                              className="shrink-0 rounded-md bg-purple-600 px-4 py-2 text-xs font-medium text-white transition hover:bg-purple-700 disabled:cursor-not-allowed disabled:opacity-50"
-                        >
-                              {loading ? "Uploading..." : "Upload"}
-                        </button>
                   </div>
 
                   {/* Selected File */}
@@ -128,9 +129,10 @@ const ImageUpload = ({
                   {/* Loading */}
                   {loading && (
                         <p className="mt-2 text-xs font-medium text-purple-600">
-                              ছবি upload হচ্ছে, একটু অপেক্ষা করুন...
+                              Uploading image, please wait...
                         </p>
                   )}
+
             </div>
       );
 };
