@@ -1037,7 +1037,7 @@ const OrderForm = () => {
 
                   <div className="flex-1">
                     <p className="mt-1 text-[14px] leading-relaxed text-red">
-                      অগ্রিম ৩০% প্রদানকৃত টাকা Screenshot/Proof এখানে আপলোড করুন।
+                      অগ্রীম বাবদ- ৩০% প্রদানকৃত টাকার স্কিনশর্ট/পোশাক বাড়ির অফিসিয়াল "অর্ডার ফরম" নিচের অপশনে আপলোড করুন।
                     </p>
                   </div>
 
@@ -1047,7 +1047,7 @@ const OrderForm = () => {
               {/* Transaction ID */}
               <div className="mb-5">
                 <Label htmlFor="transactionId" required>
-                  ট্রানজেকশন আইডি
+                  Transaction ID / Order No
                 </Label>
 
                 <Input
