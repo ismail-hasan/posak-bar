@@ -53,7 +53,29 @@ const ManufactureOrder = () => {
 
                   const data = await res.json();
 
-                  setOrders(Array.isArray(data) ? data : []);
+                  // =========================
+                  // Latest Order First
+                  // =========================
+                  const latestFirstOrders = Array.isArray(data)
+                        ? [...data].sort((a, b) => {
+                              // First priority: createdAt
+                              if (a.createdAt && b.createdAt) {
+                                    return (
+                                          new Date(b.createdAt) -
+                                          new Date(a.createdAt)
+                                    );
+                              }
+
+                              // Fallback: MongoDB _id
+                              if (a._id && b._id) {
+                                    return b._id.localeCompare(a._id);
+                              }
+
+                              return 0;
+                        })
+                        : [];
+
+                  setOrders(latestFirstOrders);
             } catch (error) {
                   console.error("Failed to fetch orders:", error);
             } finally {
@@ -395,9 +417,7 @@ const ManufactureOrder = () => {
                               </button>
                         </div>
 
-                        {/* =========================
-                            EMPTY STATE
-                        ========================= */}
+                        {/* EMPTY STATE */}
                         {filteredOrders.length === 0 && (
                               <div className="rounded-xl border border-purple-100 bg-white px-4 py-14 text-center shadow-sm sm:px-5">
                                     <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-purple-50 text-2xl">
@@ -418,19 +438,13 @@ const ManufactureOrder = () => {
                               </div>
                         )}
 
-                        {/* =========================
-                            TABLE
-                        ========================= */}
+                        {/* TABLE */}
                         {filteredOrders.length > 0 && (
                               <div className="w-full overflow-hidden rounded-xl border border-purple-100 bg-white shadow-sm">
 
-                                    {/* Horizontal Scroll Container */}
                                     <div className="w-full overflow-x-auto">
                                           <table className="w-max min-w-[2450px] border-collapse">
 
-                                                {/* =========================
-                                                    HEADER
-                                                ========================= */}
                                                 <thead>
                                                       <tr className="bg-purple-700">
 
@@ -470,12 +484,10 @@ const ManufactureOrder = () => {
                                                                   Delivery
                                                             </th>
 
-                                                            {/* TRANSACTION ID */}
                                                             <th className="w-[180px] min-w-[180px] border-r border-purple-600 px-3 py-4 text-center text-xs font-bold uppercase tracking-wide text-white">
                                                                   Transaction ID
                                                             </th>
 
-                                                            {/* PAYMENT PROOF */}
                                                             <th className="w-[150px] min-w-[150px] border-r border-purple-600 px-3 py-4 text-center text-xs font-bold uppercase tracking-wide text-white">
                                                                   Payment Proof
                                                             </th>
@@ -490,53 +502,38 @@ const ManufactureOrder = () => {
                                                       </tr>
                                                 </thead>
 
-                                                {/* =========================
-                                                    BODY
-                                                ========================= */}
                                                 <tbody>
                                                       {filteredOrders.map(
                                                             (order, index) => {
                                                                   const customer =
-                                                                        order.customer ||
-                                                                        {};
+                                                                        order.customer || {};
 
                                                                   const manufacturing =
-                                                                        order.manufacturing ||
-                                                                        {};
+                                                                        order.manufacturing || {};
 
                                                                   const fabric =
                                                                         manufacturing.fabric;
 
                                                                   const sizes =
-                                                                        manufacturing.sizes ||
-                                                                        {};
+                                                                        manufacturing.sizes || {};
 
                                                                   const jerseyStyle =
-                                                                        manufacturing.jerseyStyle ||
-                                                                        {};
+                                                                        manufacturing.jerseyStyle || {};
 
                                                                   const readymade =
-                                                                        order.readymade ||
-                                                                        {};
+                                                                        order.readymade || {};
 
                                                                   const delivery =
-                                                                        order.delivery ||
-                                                                        {};
+                                                                        order.delivery || {};
 
-                                                                  // =========================
-                                                                  // Payment Data
-                                                                  // =========================
                                                                   const payment =
-                                                                        order.payment ||
-                                                                        {};
+                                                                        order.payment || {};
 
                                                                   const transactionId =
-                                                                        payment.transactionId ||
-                                                                        "-";
+                                                                        payment.transactionId || "-";
 
                                                                   const paymentProof =
-                                                                        payment.paymentProof ||
-                                                                        "";
+                                                                        payment.paymentProof || "";
 
                                                                   const status =
                                                                         normalizeStatus(
@@ -566,17 +563,13 @@ const ManufactureOrder = () => {
 
                                                                   return (
                                                                         <tr
-                                                                              key={
-                                                                                    order._id
-                                                                              }
+                                                                              key={order._id}
                                                                               className="border-b border-purple-50 transition-colors last:border-b-0 hover:bg-purple-50/40"
                                                                         >
-
                                                                               {/* # */}
                                                                               <td className="sticky left-0 z-20 bg-white px-3 py-4 text-center align-middle">
                                                                                     <span className="mx-auto flex h-8 w-8 items-center justify-center rounded-lg bg-purple-50 text-sm font-bold text-purple-700">
-                                                                                          {index +
-                                                                                                1}
+                                                                                          {index + 1}
                                                                                     </span>
                                                                               </td>
 
@@ -584,18 +577,15 @@ const ManufactureOrder = () => {
                                                                               <td className="px-3 py-4 text-center align-middle">
                                                                                     <div className="mx-auto w-[190px]">
                                                                                           <p className="break-words text-sm font-bold leading-5 text-gray-900">
-                                                                                                {customer.name ||
-                                                                                                      "-"}
+                                                                                                {customer.name || "-"}
                                                                                           </p>
 
                                                                                           <p className="mt-1 text-xs font-medium text-gray-500">
-                                                                                                {customer.phone ||
-                                                                                                      "-"}
+                                                                                                {customer.phone || "-"}
                                                                                           </p>
 
                                                                                           <p className="mt-1 break-words text-xs leading-4 text-gray-400">
-                                                                                                {customer.address ||
-                                                                                                      "-"}
+                                                                                                {customer.address || "-"}
                                                                                           </p>
                                                                                     </div>
                                                                               </td>
@@ -603,22 +593,14 @@ const ManufactureOrder = () => {
                                                                               {/* PRODUCT */}
                                                                               <td className="px-3 py-4 text-center align-middle">
                                                                                     <div className="mx-auto w-[150px]">
-                                                                                          {order.products?.length >
-                                                                                                0 ? (
+                                                                                          {order.products?.length > 0 ? (
                                                                                                 order.products.map(
-                                                                                                      (
-                                                                                                            product,
-                                                                                                            i
-                                                                                                      ) => (
+                                                                                                      (product, i) => (
                                                                                                             <p
-                                                                                                                  key={
-                                                                                                                        i
-                                                                                                                  }
+                                                                                                                  key={i}
                                                                                                                   className="mb-1 break-words text-sm font-semibold leading-5 text-gray-700 last:mb-0"
                                                                                                             >
-                                                                                                                  {
-                                                                                                                        product
-                                                                                                                  }
+                                                                                                                  {product}
                                                                                                             </p>
                                                                                                       )
                                                                                                 )
@@ -633,8 +615,7 @@ const ManufactureOrder = () => {
                                                                               {/* TYPE */}
                                                                               <td className="px-3 py-4 text-center align-middle">
                                                                                     <span className="inline-flex rounded-full bg-purple-100 px-3 py-1.5 text-xs font-bold text-purple-700">
-                                                                                          {order.productType ||
-                                                                                                "-"}
+                                                                                          {order.productType || "-"}
                                                                                     </span>
                                                                               </td>
 
@@ -643,13 +624,11 @@ const ManufactureOrder = () => {
                                                                                     {fabric ? (
                                                                                           <div className="mx-auto w-[130px]">
                                                                                                 <p className="break-words text-sm font-bold text-gray-800">
-                                                                                                      {fabric.name ||
-                                                                                                            "-"}
+                                                                                                      {fabric.name || "-"}
                                                                                                 </p>
 
                                                                                                 <p className="mt-1 text-xs text-gray-500">
-                                                                                                      {fabric.gsm ||
-                                                                                                            "-"}
+                                                                                                      {fabric.gsm || "-"}
                                                                                                 </p>
                                                                                           </div>
                                                                                     ) : (
@@ -661,28 +640,15 @@ const ManufactureOrder = () => {
 
                                                                               {/* SIZES */}
                                                                               <td className="px-3 py-4 text-center align-middle">
-                                                                                    {Object.keys(
-                                                                                          sizes
-                                                                                    ).length >
-                                                                                          0 ? (
+                                                                                    {Object.keys(sizes).length > 0 ? (
                                                                                           <div className="mx-auto flex w-[180px] flex-wrap justify-center gap-1.5">
-                                                                                                {Object.entries(
-                                                                                                      sizes
-                                                                                                ).map(
-                                                                                                      ([
-                                                                                                            size,
-                                                                                                            quantity,
-                                                                                                      ]) => (
+                                                                                                {Object.entries(sizes).map(
+                                                                                                      ([size, quantity]) => (
                                                                                                             <span
-                                                                                                                  key={
-                                                                                                                        size
-                                                                                                                  }
+                                                                                                                  key={size}
                                                                                                                   className="rounded-md bg-purple-50 px-2.5 py-1.5 text-xs font-bold text-purple-700"
                                                                                                             >
-                                                                                                                  {size}:{" "}
-                                                                                                                  {
-                                                                                                                        quantity
-                                                                                                                  }
+                                                                                                                  {size}: {quantity}
                                                                                                             </span>
                                                                                                       )
                                                                                                 )}
@@ -696,35 +662,20 @@ const ManufactureOrder = () => {
 
                                                                               {/* JERSEY STYLE */}
                                                                               <td className="px-3 py-4 text-center align-middle">
-                                                                                    {Object.keys(
-                                                                                          jerseyStyle
-                                                                                    ).length >
-                                                                                          0 ? (
+                                                                                    {Object.keys(jerseyStyle).length > 0 ? (
                                                                                           <div className="mx-auto w-[205px] space-y-1.5">
-                                                                                                {Object.entries(
-                                                                                                      jerseyStyle
-                                                                                                ).map(
-                                                                                                      ([
-                                                                                                            style,
-                                                                                                            quantity,
-                                                                                                      ]) => (
+                                                                                                {Object.entries(jerseyStyle).map(
+                                                                                                      ([style, quantity]) => (
                                                                                                             <div
-                                                                                                                  key={
-                                                                                                                        style
-                                                                                                                  }
+                                                                                                                  key={style}
                                                                                                                   className="flex items-center justify-between gap-2 rounded-md border border-purple-100 bg-purple-50/50 px-3 py-2"
                                                                                                             >
                                                                                                                   <span className="text-xs font-medium text-gray-600">
-                                                                                                                        {jerseyStyleNames[
-                                                                                                                              style
-                                                                                                                        ] ||
-                                                                                                                              style}
+                                                                                                                        {jerseyStyleNames[style] || style}
                                                                                                                   </span>
 
                                                                                                                   <span className="text-sm font-bold text-purple-700">
-                                                                                                                        {
-                                                                                                                              quantity
-                                                                                                                        }
+                                                                                                                        {quantity}
                                                                                                                   </span>
                                                                                                             </div>
                                                                                                       )
@@ -739,35 +690,20 @@ const ManufactureOrder = () => {
 
                                                                               {/* READYMADE */}
                                                                               <td className="px-3 py-4 text-center align-middle">
-                                                                                    {Object.keys(
-                                                                                          readymade
-                                                                                    ).length >
-                                                                                          0 ? (
+                                                                                    {Object.keys(readymade).length > 0 ? (
                                                                                           <div className="mx-auto w-[170px] space-y-1.5">
-                                                                                                {Object.entries(
-                                                                                                      readymade
-                                                                                                ).map(
-                                                                                                      ([
-                                                                                                            product,
-                                                                                                            quantity,
-                                                                                                      ]) => (
+                                                                                                {Object.entries(readymade).map(
+                                                                                                      ([product, quantity]) => (
                                                                                                             <div
-                                                                                                                  key={
-                                                                                                                        product
-                                                                                                                  }
+                                                                                                                  key={product}
                                                                                                                   className="rounded-md bg-gray-50 px-3 py-2"
                                                                                                             >
                                                                                                                   <p className="break-words text-xs font-semibold leading-4 text-gray-700">
-                                                                                                                        {
-                                                                                                                              product
-                                                                                                                        }
+                                                                                                                        {product}
                                                                                                                   </p>
 
                                                                                                                   <p className="mt-0.5 text-xs font-bold text-purple-600">
-                                                                                                                        Qty:{" "}
-                                                                                                                        {
-                                                                                                                              quantity
-                                                                                                                        }
+                                                                                                                        Qty: {quantity}
                                                                                                                   </p>
                                                                                                             </div>
                                                                                                       )
@@ -784,15 +720,13 @@ const ManufactureOrder = () => {
                                                                               <td className="px-3 py-4 text-center align-middle">
                                                                                     <div className="mx-auto w-[130px]">
                                                                                           <span className="inline-flex rounded-full bg-purple-50 px-3 py-1.5 text-xs font-bold text-purple-700">
-                                                                                                {delivery.type ||
-                                                                                                      "-"}
+                                                                                                {delivery.type || "-"}
                                                                                           </span>
 
                                                                                           <p className="mt-1.5 text-xs text-gray-500">
                                                                                                 Payer:{" "}
                                                                                                 <span className="font-semibold text-gray-700">
-                                                                                                      {delivery.payer ||
-                                                                                                            "-"}
+                                                                                                      {delivery.payer || "-"}
                                                                                                 </span>
                                                                                           </p>
                                                                                     </div>
@@ -801,12 +735,9 @@ const ManufactureOrder = () => {
                                                                               {/* TRANSACTION ID */}
                                                                               <td className="px-3 py-4 text-center align-middle">
                                                                                     <div className="mx-auto w-[160px]">
-                                                                                          {transactionId !==
-                                                                                                "-" ? (
+                                                                                          {transactionId !== "-" ? (
                                                                                                 <span className="block break-all rounded-lg border border-blue-100 bg-blue-50 px-3 py-2 text-xs font-bold text-blue-700">
-                                                                                                      {
-                                                                                                            transactionId
-                                                                                                      }
+                                                                                                      {transactionId}
                                                                                                 </span>
                                                                                           ) : (
                                                                                                 <span className="text-sm text-gray-400">
@@ -830,9 +761,7 @@ const ManufactureOrder = () => {
                                                                                                       className="group relative overflow-hidden rounded-lg border border-purple-100 bg-purple-50 p-1 shadow-sm transition-all duration-200 hover:border-purple-400 hover:shadow-md"
                                                                                                 >
                                                                                                       <img
-                                                                                                            src={
-                                                                                                                  paymentProof
-                                                                                                            }
+                                                                                                            src={paymentProof}
                                                                                                             alt="Payment Proof"
                                                                                                             className="h-16 w-24 rounded-md object-cover transition-transform duration-200 group-hover:scale-105"
                                                                                                       />
@@ -854,21 +783,16 @@ const ManufactureOrder = () => {
                                                                               {/* STATUS */}
                                                                               <td className="px-3 py-4 text-center align-middle">
                                                                                     <span
-                                                                                          className={`inline-flex rounded-full px-3 py-1.5 text-xs font-bold uppercase ${status ===
-                                                                                                      "completed"
+                                                                                          className={`inline-flex rounded-full px-3 py-1.5 text-xs font-bold uppercase ${status === "completed"
                                                                                                       ? "bg-purple-100 text-purple-700"
-                                                                                                      : status ===
-                                                                                                            "processing"
+                                                                                                      : status === "processing"
                                                                                                             ? "bg-blue-100 text-blue-700"
-                                                                                                            : status ===
-                                                                                                                  "cancelled"
+                                                                                                            : status === "cancelled"
                                                                                                                   ? "bg-red-100 text-red-700"
                                                                                                                   : "bg-amber-100 text-amber-700"
                                                                                                 }`}
                                                                                     >
-                                                                                          {
-                                                                                                status
-                                                                                          }
+                                                                                          {status}
                                                                                     </span>
                                                                               </td>
 
@@ -881,12 +805,9 @@ const ManufactureOrder = () => {
                                                                                                 type="button"
                                                                                                 disabled={
                                                                                                       rowLoading ||
-                                                                                                      status ===
-                                                                                                      "processing" ||
-                                                                                                      status ===
-                                                                                                      "completed" ||
-                                                                                                      status ===
-                                                                                                      "cancelled"
+                                                                                                      status === "processing" ||
+                                                                                                      status === "completed" ||
+                                                                                                      status === "cancelled"
                                                                                                 }
                                                                                                 onClick={() =>
                                                                                                       handleStatusChange(
@@ -894,13 +815,10 @@ const ManufactureOrder = () => {
                                                                                                             "processing"
                                                                                                       )
                                                                                                 }
-                                                                                                className={`inline-flex min-w-[95px] items-center justify-center rounded-lg px-3 py-2 text-xs font-bold shadow-sm transition-all duration-200 ${status ===
-                                                                                                            "processing"
+                                                                                                className={`inline-flex min-w-[95px] items-center justify-center rounded-lg px-3 py-2 text-xs font-bold shadow-sm transition-all duration-200 ${status === "processing"
                                                                                                             ? "cursor-not-allowed bg-blue-100 text-blue-400"
-                                                                                                            : status ===
-                                                                                                                  "completed" ||
-                                                                                                                  status ===
-                                                                                                                  "cancelled"
+                                                                                                            : status === "completed" ||
+                                                                                                                  status === "cancelled"
                                                                                                                   ? "cursor-not-allowed bg-gray-100 text-gray-400"
                                                                                                                   : "bg-blue-600 text-white hover:bg-blue-700 hover:shadow-md"
                                                                                                       }`}
@@ -915,10 +833,8 @@ const ManufactureOrder = () => {
                                                                                                 type="button"
                                                                                                 disabled={
                                                                                                       rowLoading ||
-                                                                                                      status ===
-                                                                                                      "completed" ||
-                                                                                                      status ===
-                                                                                                      "cancelled"
+                                                                                                      status === "completed" ||
+                                                                                                      status === "cancelled"
                                                                                                 }
                                                                                                 onClick={() =>
                                                                                                       handleStatusChange(
@@ -926,11 +842,9 @@ const ManufactureOrder = () => {
                                                                                                             "completed"
                                                                                                       )
                                                                                                 }
-                                                                                                className={`inline-flex min-w-[90px] items-center justify-center rounded-lg px-3 py-2 text-xs font-bold shadow-sm transition-all duration-200 ${status ===
-                                                                                                            "completed"
+                                                                                                className={`inline-flex min-w-[90px] items-center justify-center rounded-lg px-3 py-2 text-xs font-bold shadow-sm transition-all duration-200 ${status === "completed"
                                                                                                             ? "cursor-not-allowed bg-purple-100 text-purple-400"
-                                                                                                            : status ===
-                                                                                                                  "cancelled"
+                                                                                                            : status === "cancelled"
                                                                                                                   ? "cursor-not-allowed bg-gray-100 text-gray-400"
                                                                                                                   : "bg-purple-600 text-white hover:bg-purple-700 hover:shadow-md"
                                                                                                       }`}
@@ -945,8 +859,7 @@ const ManufactureOrder = () => {
                                                                                                 type="button"
                                                                                                 disabled={
                                                                                                       rowLoading ||
-                                                                                                      status ===
-                                                                                                      "cancelled"
+                                                                                                      status === "cancelled"
                                                                                                 }
                                                                                                 onClick={() =>
                                                                                                       handleStatusChange(
@@ -954,8 +867,7 @@ const ManufactureOrder = () => {
                                                                                                             "cancelled"
                                                                                                       )
                                                                                                 }
-                                                                                                className={`inline-flex min-w-[80px] items-center justify-center rounded-lg px-3 py-2 text-xs font-bold shadow-sm transition-all duration-200 ${status ===
-                                                                                                            "cancelled"
+                                                                                                className={`inline-flex min-w-[80px] items-center justify-center rounded-lg px-3 py-2 text-xs font-bold shadow-sm transition-all duration-200 ${status === "cancelled"
                                                                                                             ? "cursor-not-allowed bg-red-100 text-red-400"
                                                                                                             : "bg-red-600 text-white hover:bg-red-700 hover:shadow-md"
                                                                                                       }`}
@@ -968,13 +880,9 @@ const ManufactureOrder = () => {
                                                                                           {/* DELETE */}
                                                                                           <button
                                                                                                 type="button"
-                                                                                                disabled={
-                                                                                                      rowLoading
-                                                                                                }
+                                                                                                disabled={rowLoading}
                                                                                                 onClick={() =>
-                                                                                                      handleDelete(
-                                                                                                            order._id
-                                                                                                      )
+                                                                                                      handleDelete(order._id)
                                                                                                 }
                                                                                                 className="inline-flex min-w-[70px] items-center justify-center rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs font-bold text-gray-600 shadow-sm transition-all duration-200 hover:border-red-200 hover:bg-red-50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50"
                                                                                           >
@@ -992,7 +900,6 @@ const ManufactureOrder = () => {
                                           </table>
                                     </div>
 
-                                    {/* Horizontal Scroll Hint */}
                                     <div className="border-t border-purple-50 bg-purple-50/30 px-4 py-2 text-center text-[11px] font-medium text-purple-500 sm:text-xs">
                                           ← Swipe left or right to view all
                                           columns →
@@ -1001,9 +908,7 @@ const ManufactureOrder = () => {
                         )}
                   </div>
 
-                  {/* =========================
-                      PAYMENT IMAGE MODAL
-                  ========================= */}
+                  {/* PAYMENT IMAGE MODAL */}
                   {selectedPaymentImage && (
                         <div
                               className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm"
@@ -1015,7 +920,6 @@ const ManufactureOrder = () => {
                                           e.stopPropagation()
                                     }
                               >
-                                    {/* CLOSE BUTTON */}
                                     <button
                                           type="button"
                                           onClick={closePaymentImage}
@@ -1024,7 +928,6 @@ const ManufactureOrder = () => {
                                           ✕
                                     </button>
 
-                                    {/* LARGE IMAGE */}
                                     <img
                                           src={selectedPaymentImage}
                                           alt="Payment Proof Preview"

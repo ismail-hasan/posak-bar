@@ -11,7 +11,29 @@ const Order = () => {
             fetch('https://posak-bari-backend.vercel.app/order')
                   .then(res => res.json())
                   .then(data => {
-                        setOrders(data);
+
+                        // Latest order first
+                        const latestFirstOrders = Array.isArray(data)
+                              ? [...data].sort((a, b) => {
+
+                                    // createdAt থাকলে createdAt দিয়ে sort
+                                    if (a.createdAt && b.createdAt) {
+                                          return (
+                                                new Date(b.createdAt) -
+                                                new Date(a.createdAt)
+                                          );
+                                    }
+
+                                    // createdAt না থাকলে MongoDB _id দিয়ে sort
+                                    if (a._id && b._id) {
+                                          return b._id.localeCompare(a._id);
+                                    }
+
+                                    return 0;
+                              })
+                              : [];
+
+                        setOrders(latestFirstOrders);
                         setLoading(false);
                   })
                   .catch(err => {
@@ -203,16 +225,16 @@ const Order = () => {
                                     key={tab.key}
                                     onClick={() => setFilter(tab.key)}
                                     className={`px-5 py-2 rounded-lg font-semibold capitalize transition flex items-center gap-2 ${filter === tab.key
-                                                ? 'bg-purple-900 text-white shadow-md'
-                                                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                                          ? 'bg-purple-900 text-white shadow-md'
+                                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                                           }`}
                               >
                                     <span>{tab.label}</span>
 
                                     <span
                                           className={`text-xs px-2 py-0.5 rounded-full ${filter === tab.key
-                                                      ? 'bg-purple-800 text-white'
-                                                      : 'bg-gray-200 text-gray-700'
+                                                ? 'bg-purple-800 text-white'
+                                                : 'bg-gray-200 text-gray-700'
                                                 }`}
                                     >
                                           {tab.count}
@@ -349,15 +371,15 @@ const Order = () => {
 
                                                                   <span
                                                                         className={`px-3 py-1 rounded-full text-xs font-semibold uppercase ${orderStatus ===
-                                                                                    'complete'
-                                                                                    ? 'bg-green-100 text-green-700'
+                                                                              'complete'
+                                                                              ? 'bg-green-100 text-green-700'
+                                                                              : orderStatus ===
+                                                                                    'processing'
+                                                                                    ? 'bg-blue-100 text-blue-700'
                                                                                     : orderStatus ===
-                                                                                          'processing'
-                                                                                          ? 'bg-blue-100 text-blue-700'
-                                                                                          : orderStatus ===
-                                                                                                'cancelled'
-                                                                                                ? 'bg-red-100 text-red-700'
-                                                                                                : 'bg-yellow-100 text-yellow-700'
+                                                                                          'cancelled'
+                                                                                          ? 'bg-red-100 text-red-700'
+                                                                                          : 'bg-yellow-100 text-yellow-700'
                                                                               }`}
                                                                   >
                                                                         {order.status ||
@@ -384,9 +406,9 @@ const Order = () => {
                                                                                     isCancelled
                                                                               }
                                                                               className={`px-3 py-1.5 rounded text-xs font-medium transition ${isCompleted ||
-                                                                                          isCancelled
-                                                                                          ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                                                                          : 'bg-blue-500 hover:bg-blue-600 text-white cursor-pointer'
+                                                                                    isCancelled
+                                                                                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                                                                    : 'bg-blue-500 hover:bg-blue-600 text-white cursor-pointer'
                                                                                     }`}
                                                                         >
                                                                               Processing
@@ -405,9 +427,9 @@ const Order = () => {
                                                                                     isCancelled
                                                                               }
                                                                               className={`px-3 py-1.5 rounded text-xs font-medium transition ${isCompleted ||
-                                                                                          isCancelled
-                                                                                          ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                                                                          : 'bg-green-500 hover:bg-green-600 text-white cursor-pointer'
+                                                                                    isCancelled
+                                                                                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                                                                    : 'bg-green-500 hover:bg-green-600 text-white cursor-pointer'
                                                                                     }`}
                                                                         >
                                                                               Complete
@@ -426,9 +448,9 @@ const Order = () => {
                                                                                     isCompleted
                                                                               }
                                                                               className={`px-3 py-1.5 rounded text-xs font-medium transition ${isCancelled ||
-                                                                                          isCompleted
-                                                                                          ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                                                                          : 'bg-orange-500 hover:bg-orange-600 text-white cursor-pointer'
+                                                                                    isCompleted
+                                                                                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                                                                    : 'bg-orange-500 hover:bg-orange-600 text-white cursor-pointer'
                                                                                     }`}
                                                                         >
                                                                               Cancel
