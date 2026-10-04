@@ -16,6 +16,7 @@ const FABRICS = [
 ];
 
 const SIZES = ["S", "M", "L", "XL", "XXL", "3XL", "4XL", "5XL"];
+const KIDS_AGES = Array.from({ length: 12 }, (_, i) => i + 1);
 
 const MANUFACTURING_PRODUCTS = [
   "কাস্টমাইজ সাবলিমেশন জার্সি",
@@ -49,6 +50,48 @@ const TERMS_LIST = [
 ];
 
 // ─────────────────────────────────────────────
+// Helpers
+// ─────────────────────────────────────────────
+
+const sumValues = (obj) =>
+  Object.values(obj || {}).reduce((sum, v) => sum + Number(v || 0), 0);
+
+// { M: "5", L: "2" } -> [{ size: "M", quantity: 5 }, ...] (শুধু > 0)
+const toAdultList = (obj) =>
+  SIZES.filter((s) => Number(obj?.[s] || 0) > 0).map((s) => ({
+    size: s,
+    quantity: Number(obj[s]),
+  }));
+
+// { 1: "2", 7: "10" } -> [{ age: 1, quantity: 2 }, ...] (শুধু > 0)
+const toKidsList = (obj) =>
+  KIDS_AGES.filter((a) => Number(obj?.[a] || 0) > 0).map((a) => ({
+    age: a,
+    quantity: Number(obj[a]),
+  }));
+
+const getInitialForm = () => ({
+  productType: "manufacturing",
+  products: [],
+  customer: { name: "", phone: "", address: "" },
+  manufacturing: {
+    fabric: null,
+    sizeCategory: "adult",
+    kids: {},
+    sizes: {},
+    jerseyStyle: {},
+  },
+  readymade: {},
+  delivery: { type: "courier", payer: "customer" },
+  payment: {
+    advancePercentage: 30,
+    transactionId: "",
+    paymentProof: "",
+  },
+  termsAccepted: false,
+});
+
+// ─────────────────────────────────────────────
 // UI Components
 // ─────────────────────────────────────────────
 
@@ -58,7 +101,6 @@ const SectionCard = ({ title, children }) => {
       <h2 className="mb-4 border-b border-gray-100 pb-3 text-[22px] font-semibold text-gray-800 sm:text-base">
         {title}
       </h2>
-
       {children}
     </div>
   );
@@ -91,7 +133,6 @@ const Label = ({ children, required, htmlFor }) => {
       className="mb-1.5 block text-sm font-medium text-gray-600"
     >
       {children}
-
       {required && <span className="ml-1 text-red-500">*</span>}
     </label>
   );
@@ -134,9 +175,7 @@ const InfoBox = ({ children }) => {
 };
 
 const FieldError = ({ msg }) => {
-  return msg ? (
-    <p className="mt-1 text-xs text-red-500">{msg}</p>
-  ) : null;
+  return msg ? <p className="mt-1 text-xs text-red-500">{msg}</p> : null;
 };
 
 // ─────────────────────────────────────────────
@@ -144,42 +183,7 @@ const FieldError = ({ msg }) => {
 // ─────────────────────────────────────────────
 
 const OrderForm = () => {
-  const [formData, setFormData] = useState({
-    productType: "manufacturing",
-
-    products: [],
-
-    customer: {
-      name: "",
-      phone: "",
-      address: "",
-    },
-
-    manufacturing: {
-      fabric: null,
-      sizeCategory: "adult",
-      kids: "",
-      sizes: {},
-      jerseyStyle: {},
-    },
-
-    readymade: {},
-
-    delivery: {
-      type: "courier",
-      payer: "customer",
-    },
-
-    // ⭐ NEW: Advance Payment
-    payment: {
-      advancePercentage: 30,
-      transactionId: "",
-      paymentProof: "",
-    },
-
-    termsAccepted: false,
-  });
-
+  const [formData, setFormData] = useState(getInitialForm());
   const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -189,54 +193,37 @@ const OrderForm = () => {
   // ─────────────────────────────────────────────
 
   const clearErr = (key) => {
-    setErrors((prev) => ({
-      ...prev,
-      [key]: "",
-    }));
+    setErrors((prev) => ({ ...prev, [key]: "" }));
   };
 
   const updateCustomer = (key, value) => {
     setFormData((prev) => ({
       ...prev,
-      customer: {
-        ...prev.customer,
-        [key]: value,
-      },
+      customer: { ...prev.customer, [key]: value },
     }));
   };
 
   const updateManufacturing = (key, value) => {
     setFormData((prev) => ({
       ...prev,
-      manufacturing: {
-        ...prev.manufacturing,
-        [key]: value,
-      },
+      manufacturing: { ...prev.manufacturing, [key]: value },
     }));
   };
 
   const updateDelivery = (key, value) => {
     setFormData((prev) => ({
       ...prev,
-      delivery: {
-        ...prev.delivery,
-        [key]: value,
-      },
+      delivery: { ...prev.delivery, [key]: value },
     }));
   };
 
-  // ⭐ NEW: Payment Update
   const updatePayment = (key, value) => {
     setFormData((prev) => ({
       ...prev,
-      payment: {
-        ...prev.payment,
-        [key]: value,
-      },
+      payment: { ...prev.payment, [key]: value },
     }));
   };
 
-  // ⭐ NEW: Payment Proof Upload
   const handlePaymentProofUpload = (imageUrl) => {
     updatePayment("paymentProof", imageUrl);
     clearErr("paymentProof");
@@ -252,16 +239,14 @@ const OrderForm = () => {
       productType: type,
       products: [],
       manufacturing: {
-        ...prev.manufacturing,
         fabric: null,
         sizeCategory: "adult",
-        kids: "",
+        kids: {},
         sizes: {},
         jerseyStyle: {},
       },
       readymade: {},
     }));
-
     setErrors({});
   };
 
@@ -273,14 +258,17 @@ const OrderForm = () => {
     setFormData((prev) => {
       const alreadySelected = prev.products.includes(product);
 
+      const readymade = { ...prev.readymade };
+      if (alreadySelected) delete readymade[product];
+
       return {
         ...prev,
+        readymade,
         products: alreadySelected
           ? prev.products.filter((item) => item !== product)
           : [...prev.products, product],
       };
     });
-
     clearErr("product");
   };
 
@@ -290,47 +278,46 @@ const OrderForm = () => {
 
   const updateReadymadeQty = (product, value) => {
     setFormData((prev) => {
-      const readymade = {
-        ...prev.readymade,
-      };
-
-      if (value === "") {
-        delete readymade[product];
-      } else {
-        readymade[product] = value;
-      }
-
-      return {
-        ...prev,
-        readymade,
-      };
+      const readymade = { ...prev.readymade };
+      if (value === "") delete readymade[product];
+      else readymade[product] = value;
+      return { ...prev, readymade };
     });
+    clearErr("product");
   };
 
   // ─────────────────────────────────────────────
-  // Size
+  // Size (Adult)
   // ─────────────────────────────────────────────
 
   const updateSize = (size, value) => {
     setFormData((prev) => {
-      const sizes = {
-        ...prev.manufacturing.sizes,
-      };
-
-      if (value === "") {
-        delete sizes[size];
-      } else {
-        sizes[size] = value;
-      }
-
+      const sizes = { ...prev.manufacturing.sizes };
+      if (value === "") delete sizes[size];
+      else sizes[size] = value;
       return {
         ...prev,
-        manufacturing: {
-          ...prev.manufacturing,
-          sizes,
-        },
+        manufacturing: { ...prev.manufacturing, sizes },
       };
     });
+    clearErr("sizeMismatch");
+  };
+
+  // ─────────────────────────────────────────────
+  // Size (Kids)
+  // ─────────────────────────────────────────────
+
+  const updateKidsSize = (age, value) => {
+    setFormData((prev) => {
+      const kids = { ...(prev.manufacturing.kids || {}) };
+      if (value === "") delete kids[age];
+      else kids[age] = value;
+      return {
+        ...prev,
+        manufacturing: { ...prev.manufacturing, kids },
+      };
+    });
+    clearErr("sizeMismatch");
   };
 
   // ─────────────────────────────────────────────
@@ -339,25 +326,14 @@ const OrderForm = () => {
 
   const updateJerseyStyle = (key, value) => {
     setFormData((prev) => {
-      const jerseyStyle = {
-        ...prev.manufacturing.jerseyStyle,
-      };
-
-      if (value === "") {
-        delete jerseyStyle[key];
-      } else {
-        jerseyStyle[key] = value;
-      }
-
+      const jerseyStyle = { ...prev.manufacturing.jerseyStyle };
+      if (value === "") delete jerseyStyle[key];
+      else jerseyStyle[key] = value;
       return {
         ...prev,
-        manufacturing: {
-          ...prev.manufacturing,
-          jerseyStyle,
-        },
+        manufacturing: { ...prev.manufacturing, jerseyStyle },
       };
     });
-
     clearErr(key);
     clearErr("jerseyStyle");
     clearErr("sizeMismatch");
@@ -368,13 +344,28 @@ const OrderForm = () => {
   // ─────────────────────────────────────────────
 
   const toggleTerms = () => {
-    setFormData((prev) => ({
-      ...prev,
-      termsAccepted: !prev.termsAccepted,
-    }));
-
+    setFormData((prev) => ({ ...prev, termsAccepted: !prev.termsAccepted }));
     clearErr("terms");
   };
+
+  // ─────────────────────────────────────────────
+  // Totals  ✅ বড়দের + বাচ্চাদের একসাথে যোগ হবে
+  // ─────────────────────────────────────────────
+
+  const jersey = formData.manufacturing.jerseyStyle;
+  const isKids = formData.manufacturing.sizeCategory === "kids";
+
+  const totalJerseyQty =
+    Number(jersey.kolarHalf || 0) +
+    Number(jersey.kolarFull || 0) +
+    Number(jersey.golGolaHalf || 0) +
+    Number(jersey.golGolaFull || 0);
+
+  const adultSizeTotal = sumValues(formData.manufacturing.sizes);
+  const kidsSizeTotal = sumValues(formData.manufacturing.kids);
+
+  // ✅ দুই tab এ একই combined total দেখাবে
+  const totalSizeQty = adultSizeTotal + kidsSizeTotal;
 
   // ─────────────────────────────────────────────
   // Validation
@@ -397,8 +388,7 @@ const OrderForm = () => {
     if (!phone) {
       e.phone = "মোবাইল নম্বর লিখুন";
     } else if (!phoneRegex.test(phone)) {
-      e.phone =
-        "সঠিক বাংলাদেশি মোবাইল নম্বর দিন (যেমন: 01XXXXXXXXX)";
+      e.phone = "সঠিক বাংলাদেশি মোবাইল নম্বর দিন (যেমন: 01XXXXXXXXX)";
     }
 
     if (!formData.customer.address.trim()) {
@@ -406,35 +396,37 @@ const OrderForm = () => {
     }
 
     if (formData.productType === "manufacturing") {
-      const jersey = formData.manufacturing.jerseyStyle;
+      if (!formData.manufacturing.fabric) {
+        e.fabric = "একটি ফেব্রিক নির্বাচন করুন";
+      }
 
       const hasJerseyStyle = Object.values(jersey).some(
         (value) => value !== "" && Number(value) > 0
       );
 
       if (!hasJerseyStyle) {
-        e.jerseyStyle =
-          "কলার/গোলগলা স্টাইলের যেকোনো একটি পরিমাণ লিখুন";
+        e.jerseyStyle = "কলার/গোলগলা স্টাইলের যেকোনো একটি পরিমাণ লিখুন";
       }
 
-      if (formData.manufacturing.sizeCategory === "adult") {
-        const sizeTotal = Object.values(
-          formData.manufacturing.sizes
-        ).reduce((sum, value) => sum + Number(value || 0), 0);
-
-        const jerseyTotal =
-          Number(jersey.kolarHalf || 0) +
-          Number(jersey.kolarFull || 0) +
-          Number(jersey.golGolaHalf || 0) +
-          Number(jersey.golGolaFull || 0);
-
-        if (sizeTotal !== jerseyTotal) {
-          e.sizeMismatch = `মোট সাইজ: ${sizeTotal} পিস এবং মোট জার্সির পরিমাণ: ${jerseyTotal} পিস — সমান দিন`;
-        }
+      // ✅ combined (বড়দের + বাচ্চাদের) total এর সাথে জার্সির মোট মেলানো হবে
+      if (totalSizeQty !== totalJerseyQty) {
+        e.sizeMismatch = `মোট সাইজ: ${totalSizeQty} পিস (বড়দের ${adultSizeTotal} + বাচ্চাদের ${kidsSizeTotal}) এবং মোট জার্সির পরিমাণ: ${totalJerseyQty} পিস — সমান দিন`;
       }
+
+      // ন্যূনতম ১০ পিস চেক চাইলে নিচের লাইনগুলো uncomment করুন
+      // if (totalJerseyQty > 0 && totalJerseyQty < 10) {
+      //   e.jerseyStyle = "ন্যূনতম ১০ পিস অর্ডার করতে হবে";
+      // }
     }
 
-    // ⭐ NEW: Advance Payment Validation
+    if (formData.productType === "readymade") {
+      const missingQty = formData.products.some(
+        (p) => Number(formData.readymade[p] || 0) <= 0
+      );
+      if (missingQty) {
+        e.product = "নির্বাচিত প্রতিটি পণ্যের পিস সংখ্যা লিখুন";
+      }
+    }
 
     if (!formData.payment.transactionId.trim()) {
       e.transactionId = "Transaction ID লিখুন";
@@ -449,6 +441,79 @@ const OrderForm = () => {
     }
 
     return e;
+  };
+
+  // ─────────────────────────────────────────────
+  // Backend Payload  ✅ adult + kids দুটোই যাবে
+  // ─────────────────────────────────────────────
+
+  const buildPayload = () => {
+    const isManufacturing = formData.productType === "manufacturing";
+
+    const payload = {
+      orderType: formData.productType,
+      products: formData.products,
+
+      customer: {
+        name: formData.customer.name.trim(),
+        phone: formData.customer.phone.replace(/\s/g, ""),
+        address: formData.customer.address.trim(),
+      },
+
+      delivery: {
+        type: formData.delivery.type,
+        courierChargePaidBy: formData.delivery.payer,
+      },
+
+      payment: {
+        advancePercentage: formData.payment.advancePercentage,
+        transactionId: formData.payment.transactionId.trim(),
+        paymentProof: formData.payment.paymentProof,
+      },
+
+      termsAccepted: formData.termsAccepted,
+    };
+
+    if (isManufacturing) {
+      const m = formData.manufacturing;
+
+      payload.manufacturing = {
+        fabric: m.fabric
+          ? { id: m.fabric.id, name: m.fabric.name, gsm: m.fabric.gsm }
+          : null,
+
+        // ✅ দুই category র data আলাদা আলাদা
+        adultSizes: toAdultList(m.sizes),
+        kidsSizes: toKidsList(m.kids),
+
+        sizeSummary: {
+          adultTotal: adultSizeTotal,
+          kidsTotal: kidsSizeTotal,
+          grandTotal: totalSizeQty,
+        },
+
+        jerseyStyle: {
+          kolarHalf: Number(m.jerseyStyle.kolarHalf || 0),
+          kolarFull: Number(m.jerseyStyle.kolarFull || 0),
+          golGolaHalf: Number(m.jerseyStyle.golGolaHalf || 0),
+          golGolaFull: Number(m.jerseyStyle.golGolaFull || 0),
+        },
+
+        totalQuantity: totalJerseyQty,
+      };
+    } else {
+      const items = formData.products.map((name) => ({
+        name,
+        quantity: Number(formData.readymade[name] || 0),
+      }));
+
+      payload.readymade = {
+        items,
+        totalQuantity: items.reduce((s, i) => s + i.quantity, 0),
+      };
+    }
+
+    return payload;
   };
 
   // ─────────────────────────────────────────────
@@ -469,12 +534,10 @@ const OrderForm = () => {
 
       const firstError = Object.keys(validationErrors)[0];
 
-      document
-        .getElementById(`field-${firstError}`)
-        ?.scrollIntoView({
-          behavior: "smooth",
-          block: "center",
-        });
+      document.getElementById(`field-${firstError}`)?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
 
       return;
     }
@@ -484,24 +547,19 @@ const OrderForm = () => {
     try {
       const response = await fetch(API_URL, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(buildPayload()),
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(
-          data?.message || "অর্ডার সাবমিট করতে সমস্যা হয়েছে"
-        );
+        throw new Error(data?.message || "অর্ডার সাবমিট করতে সমস্যা হয়েছে");
       }
 
       setSubmitted(true);
     } catch (error) {
       console.error("Order submit error:", error);
-
       alert(
         error.message ||
         "সার্ভারের সাথে যোগাযোগ করা যাচ্ছে না। Backend server চেক করুন।"
@@ -516,61 +574,10 @@ const OrderForm = () => {
   // ─────────────────────────────────────────────
 
   const resetForm = () => {
-    setFormData({
-      productType: "manufacturing",
-
-      products: [],
-
-      customer: {
-        name: "",
-        phone: "",
-        address: "",
-      },
-
-      manufacturing: {
-        fabric: null,
-        sizeCategory: "adult",
-        kids: "",
-        sizes: {},
-        jerseyStyle: {},
-      },
-
-      readymade: {},
-
-      delivery: {
-        type: "courier",
-        payer: "customer",
-      },
-
-      // ⭐ NEW
-      payment: {
-        advancePercentage: 30,
-        transactionId: "",
-        paymentProof: "",
-      },
-
-      termsAccepted: false,
-    });
-
+    setFormData(getInitialForm());
     setErrors({});
     setSubmitted(false);
   };
-
-  // ─────────────────────────────────────────────
-  // Total Jersey Quantity
-  // ─────────────────────────────────────────────
-
-  const jersey = formData.manufacturing.jerseyStyle;
-
-  const totalJerseyQty =
-    Number(jersey.kolarHalf || 0) +
-    Number(jersey.kolarFull || 0) +
-    Number(jersey.golGolaHalf || 0) +
-    Number(jersey.golGolaFull || 0);
-
-  const totalSizeQty = Object.values(
-    formData.manufacturing.sizes
-  ).reduce((sum, value) => sum + Number(value || 0), 0);
 
   // ─────────────────────────────────────────────
   // Success Screen
@@ -587,8 +594,8 @@ const OrderForm = () => {
           </h1>
 
           <p className="mb-6 text-sm leading-relaxed text-gray-600 sm:text-base">
-            আপনার অর্ডার সফলভাবে গৃহীত হয়েছে। আমাদের টিম খুব শীঘ্রই আপনার
-            সাথে যোগাযোগ করবে। অনুগ্রহ করে অপেক্ষা করুন।
+            আপনার অর্ডার সফলভাবে গৃহীত হয়েছে। আমাদের টিম খুব শীঘ্রই আপনার সাথে
+            যোগাযোগ করবে। অনুগ্রহ করে অপেক্ষা করুন।
           </p>
 
           <button
@@ -610,7 +617,6 @@ const OrderForm = () => {
   return (
     <div className="min-h-screen bg-slate-50 px-3 py-6 sm:px-6">
       <div className="mx-auto max-w-2xl">
-
         {/* Header */}
         <div className="mb-5 rounded-2xl bg-gradient-to-r from-green-700 to-red-600 p-6 text-center shadow-md sm:p-8">
           <h1 className="mb-1 text-[21px] font-bold text-white sm:text-3xl">
@@ -619,7 +625,6 @@ const OrderForm = () => {
         </div>
 
         <form onSubmit={handleSubmit} noValidate>
-
           {/* Product Type */}
           <SectionCard title="কোন পণ্যটি অর্ডার করতে চান? নির্বাচন করুন">
             <div className="mb-4 flex gap-2">
@@ -637,8 +642,7 @@ const OrderForm = () => {
             </div>
 
             <Label>
-              পণ্য নির্বাচন করুন{" "}
-              <span className="text-red-500">*</span>
+              পণ্য নির্বাচন করুন <span className="text-red-500">*</span>
             </Label>
 
             <div
@@ -680,10 +684,7 @@ const OrderForm = () => {
                         onWheel={(e) => e.target.blur()}
                         onChange={(e) => {
                           e.stopPropagation();
-                          updateReadymadeQty(
-                            product,
-                            e.target.value
-                          );
+                          updateReadymadeQty(product, e.target.value);
                         }}
                         className="w-20 rounded-lg border border-gray-300 bg-white px-2 py-1.5 text-center text-sm text-gray-800 transition focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-400"
                       />
@@ -788,8 +789,7 @@ const OrderForm = () => {
                           type="radio"
                           name="fabric-radio"
                           checked={
-                            formData.manufacturing.fabric?.id ===
-                            fabric.id
+                            formData.manufacturing.fabric?.id === fabric.id
                           }
                           onChange={() => {
                             updateManufacturing("fabric", fabric);
@@ -823,99 +823,90 @@ const OrderForm = () => {
                 <div className="flex gap-2">
                   <ToggleBtn
                     label="বড়দের মাপ"
-                    active={
-                      formData.manufacturing.sizeCategory === "adult"
-                    }
-                    onClick={() =>
-                      updateManufacturing(
-                        "sizeCategory",
-                        "adult"
-                      )
-                    }
+                    active={formData.manufacturing.sizeCategory === "adult"}
+                    onClick={() => {
+                      updateManufacturing("sizeCategory", "adult");
+                      clearErr("sizeMismatch");
+                    }}
                   />
 
                   <ToggleBtn
                     label="বাচ্চাদের মাপ"
-                    active={
-                      formData.manufacturing.sizeCategory === "kids"
-                    }
-                    onClick={() =>
-                      updateManufacturing(
-                        "sizeCategory",
-                        "kids"
-                      )
-                    }
+                    active={formData.manufacturing.sizeCategory === "kids"}
+                    onClick={() => {
+                      updateManufacturing("sizeCategory", "kids");
+                      clearErr("sizeMismatch");
+                    }}
                   />
                 </div>
               </div>
 
-              {formData.manufacturing.sizeCategory === "kids" && (
-                <div className="mb-4">
-                  <Label htmlFor="kidAge">
-                    বাচ্চার বয়স এবং পরিমাণ দিন
-                  </Label>
+              {/* ================= বড়দের মাপ ================= */}
+              {!isKids && (
+                <div className="grid grid-cols-4 gap-2 sm:gap-3">
+                  {SIZES.map((size) => (
+                    <div key={size} className="flex flex-col items-center gap-1">
+                      <span className="text-xs font-bold text-gray-500">
+                        {size}
+                      </span>
 
-                  <Input
-                    id="kidAge"
-                    type="text"
-                    placeholder="যেমন: ১ বছরের ৫ পিছ, ৭ বছরে ১০ পিছ ......"
-                    value={formData.manufacturing.kids}
-                    onChange={(e) =>
-                      updateManufacturing(
-                        "kids",
-                        e.target.value
-                      )
-                    }
-                  />
+                      <input
+                        type="number"
+                        min="0"
+                        placeholder="0"
+                        value={formData.manufacturing.sizes?.[size] || ""}
+                        onWheel={(e) => e.target.blur()}
+                        onChange={(e) => updateSize(size, e.target.value)}
+                        className="w-full rounded-xl border border-gray-200 bg-gray-50 px-1 py-2 text-center text-sm text-gray-800 transition focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-400"
+                      />
+                    </div>
+                  ))}
                 </div>
               )}
 
-              {formData.manufacturing.sizeCategory === "adult" && (
-                <>
-                  <div className="grid grid-cols-4 gap-2 sm:gap-3">
-                    {SIZES.map((size) => (
-                      <div
-                        key={size}
-                        className="flex flex-col items-center gap-1"
-                      >
-                        <span className="text-xs font-bold text-gray-500">
-                          {size}
-                        </span>
-
-                        <input
-                          type="number"
-                          min="0"
-                          placeholder="0"
-                          value={
-                            formData.manufacturing.sizes[size] || ""
-                          }
-                          onWheel={(e) => e.target.blur()}
-                          onChange={(e) => {
-                            updateSize(size, e.target.value);
-                            clearErr("sizeMismatch");
-                          }}
-                          className="w-full rounded-xl border border-gray-200 bg-gray-50 px-1 py-2 text-center text-sm text-gray-800 transition focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-400"
-                        />
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="mt-4 text-right">
-                    <p className="text-sm text-gray-600 sm:text-base">
-                      মোট সাইজ:{" "}
-                      <span className="font-bold text-blue-600">
-                        {totalSizeQty} পিস
+              {/* ================= বাচ্চাদের মাপ ================= */}
+              {isKids && (
+                <div className="grid grid-cols-4 gap-2 sm:gap-3">
+                  {KIDS_AGES.map((age) => (
+                    <div key={age} className="flex flex-col items-center gap-1">
+                      <span className="text-xs font-bold text-gray-500">
+                        {age} বছর
                       </span>
-                    </p>
 
-                    {errors.sizeMismatch && (
-                      <p className="mt-1 text-sm font-medium text-red-500">
-                        {errors.sizeMismatch}
-                      </p>
-                    )}
-                  </div>
-                </>
+                      <input
+                        type="number"
+                        min="0"
+                        placeholder="0"
+                        value={formData.manufacturing.kids?.[age] || ""}
+                        onWheel={(e) => e.target.blur()}
+                        onChange={(e) => updateKidsSize(age, e.target.value)}
+                        className="w-full rounded-xl border border-gray-200 bg-gray-50 px-1 py-2 text-center text-sm text-gray-800 transition focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-400"
+                      />
+                    </div>
+                  ))}
+                </div>
               )}
+
+              {/* ✅ মোট সাইজ (বড়দের + বাচ্চাদের combined) */}
+              <div id="field-sizeMismatch" className="mt-4 text-right">
+                <p className="text-sm text-gray-600 sm:text-base">
+                  মোট সাইজ:{" "}
+                  <span className="font-bold text-blue-600">
+                    {totalSizeQty} পিস
+                  </span>
+                </p>
+
+                {/* দুই category র আলাদা সংখ্যা */}
+                <p className="mt-1 text-xs text-gray-400">
+                  বড়দের {adultSizeTotal} + বাচ্চাদের {kidsSizeTotal}
+                </p>
+
+                {errors.sizeMismatch && (
+                  <p className="mt-1 text-sm font-medium text-red-500">
+                    {errors.sizeMismatch}
+                  </p>
+                )}
+              </div>
             </SectionCard>
           )}
 
@@ -924,9 +915,7 @@ const OrderForm = () => {
             <SectionCard title="জার্সির স্টাইল ও পরিমাণ দিন">
               <div className="mb-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div id="field-kolarHalf">
-                  <Label htmlFor="kolarHalf">
-                    কলার হাফহাতা
-                  </Label>
+                  <Label htmlFor="kolarHalf">কলার হাফহাতা</Label>
 
                   <Input
                     id="kolarHalf"
@@ -935,18 +924,13 @@ const OrderForm = () => {
                     placeholder="পিস সংখ্যা লিখুন"
                     value={jersey.kolarHalf || ""}
                     onChange={(e) =>
-                      updateJerseyStyle(
-                        "kolarHalf",
-                        e.target.value
-                      )
+                      updateJerseyStyle("kolarHalf", e.target.value)
                     }
                   />
                 </div>
 
                 <div id="field-kolarFull">
-                  <Label htmlFor="kolarFull">
-                    কলার ফুলহাতা
-                  </Label>
+                  <Label htmlFor="kolarFull">কলার ফুলহাতা</Label>
 
                   <Input
                     id="kolarFull"
@@ -955,18 +939,13 @@ const OrderForm = () => {
                     placeholder="পিস সংখ্যা লিখুন"
                     value={jersey.kolarFull || ""}
                     onChange={(e) =>
-                      updateJerseyStyle(
-                        "kolarFull",
-                        e.target.value
-                      )
+                      updateJerseyStyle("kolarFull", e.target.value)
                     }
                   />
                 </div>
 
                 <div id="field-golGolaHalf">
-                  <Label htmlFor="golGolaHalf">
-                    গোলগলা হাফহাতা
-                  </Label>
+                  <Label htmlFor="golGolaHalf">গোলগলা হাফহাতা</Label>
 
                   <Input
                     id="golGolaHalf"
@@ -975,18 +954,13 @@ const OrderForm = () => {
                     placeholder="পিস সংখ্যা লিখুন"
                     value={jersey.golGolaHalf || ""}
                     onChange={(e) =>
-                      updateJerseyStyle(
-                        "golGolaHalf",
-                        e.target.value
-                      )
+                      updateJerseyStyle("golGolaHalf", e.target.value)
                     }
                   />
                 </div>
 
                 <div id="field-golGolaFull">
-                  <Label htmlFor="golGolaFull">
-                    গোলগলা ফুলহাতা
-                  </Label>
+                  <Label htmlFor="golGolaFull">গোলগলা ফুলহাতা</Label>
 
                   <Input
                     id="golGolaFull"
@@ -995,16 +969,15 @@ const OrderForm = () => {
                     placeholder="পিস সংখ্যা লিখুন"
                     value={jersey.golGolaFull || ""}
                     onChange={(e) =>
-                      updateJerseyStyle(
-                        "golGolaFull",
-                        e.target.value
-                      )
+                      updateJerseyStyle("golGolaFull", e.target.value)
                     }
                   />
                 </div>
               </div>
 
-              <FieldError msg={errors.jerseyStyle} />
+              <div id="field-jerseyStyle">
+                <FieldError msg={errors.jerseyStyle} />
+              </div>
 
               <div>
                 <Label>মোট জার্সির পরিমাণ</Label>
@@ -1019,28 +992,18 @@ const OrderForm = () => {
             </SectionCard>
           )}
 
-          {/* Delivery */}
-
-
-          {/* =====================================================
-              ⭐ ADVANCE PAYMENT
-          ===================================================== */}
-
+          {/* ADVANCE PAYMENT */}
           <SectionCard title="অবশ্যই অগ্রিম পেমেন্ট আবশ্যক ">
-            <div
-              id="field-transactionId"
-            >
-
+            <div id="field-transactionId">
               {/* Payment Notice */}
-              <div className="mb-5 rounded-xl border-red-600 border-2 text-red-600 p-4 text-center">
+              <div className="mb-5 rounded-xl border-2 border-red-600 p-4 text-center text-red-600">
                 <div className="flex items-start gap-3">
-
                   <div className="flex-1">
-                    <p className="mt-1 text-[14px] leading-relaxed text-red">
-                      অগ্রীম বাবদ- ৩০% প্রদানকৃত টাকার স্কিনশর্ট/পোশাক বাড়ির অফিসিয়াল "অর্ডার ফরম" নিচের অপশনে আপলোড করুন।
+                    <p className="mt-1 text-[14px] leading-relaxed text-red-600">
+                      অগ্রীম বাবদ- ৩০% প্রদানকৃত টাকার স্কিনশর্ট/পোশাক বাড়ির
+                      অফিসিয়াল "অর্ডার ফরম" নিচের অপশনে আপলোড করুন।
                     </p>
                   </div>
-
                 </div>
               </div>
 
@@ -1056,10 +1019,7 @@ const OrderForm = () => {
                   placeholder="Transaction ID এখানে লিখুন"
                   value={formData.payment.transactionId}
                   onChange={(e) => {
-                    updatePayment(
-                      "transactionId",
-                      e.target.value
-                    );
+                    updatePayment("transactionId", e.target.value);
                     clearErr("transactionId");
                   }}
                 />
@@ -1069,18 +1029,13 @@ const OrderForm = () => {
 
               {/* Payment Proof */}
               <div id="field-paymentProof">
-                <Label required>
-                  পেমেন্টের স্ক্রিনশট / প্রমাণ
-                </Label>
+                <Label required>পেমেন্টের স্ক্রিনশট / প্রমাণ</Label>
 
                 <ImageUpload
                   collectionName="manufactureOrder"
-                  onUploadSuccess={
-                    handlePaymentProofUpload
-                  }
+                  onUploadSuccess={handlePaymentProofUpload}
                 />
 
-                {/* Uploaded Image Preview */}
                 {formData.payment.paymentProof && (
                   <div className="mt-4 overflow-hidden rounded-xl border border-green-200 bg-green-50 p-3">
                     <div className="mb-2 flex items-center gap-2">
@@ -1106,8 +1061,7 @@ const OrderForm = () => {
             </div>
           </SectionCard>
 
-
-
+          {/* Delivery */}
           <SectionCard title="ডেলিভারি পদ্ধতি">
             <Label>ডেলিভারির ধরন নির্বাচন করুন</Label>
 
@@ -1116,9 +1070,7 @@ const OrderForm = () => {
                 <button
                   key={val}
                   type="button"
-                  onClick={() =>
-                    updateDelivery("type", val)
-                  }
+                  onClick={() => updateDelivery("type", val)}
                   className={[
                     "rounded-xl border px-1 py-3 text-center transition-all",
                     formData.delivery.type === val
@@ -1126,13 +1078,8 @@ const OrderForm = () => {
                       : "border-gray-200 bg-white text-gray-600 hover:border-blue-300",
                   ].join(" ")}
                 >
-                  <div className="mb-1 text-xl">
-                    {emoji}
-                  </div>
-
-                  <div className="text-xs font-medium leading-snug">
-                    {label}
-                  </div>
+                  <div className="mb-1 text-xl">{emoji}</div>
+                  <div className="text-xs font-medium leading-snug">{label}</div>
                 </button>
               ))}
             </div>
@@ -1142,32 +1089,21 @@ const OrderForm = () => {
             <div className="flex gap-2">
               <ToggleBtn
                 label="গ্রাহক"
-                active={
-                  formData.delivery.payer === "customer"
-                }
-                onClick={() =>
-                  updateDelivery("payer", "customer")
-                }
+                active={formData.delivery.payer === "customer"}
+                onClick={() => updateDelivery("payer", "customer")}
               />
 
               <ToggleBtn
                 label="কোম্পানি"
-                active={
-                  formData.delivery.payer === "company"
-                }
-                onClick={() =>
-                  updateDelivery("payer", "company")
-                }
+                active={formData.delivery.payer === "company"}
+                onClick={() => updateDelivery("payer", "company")}
               />
             </div>
           </SectionCard>
 
           {/* Terms */}
           <SectionCard title="শর্তাবলী ও চুক্তি">
-            <div
-              className="mb-5 space-y-3"
-              id="field-terms"
-            >
+            <div className="mb-5 space-y-3" id="field-terms">
               {TERMS_LIST.map(({ key, text }) => (
                 <label
                   key={key}
@@ -1193,22 +1129,16 @@ const OrderForm = () => {
               type="submit"
               disabled={submitting}
               className={[
-                "cursor-pointer mt-3 w-full rounded-2xl py-4 text-base font-semibold text-white shadow-lg",
+                "mt-3 w-full cursor-pointer rounded-2xl py-4 text-base font-semibold text-white shadow-lg",
                 "bg-gradient-to-r from-blue-600 to-red-600",
                 "transition-all duration-200 hover:from-blue-700 hover:to-red-700",
                 "active:scale-[0.99]",
-                submitting
-                  ? "cursor-not-allowed opacity-70"
-                  : "",
+                submitting ? "cursor-not-allowed opacity-70" : "",
               ].join(" ")}
             >
-              {submitting
-                ? "⏳ পাঠানো হচ্ছে..."
-                : "✅ অর্ডার কনফার্ম করুন"}
+              {submitting ? "⏳ পাঠানো হচ্ছে..." : "✅ অর্ডার কনফার্ম করুন"}
             </button>
           </SectionCard>
-
-
         </form>
       </div>
 
